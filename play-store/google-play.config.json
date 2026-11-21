@@ -1,19 +1,10 @@
 {
-  "appName": "Seorilabs Game Starter",
-  "packageName": "com.seorilabs.startergame",
+  "appName": "Four Alike",
+  "packageName": "com.seoleeapps.fouralike",
   "defaultLanguage": "en-US",
   "track": "internal",
-  "aabPath": "build/android/starter-template-game.aab",
+  "aabPath": "build/android/four-alike.aab",
   "release": {
     "track": "internal"
-  },
-  "internalTesting": {
-    "purpose": "Landscape game template with live platform accounts, cloud saves, inbox, sandbox purchases and non-monetized test ads",
-    "ads": true,
-    "inAppPurchases": true,
-    "testPurchasesOnly": true,
-    "nonMonetizedAdVersion": "1.1.0"
-  },
-  "privacyPolicyUrl": "https://www.seorilabs.com/privacy/",
-  "contactEmail": "cs@seorilabs.com"
+  }
 }

@@ -14,7 +14,6 @@ func text_button(main: Node, value: String) -> Button:
  return null
 func mount_game(path: String, home: String = "") -> Control:
  var main: Control = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
- main.connect_platform = false
  main.state = State.new(path)
  main.device_locale = "en-US"
  if not home.is_empty(): main.home_profile = home
@@ -28,7 +27,7 @@ func run() -> void:
  save_dir = "user://e2e-game-%d" % Time.get_ticks_usec()
  DirAccess.make_dir_recursive_absolute(save_dir)
  print("Isolated save: ", ProjectSettings.globalize_path(save_dir))
- d.begin("offline-first-play-restart", ["startup", "tutorial", "account_save", "inbox", "commerce", "operations", "observability", "ui_leaderboard", "ui_kit"])
+ d.begin("offline-first-play-restart", ["startup", "tutorial", "account_save", "inbox", "commerce", "operations", "observability", "ui_leaderboard", "ui_landscape", "ui_kit"])
  var main: Control = await mount_game(save_dir + "/play.json")
  await d.shot("title")
  d.step("start actual sample", await d.tap(b(main, "start")) and main.screen == "play")

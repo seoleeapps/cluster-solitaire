@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "gameId": "com.seorilabs.startergame",
+  "gameId": "com.seoleeapps.fouralike",
   "mode": "local",
   "newGame": true,
   "features": {
@@ -120,48 +120,48 @@
   },
   "optional": {
     "attendance": {
-      "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "enabled": true,
+      "reason": "출석 보상을 첫 출시에 넣는다. 제품 화면은 아직 구현 전이다"
     },
     "missions": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "achievements": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "events": {
-      "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "enabled": true,
+      "reason": "일일 도전(연속 기록, 이번 달 달력, 결과 공유)을 첫 출시에 넣는다. 제품 화면은 아직 구현 전이다"
     },
     "shop": {
-      "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "enabled": true,
+      "reason": "코인 상점(부스터, 카드 뒷면, 테이블 테마)을 첫 출시에 넣는다. 인앱결제 없이 게임 안 코인만 쓴다. 제품 화면은 아직 구현 전이다"
     },
     "pass": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "ranking": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "서버와 계정이 없어 첫 출시에서 뺀다. 다음 버전 후보다"
     },
     "friends": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "guild": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "push": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "review": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "인앱 리뷰 플러그인이 첫 출시 범위 밖이다"
     }
   },
   "services": {
@@ -210,12 +210,11 @@
     "runner": "tools/check.py"
   },
   "adoptedMarkets": [
-    "google_play",
-    "app_store"
+    "google_play"
   ],
   "uiStandard": {
     "version": "1.1.0",
-    "homeProfile": "hero",
+    "homeProfile": "map",
     "skin": "soft-adventure",
     "locales": [
       "en",
@@ -248,7 +247,6 @@
       "godot/game/features/sample_round/sample_round.gd",
       "godot/game/features/sample_round/sample_round.tscn",
       "godot/config/product.json",
-      "godot/config/runtime.json",
       "godot/project.godot"
     ],
     "bundleLock": "common-bundle.lock.json"
