@@ -175,11 +175,7 @@
     "mate",
     "bubble_tea"
    ],
-   "also": [
-    "cookie",
-    "shortcake",
-    "cupcake"
-   ]
+   "also": []
   },
   {
    "id": "seafood",
@@ -339,8 +335,6 @@
     "flatbread",
     "candy",
     "chocolate_bar",
-    "wrapped_gift",
-    "teddy_bear",
     "sandwich"
    ]
   },
@@ -529,7 +523,6 @@
     "two_hump_camel",
     "flamingo",
     "bear",
-    "sport_utility_vehicle",
     "leo"
    ]
   },
@@ -592,7 +585,6 @@
     "front_facing_baby_chick",
     "bat",
     "phoenix_bird",
-    "feather",
     "building_construction",
     "kite"
    ]
@@ -619,8 +611,7 @@
     "spider",
     "scorpion",
     "worm",
-    "snail",
-    "spider_web"
+    "snail"
    ]
   },
   {
@@ -654,12 +645,7 @@
     "mammoth",
     "dodo"
    ],
-   "also": [
-    "bone",
-    "skull",
-    "headstone",
-    "ghost"
-   ]
+   "also": []
   },
   {
    "id": "rodents",
@@ -762,23 +748,7 @@
    ],
    "also": [
     "raccoon",
-    "pool_8_ball",
-    "soccer_ball",
-    "musical_keyboard",
-    "clapper_board",
-    "skull",
-    "skull_and_crossbones",
-    "newspaper",
-    "rice_ball",
-    "game_die",
-    "black_heart",
-    "white_heart",
-    "black_circle",
-    "white_circle",
-    "black_large_square",
-    "white_large_square",
-    "black_cat",
-    "cooked_rice"
+    "black_cat"
    ]
   },
   {
@@ -822,14 +792,10 @@
    ],
    "also": [
     "shrimp",
-    "egg",
     "hatching_chick",
-    "chestnut",
     "scorpion",
     "beetle",
     "lady_beetle",
-    "taco",
-    "pea_pod",
     "cancer"
    ]
   },
@@ -851,11 +817,7 @@
     "camel",
     "two_hump_camel",
     "peacock",
-    "dragon",
-    "guitar",
-    "banjo",
-    "violin",
-    "necktie"
+    "dragon"
    ]
   },
   {
@@ -924,17 +886,8 @@
     "shrimp",
     "jellyfish",
     "bug",
-    "beetle",
-    "lady_beetle",
-    "cockroach",
-    "cricket",
-    "honeybee",
-    "fly",
-    "mosquito",
-    "butterfly",
     "scorpio",
-    "cancer",
-    "ant"
+    "cancer"
    ]
   },
   {
@@ -988,8 +941,7 @@
     "mosquito",
     "cockroach",
     "scorpion",
-    "beaver",
-    "person_vampire"
+    "beaver"
    ]
   },
   {
@@ -1038,14 +990,10 @@
     "hyacinth",
     "blossom",
     "bouquet",
-    "maple_leaf",
-    "fallen_leaf",
     "four_leaf_clover",
     "shamrock",
-    "leaf_fluttering_in_wind",
     "herb",
     "sheaf_of_rice",
-    "leafy_green",
     "broccoli",
     "coral"
    ]
@@ -1290,12 +1238,6 @@
    "also": [
     "ice_skate",
     "ice_hockey",
-    "curling_stone",
-    "skis",
-    "sled",
-    "snowboarder",
-    "skier",
-    "penguin",
     "cup_with_straw",
     "tropical_drink",
     "bubble_tea",
@@ -1330,9 +1272,6 @@
     "bucket",
     "ice",
     "spouting_whale",
-    "person_swimming",
-    "person_surfing",
-    "person_rowing_boat",
     "beach_with_umbrella",
     "desert_island"
    ]
@@ -1425,16 +1364,12 @@
    "also": [
     "milky_way",
     "night_with_stars",
-    "sun",
-    "comet",
     "magic_wand",
     "christmas_tree",
     "military_medal",
     "sports_medal",
     "sparkler",
     "fireworks",
-    "ringed_planet",
-    "singer",
     "crystal_ball"
    ]
   },
@@ -1460,19 +1395,7 @@
     "ambulance",
     "fire_engine",
     "police_car",
-    "motorcycle",
-    "motor_scooter",
-    "bicycle",
-    "kick_scooter",
-    "tram",
-    "stop_sign",
-    "vertical_traffic_light",
-    "construction",
-    "bus_stop",
-    "no_entry",
-    "person_biking",
-    "no_bicycles",
-    "no_pedestrians"
+    "tram"
    ]
   },
   {
@@ -1542,35 +1465,6 @@
     "satellite",
     "airplane_departure",
     "airplane_arrival",
-    "eagle",
-    "owl",
-    "parrot",
-    "dove",
-    "swan",
-    "flamingo",
-    "blackbird",
-    "duck",
-    "goose",
-    "phoenix_bird",
-    "bat",
-    "butterfly",
-    "honeybee",
-    "fly",
-    "mosquito",
-    "lady_beetle",
-    "dragon",
-    "person_fairy",
-    "baby_angel",
-    "money_with_wings",
-    "flying_disc",
-    "boomerang",
-    "cloud",
-    "leaf_fluttering_in_wind",
-    "fireworks",
-    "shooting_star",
-    "comet",
-    "pilot",
-    "astronaut",
     "kite",
     "balloon"
    ]
@@ -1633,24 +1527,7 @@
     "no_bicycles",
     "prohibited",
     "warning",
-    "police_car_light",
-    "police_officer",
-    "automobile",
-    "taxi",
-    "bus",
-    "delivery_truck",
-    "pickup_truck",
-    "sport_utility_vehicle",
-    "minibus",
-    "articulated_lorry",
-    "trolleybus",
-    "ambulance",
-    "fire_engine",
-    "police_car",
-    "motorcycle",
-    "motor_scooter",
-    "bicycle",
-    "kick_scooter"
+    "police_car_light"
    ]
   },
   {
@@ -1947,7 +1824,6 @@
     "keyboard",
     "oil_drum",
     "poultry_leg",
-    "musical_score",
     "microphone"
    ]
   },
@@ -2304,51 +2180,8 @@
     "mirror"
    ],
    "also": [
-    "television",
-    "toilet",
-    "bathtub",
-    "shower",
-    "mantelpiece_clock",
-    "alarm_clock",
-    "candle",
-    "light_bulb",
-    "potted_plant",
-    "broom",
-    "bucket",
-    "wastebasket",
-    "basket",
-    "teapot",
-    "key",
-    "telephone",
-    "radio",
     "file_cabinet",
-    "ladder",
-    "amphora",
-    "jar",
-    "laptop",
-    "desktop_computer",
-    "toothbrush",
-    "soap",
-    "sponge",
-    "plunger",
-    "roll_of_paper",
-    "teddy_bear",
-    "books",
-    "fork_and_knife_with_plate",
-    "bowl_with_spoon",
-    "tumbler_glass",
-    "spoon",
-    "chopsticks",
-    "fork_and_knife",
-    "timer_clock",
-    "wind_chime",
-    "person_in_bed",
-    "house",
-    "house_with_garden",
-    "electric_plug",
-    "calendar",
-    "diya_lamp",
-    "framed_picture"
+    "person_in_bed"
    ]
   },
   {
@@ -2669,7 +2502,6 @@
     "movie_camera",
     "film_projector",
     "eye",
-    "detective",
     "flashlight",
     "crystal_ball",
     "mirror"
@@ -2773,13 +2605,6 @@
     "rescue_workers_helmet"
    ],
    "also": [
-    "santa_claus",
-    "cook",
-    "construction_worker",
-    "person_mage",
-    "detective",
-    "snowman",
-    "person_with_veil",
     "ribbon",
     "headphone"
    ]
@@ -2853,9 +2678,6 @@
     "microscope",
     "eye",
     "performing_arts",
-    "teacher",
-    "scientist",
-    "mrs_claus",
     "tumbler_glass"
    ]
   },
@@ -2906,17 +2728,11 @@
     "diving_mask"
    ],
    "also": [
-    "person_swimming",
-    "person_playing_water_polo",
-    "water_wave",
     "sunglasses",
     "umbrella_on_ground",
-    "beach_with_umbrella",
     "shorts",
     "lotion_bottle",
-    "shower",
     "water_pistol",
-    "ladder",
     "womans_hat",
     "goggles"
    ]
@@ -3119,8 +2935,6 @@
     "flashlight",
     "atom_symbol",
     "radioactive",
-    "person_lifting_weights",
-    "raised_fist",
     "guitar",
     "warning"
    ]
@@ -3209,10 +3023,6 @@
     "ping_pong",
     "lacrosse",
     "field_hockey",
-    "person_bouncing_ball",
-    "person_playing_water_polo",
-    "person_golfing",
-    "person_juggling",
     "tennis"
    ]
   },
@@ -3231,12 +3041,10 @@
     "lacrosse"
    ],
    "also": [
-    "person_golfing",
     "fishing_pole",
     "magic_wand",
     "drum",
     "chopsticks",
-    "pool_8_ball",
     "poultry_leg",
     "lipstick"
    ]
@@ -3257,10 +3065,7 @@
     "skier"
    ],
    "also": [
-    "snowman",
-    "snowflake",
-    "goggles",
-    "cloud_with_snow"
+    "goggles"
    ]
   },
   {
@@ -3278,22 +3083,11 @@
    ],
    "also": [
     "speedboat",
-    "ferry",
-    "passenger_ship",
-    "ship",
     "motor_boat",
     "ring_buoy",
-    "anchor",
-    "water_wave",
     "one_piece_swimsuit",
     "bikini",
     "goggles",
-    "thong_sandal",
-    "water_pistol",
-    "beach_with_umbrella",
-    "swan",
-    "duck",
-    "national_park",
     "fishing_pole",
     "sailboat",
     "canoe"
@@ -3925,8 +3719,6 @@
     "mrs_claus",
     "baby_angel",
     "alien",
-    "robot",
-    "clown_face",
     "dragon",
     "unicorn",
     "phoenix_bird"
@@ -3981,7 +3773,6 @@
     "stop_sign",
     "warning",
     "sos_button",
-    "long_drum",
     "handbag"
    ]
   },
@@ -4045,18 +3836,9 @@
     "nose"
    ],
    "also": [
-    "glasses",
-    "sunglasses",
-    "goggles",
-    "diving_mask",
-    "lipstick",
     "kiss_mark",
-    "performing_arts",
     "clown_face",
-    "sleeping_face",
     "skull",
-    "razor",
-    "jack_o_lantern",
     "tongue",
     "tooth"
    ]
@@ -4243,13 +4025,7 @@
     "amphora",
     "star",
     "glowing_star",
-    "milky_way",
-    "night_with_stars",
     "shooting_star",
-    "sparkles",
-    "telescope",
-    "crystal_ball",
-    "ringed_planet",
     "rat",
     "mouse",
     "tiger",
@@ -4287,16 +4063,8 @@
     "keycap_8",
     "keycap_9",
     "keycap_0",
-    "bar_chart",
-    "chart_increasing",
-    "chart_decreasing",
-    "straight_ruler",
-    "triangular_ruler",
     "battery",
     "low_battery",
-    "ambulance",
-    "hospital",
-    "rescue_workers_helmet",
     "no_entry"
    ]
   },
@@ -4361,7 +4129,6 @@
     "crossed_swords",
     "police_car_light",
     "sos_button",
-    "fire_extinguisher",
     "stop_sign",
     "no_entry",
     "construction",
@@ -4369,10 +4136,7 @@
     "cloud_with_lightning",
     "electric_plug",
     "oil_drum",
-    "headstone",
     "atom_symbol",
-    "fire_engine",
-    "rescue_workers_helmet",
     "jellyfish"
    ]
   },
@@ -4417,7 +4181,6 @@
     "up_down_arrow",
     "metro",
     "vertical_traffic_light",
-    "toilet",
     "victory_hand",
     "ok_hand"
    ]
@@ -4476,22 +4239,8 @@
     "3rd_place_medal",
     "pool_8_ball",
     "game_die",
-    "calendar",
     "convenience_store",
-    "keyboard",
-    "telephone",
-    "pager",
-    "plus",
-    "minus",
-    "multiply",
-    "divide",
-    "heavy_equals_sign",
-    "key",
-    "old_key",
-    "musical_keyboard",
-    "four_leaf_clover",
-    "shamrock",
-    "two_hump_camel"
+    "pager"
    ]
   },
   {
