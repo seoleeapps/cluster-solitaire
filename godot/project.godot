@@ -28,6 +28,10 @@ window/handheld/orientation=1
 
 theme/default_font_multichannel_signed_distance_field=true
 
+[importer_defaults]
+
+texture={"mipmaps/generate": true}
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

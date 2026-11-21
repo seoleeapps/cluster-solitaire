@@ -1,0 +1,8 @@
+{
+  "model": "stable-audio-2.5",
+  "out_dir": ".",
+  "tracks": [
+    {"name": "bgm_main", "type": "loop", "duration": 90, "crossfade": 3,
+     "prompt": "bright cozy casual puzzle game background music, playful marimba melody, soft plucked ukulele, warm electric piano chords, light hand percussion and shaker, cheerful but calm, medium tempo, gentle"}
+  ]
+}

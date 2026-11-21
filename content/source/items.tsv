@@ -1,0 +1,802 @@
+id	asset	en	ko
+banana	Banana	Banana	바나나
+grapes	Grapes	Grapes	포도
+strawberry	Strawberry	Strawberry	딸기
+watermelon	Watermelon	Watermelon	수박
+peach	Peach	Peach	복숭아
+pear	Pear	Pear	서양배
+pineapple	Pineapple	Pineapple	파인애플
+mango	Mango	Mango	망고
+melon	Melon	Melon	멜론
+kiwi_fruit	Kiwi fruit	Kiwi	키위
+cherries	Cherries	Cherries	체리
+red_apple	Red apple	Apple	사과
+green_apple	Green apple	Green Apple	청사과
+lemon	Lemon	Lemon	레몬
+tangerine	Tangerine	Tangerine	귤
+blueberries	Blueberries	Blueberries	블루베리
+carrot	Carrot	Carrot	당근
+broccoli	Broccoli	Broccoli	브로콜리
+cucumber	Cucumber	Cucumber	오이
+eggplant	Eggplant	Eggplant	가지
+bell_pepper	Bell pepper	Bell Pepper	피망
+onion	Onion	Onion	양파
+garlic	Garlic	Garlic	마늘
+potato	Potato	Potato	감자
+leafy_green	Leafy green	Lettuce	상추
+ear_of_corn	Ear of corn	Corn	옥수수
+pea_pod	Pea pod	Peas	완두콩
+bread	Bread	Bread	식빵
+baguette_bread	Baguette bread	Baguette	바게트
+croissant	Croissant	Croissant	크루아상
+bagel	Bagel	Bagel	베이글
+pretzel	Pretzel	Pretzel	프레첼
+flatbread	Flatbread	Flatbread	납작빵
+candy	Candy	Candy	사탕
+lollipop	Lollipop	Lollipop	막대사탕
+chocolate_bar	Chocolate bar	Chocolate	초콜릿
+cookie	Cookie	Cookie	쿠키
+doughnut	Doughnut	Donut	도넛
+cupcake	Cupcake	Cupcake	컵케이크
+custard	Custard	Caramel Pudding	푸딩
+shortcake	Shortcake	Cake Slice	조각 케이크
+birthday_cake	Birthday cake	Birthday Cake	생일 케이크
+pie	Pie	Pie	파이
+hamburger	Hamburger	Hamburger	햄버거
+french_fries	French fries	French Fries	감자튀김
+pizza	Pizza	Pizza	피자
+hot_dog	Hot dog	Hot Dog	핫도그
+taco	Taco	Taco	타코
+burrito	Burrito	Burrito	부리토
+sandwich	Sandwich	Sandwich	샌드위치
+glass_of_milk	Glass of milk	Milk	우유
+cup_with_straw	Cup with straw	Soda	탄산음료
+beverage_box	Beverage box	Juice Box	팩 주스
+bubble_tea	Bubble tea	Bubble Tea	버블티
+tropical_drink	Tropical drink	Tropical Drink	트로피컬 주스
+hot_beverage	Hot beverage	Coffee	커피
+teacup_without_handle	Teacup without handle	Green Tea	녹차
+mate	Mate	Yerba Mate	마테차
+teapot	Teapot	Teapot	찻주전자
+crab	Crab	Crab	게
+lobster	Lobster	Lobster	바닷가재
+shrimp	Shrimp	Shrimp	새우
+squid	Squid	Squid	오징어
+oyster	Oyster	Oyster	굴
+fried_shrimp	Fried shrimp	Fried Shrimp	새우튀김
+bacon	Bacon	Bacon	베이컨
+cut_of_meat	Cut of meat	Steak	생고기
+meat_on_bone	Meat on bone	Meat on Bone	뼈 붙은 고기
+poultry_leg	Poultry leg	Chicken Leg	닭다리
+egg	Egg	Egg	달걀
+cooking	Cooking	Fried Egg	달걀프라이
+pancakes	Pancakes	Pancakes	팬케이크
+waffle	Waffle	Waffle	와플
+butter	Butter	Butter	버터
+fork_and_knife	Fork and knife	Fork and Knife	포크와 나이프
+fork_and_knife_with_plate	Fork and knife with plate	Plate	접시
+spoon	Spoon	Spoon	숟가락
+chopsticks	Chopsticks	Chopsticks	젓가락
+bowl_with_spoon	Bowl with spoon	Bowl	그릇
+tumbler_glass	Tumbler glass	Glass	유리잔
+cooked_rice	Cooked rice	White Rice	쌀밥
+curry_rice	Curry rice	Curry	카레
+rice_ball	Rice ball	Rice Ball	주먹밥
+sushi	Sushi	Sushi	초밥
+bento_box	Bento box	Bento Box	도시락
+steaming_bowl	Steaming bowl	Ramen	라면
+spaghetti	Spaghetti	Spaghetti	스파게티
+pot_of_food	Pot of food	Stew	스튜
+shallow_pan_of_food	Shallow pan of food	Paella	파에야
+green_salad	Green salad	Salad	샐러드
+fondue	Fondue	Fondue	퐁뒤
+stuffed_flatbread	Stuffed flatbread	Pita Sandwich	피타 샌드위치
+dumpling	Dumpling	Dumpling	만두
+salt	Salt	Salt	소금
+hot_pepper	Hot pepper	Chili Pepper	고추
+ginger_root	Ginger root	Ginger	생강
+honey_pot	Honey pot	Honey Pot	꿀단지
+tomato	Tomato	Tomato	토마토
+ring_buoy	Ring buoy	Life Ring	구명튜브
+optical_disk	Optical disk	CD	CD
+ring	Ring	Ring	반지
+cow	Cow	Cow	젖소
+pig	Pig	Pig	돼지
+horse	Horse	Horse	말
+chicken	Chicken	Chicken	닭
+rooster	Rooster	Rooster	수탉
+goat	Goat	Goat	염소
+ewe	Ewe	Sheep	양
+ram	Ram	Ram	숫양
+duck	Duck	Duck	오리
+donkey	Donkey	Donkey	당나귀
+turkey	Turkey	Turkey	칠면조
+goose	Goose	Goose	거위
+dog	Dog	Dog	강아지
+cat	Cat	Cat	고양이
+hamster	Hamster	Hamster	햄스터
+rabbit	Rabbit	Rabbit	토끼
+parrot	Parrot	Parrot	앵무새
+tropical_fish	Tropical fish	Tropical Fish	열대어
+turtle	Turtle	Turtle	거북이
+poodle	Poodle	Poodle	푸들
+lion	Lion	Lion	사자
+tiger	Tiger	Tiger	호랑이
+leopard	Leopard	Leopard	표범
+black_cat	Black cat	Black Cat	검은 고양이
+elephant	Elephant	Elephant	코끼리
+giraffe	Giraffe	Giraffe	기린
+zebra	Zebra	Zebra	얼룩말
+rhinoceros	Rhinoceros	Rhino	코뿔소
+hippopotamus	Hippopotamus	Hippo	하마
+dolphin	Dolphin	Dolphin	돌고래
+spouting_whale	Spouting whale	Whale	고래
+shark	Shark	Shark	상어
+octopus	Octopus	Octopus	문어
+jellyfish	Jellyfish	Jellyfish	해파리
+seal	Seal	Seal	물개
+blowfish	Blowfish	Pufferfish	복어
+coral	Coral	Coral	산호
+spiral_shell	Spiral shell	Conch Shell	소라 껍데기
+eagle	Eagle	Eagle	독수리
+owl	Owl	Owl	부엉이
+penguin	Penguin	Penguin	펭귄
+flamingo	Flamingo	Flamingo	홍학
+swan	Swan	Swan	백조
+dove	Dove	Dove	비둘기
+peacock	Peacock	Peacock	공작
+blackbird	Blackbird	Crow	까마귀
+dodo	Dodo	Dodo	도도새
+ant	Ant	Ant	개미
+honeybee	Honeybee	Bee	꿀벌
+butterfly	Butterfly	Butterfly	나비
+lady_beetle	Lady beetle	Ladybug	무당벌레
+beetle	Beetle	Beetle	딱정벌레
+cricket	Cricket	Grasshopper	메뚜기
+fly	Fly	Fly	파리
+mosquito	Mosquito	Mosquito	모기
+cockroach	Cockroach	Cockroach	바퀴벌레
+bug	Bug	Caterpillar	애벌레
+crocodile	Crocodile	Crocodile	악어
+lizard	Lizard	Lizard	도마뱀
+snake	Snake	Snake	뱀
+t_rex	T-rex	T-Rex	티라노사우루스
+sauropod	Sauropod	Brachiosaurus	브라키오사우루스
+mammoth	Mammoth	Mammoth	매머드
+mouse	Mouse	Mouse	생쥐
+rat	Rat	Rat	쥐
+chipmunk	Chipmunk	Squirrel	다람쥐
+beaver	Beaver	Beaver	비버
+deer	Deer	Deer	사슴
+fox	Fox	Fox	여우
+bear	Bear	Bear	곰
+wolf	Wolf	Wolf	늑대
+raccoon	Raccoon	Raccoon	라쿤
+badger	Badger	Badger	오소리
+skunk	Skunk	Skunk	스컹크
+hedgehog	Hedgehog	Hedgehog	고슴도치
+boar	Boar	Wild Boar	멧돼지
+moose	Moose	Moose	무스
+ox	Ox	Ox	황소
+water_buffalo	Water buffalo	Water Buffalo	물소
+bison	Bison	Bison	들소
+panda	Panda	Panda	판다
+kangaroo	Kangaroo	Kangaroo	캥거루
+frog	Frog	Frog	개구리
+snail	Snail	Snail	달팽이
+llama	Llama	Llama	라마
+camel	Camel	Camel	낙타
+two_hump_camel	Two-hump camel	Two-Hump Camel	쌍봉낙타
+cactus	Cactus	Cactus	선인장
+scorpion	Scorpion	Scorpion	전갈
+dragon	Dragon	Dragon	용
+unicorn	Unicorn	Unicorn	유니콘
+phoenix_bird	Phoenix bird	Phoenix	불사조
+person_merpeople	Person merpeople	Mermaid	인어
+person_fairy	Person fairy	Fairy	요정
+spider	Spider	Spider	거미
+sloth	Sloth	Sloth	나무늘보
+koala	Koala	Koala	코알라
+worm	Worm	Worm	지렁이
+bat	Bat	Bat	박쥐
+rose	Rose	Rose	장미
+tulip	Tulip	Tulip	튤립
+sunflower	Sunflower	Sunflower	해바라기
+hibiscus	Hibiscus	Hibiscus	히비스커스
+cherry_blossom	Cherry blossom	Cherry Blossom	벚꽃
+lotus	Lotus	Lotus	연꽃
+hyacinth	Hyacinth	Hyacinth	히아신스
+blossom	Blossom	Daisy	데이지
+bouquet	Bouquet	Bouquet	꽃다발
+deciduous_tree	Deciduous tree	Tree	나무
+evergreen_tree	Evergreen tree	Fir Tree	전나무
+palm_tree	Palm tree	Palm Tree	야자수
+potted_plant	Potted plant	Potted Plant	화분
+seedling	Seedling	Sprout	새싹
+christmas_tree	Christmas tree	Christmas Tree	크리스마스트리
+maple_leaf	Maple leaf	Maple Leaf	단풍잎
+fallen_leaf	Fallen leaf	Fallen Leaves	낙엽
+four_leaf_clover	Four leaf clover	Four-Leaf Clover	네잎클로버
+shamrock	Shamrock	Shamrock	세잎클로버
+leaf_fluttering_in_wind	Leaf fluttering in wind	Blowing Leaves	날리는 잎
+herb	Herb	Herb	허브
+chestnut	Chestnut	Chestnut	알밤
+jack_o_lantern	Jack-o-lantern	Jack-O-Lantern	호박 등불
+sheaf_of_rice	Sheaf of rice	Rice Stalks	벼 이삭
+hatching_chick	Hatching chick	Hatching Chick	갓 깬 병아리
+sun	Sun	Sun	해
+cloud	Cloud	Cloud	구름
+cloud_with_rain	Cloud with rain	Rain Cloud	비구름
+cloud_with_snow	Cloud with snow	Snow Cloud	눈구름
+cloud_with_lightning	Cloud with lightning	Thundercloud	번개 구름
+rainbow	Rainbow	Rainbow	무지개
+snowflake	Snowflake	Snowflake	눈송이
+tornado	Tornado	Tornado	토네이도
+fog	Fog	Fog	안개
+sun_behind_cloud	Sun behind cloud	Partly Cloudy	구름 조금
+rocket	Rocket	Rocket	로켓
+satellite	Satellite	Satellite	인공위성
+ringed_planet	Ringed planet	Saturn	토성
+comet	Comet	Comet	혜성
+flying_saucer	Flying saucer	UFO	비행접시
+milky_way	Milky way	Milky Way	은하수
+shooting_star	Shooting star	Shooting Star	별똥별
+astronaut	Astronaut	Astronaut	우주 비행사
+telescope	Telescope	Telescope	망원경
+waxing_crescent_moon	Waxing crescent moon	Waxing Crescent	초승달
+first_quarter_moon	First quarter moon	First Quarter	상현달
+full_moon	Full moon	Full Moon	보름달
+last_quarter_moon	Last quarter moon	Last Quarter	하현달
+waning_crescent_moon	Waning crescent moon	Waning Crescent	그믐달
+mountain	Mountain	Mountain	산
+volcano	Volcano	Volcano	화산
+desert_island	Desert island	Desert Island	무인도
+beach_with_umbrella	Beach with umbrella	Seaside	바닷가
+national_park	National park	Lake	호수
+water_wave	Water wave	Wave	파도
+sunrise_over_mountains	Sunrise over mountains	Sunrise	해돋이
+fire	Fire	Fire	불
+hot_springs	Hot springs	Hot Spring	온천
+candle	Candle	Candle	양초
+snowman	Snowman	Snowman	눈사람
+ice	Ice	Ice Cube	얼음
+ice_cream	Ice cream	Ice Cream	아이스크림
+shaved_ice	Shaved ice	Shaved Ice	빙수
+soft_ice_cream	Soft ice cream	Ice Cream Cone	아이스크림콘
+droplet	Droplet	Droplet	물방울
+fountain	Fountain	Fountain	분수
+shower	Shower	Shower	샤워기
+bathtub	Bathtub	Bathtub	욕조
+potable_water	Potable water	Drinking Water	식수
+light_bulb	Light bulb	Light Bulb	전구
+flashlight	Flashlight	Flashlight	손전등
+diya_lamp	Diya lamp	Oil Lamp	등잔
+red_paper_lantern	Red paper lantern	Red Lantern	붉은 등불
+sparkler	Sparkler	Sparkler	불꽃 막대
+crescent_moon	Crescent moon	Moon	달
+star	Star	Star	별
+night_with_stars	Night with stars	City at Night	도시 야경
+glowing_star	Glowing star	Glowing Star	빛나는 별
+bridge_at_night	Bridge at night	Bridge at Night	다리 야경
+zzz	Zzz	Zzz	쿨쿨
+sparkles	Sparkles	Sparkles	반짝이
+automobile	Automobile	Car	자동차
+taxi	Taxi	Taxi	택시
+bus	Bus	Bus	버스
+delivery_truck	Delivery truck	Delivery Truck	트럭
+pickup_truck	Pickup truck	Pickup Truck	픽업트럭
+sport_utility_vehicle	Sport utility vehicle	SUV	SUV
+racing_car	Racing car	Race Car	경주차
+minibus	Minibus	Van	승합차
+articulated_lorry	Articulated lorry	Trailer Truck	트레일러
+trolleybus	Trolleybus	Trolleybus	트롤리버스
+ambulance	Ambulance	Ambulance	구급차
+fire_engine	Fire engine	Fire Engine	소방차
+police_car	Police car	Police Car	경찰차
+police_car_light	Police car light	Siren	사이렌
+fire_extinguisher	Fire extinguisher	Fire Extinguisher	소화기
+rescue_workers_helmet	Rescue workers helmet	Rescue Helmet	구조대 헬멧
+sos_button	Sos button	SOS Signal	구조 신호
+locomotive	Locomotive	Locomotive	증기기관차
+bullet_train	Bullet train	Bullet Train	고속열차
+metro	Metro	Subway	지하철
+tram	Tram	Tram	트램
+light_rail	Light rail	Light Rail	경전철
+monorail	Monorail	Monorail	모노레일
+railway_car	Railway car	Railway Car	객차
+airplane	Airplane	Airplane	비행기
+small_airplane	Small airplane	Small Plane	경비행기
+helicopter	Helicopter	Helicopter	헬리콥터
+parachute	Parachute	Parachute	낙하산
+sailboat	Sailboat	Sailboat	돛단배
+speedboat	Speedboat	Speedboat	쾌속정
+ferry	Ferry	Ferry	페리
+passenger_ship	Passenger ship	Cruise Ship	크루즈선
+ship	Ship	Passenger Ship	여객선
+canoe	Canoe	Canoe	카누
+motor_boat	Motor boat	Motorboat	모터보트
+bicycle	Bicycle	Bicycle	자전거
+motorcycle	Motorcycle	Motorcycle	오토바이
+motor_scooter	Motor scooter	Scooter	스쿠터
+kick_scooter	Kick scooter	Kick Scooter	킥보드
+stop_sign	Stop sign	Stop Sign	정지 표지판
+vertical_traffic_light	Vertical traffic light	Traffic Light	신호등
+construction	Construction	Barricade	바리케이드
+bus_stop	Bus stop	Bus Stop	버스 정류장
+no_entry	No entry	No Entry	진입 금지
+airplane_departure	Airplane departure	Takeoff	이륙
+airplane_arrival	Airplane arrival	Landing	착륙
+luggage	Luggage	Suitcase	캐리어
+passport_control	Passport control	Passport Control	출입국 심사
+baggage_claim	Baggage claim	Baggage Claim	짐 찾는 곳
+customs	Customs	Customs	세관
+left_luggage	Left luggage	Luggage Locker	물품 보관함
+ferris_wheel	Ferris wheel	Ferris Wheel	관람차
+roller_coaster	Roller coaster	Roller Coaster	롤러코스터
+carousel_horse	Carousel horse	Carousel	회전목마
+admission_tickets	Admission tickets	Admission Ticket	입장권
+office_building	Office building	Office Building	빌딩
+hospital	Hospital	Hospital	병원
+bank	Bank	Bank	은행
+hotel	Hotel	Hotel	호텔
+school	School	School	학교
+post_office	Post office	Post Office	우체국
+factory	Factory	Factory	공장
+convenience_store	Convenience store	Convenience Store	편의점
+department_store	Department store	Department Store	백화점
+stadium	Stadium	Stadium	경기장
+house	House	House	집
+house_with_garden	House with garden	Cottage	전원주택
+houses	Houses	Village	마을
+hut	Hut	Hut	오두막
+tent	Tent	Tent	텐트
+castle	Castle	Castle	성
+statue_of_liberty	Statue of liberty	Statue of Liberty	자유의 여신상
+tokyo_tower	Tokyo tower	Tokyo Tower	도쿄 타워
+mount_fuji	Mount fuji	Mount Fuji	후지산
+moai	Moai	Moai Statue	모아이 석상
+world_map	World map	World Map	세계 지도
+globe_showing_europe_africa	Globe showing europe-africa	Earth	지구
+globe_with_meridians	Globe with meridians	Globe	지구본
+map_of_japan	Map of japan	Map of Japan	일본 지도
+building_construction	Building construction	Crane	크레인
+construction_worker	Construction worker	Builder	건설 노동자
+brick	Brick	Bricks	벽돌
+ladder	Ladder	Ladder	사다리
+camping	Camping	Campsite	야영장
+backpack	Backpack	Backpack	배낭
+compass	Compass	Compass	나침반
+hiking_boot	Hiking boot	Hiking Boot	등산화
+axe	Axe	Axe	도끼
+fishing_pole	Fishing pole	Fishing Rod	낚싯대
+bikini	Bikini	Bikini	비키니
+sunglasses	Sunglasses	Sunglasses	선글라스
+thong_sandal	Thong sandal	Flip-Flop	플립플롭
+diving_mask	Diving mask	Snorkel Mask	스노클 마스크
+umbrella_on_ground	Umbrella on ground	Parasol	파라솔
+shopping_cart	Shopping cart	Cart	카트
+shopping_bags	Shopping bags	Shopping Bags	쇼핑백
+receipt	Receipt	Receipt	영수증
+credit_card	Credit card	Credit Card	신용카드
+label	Label	Price Tag	가격표
+guitar	Guitar	Guitar	기타
+violin	Violin	Violin	바이올린
+drum	Drum	Drum	드럼
+trumpet	Trumpet	Trumpet	트럼펫
+saxophone	Saxophone	Saxophone	색소폰
+musical_keyboard	Musical keyboard	Piano	피아노
+accordion	Accordion	Accordion	아코디언
+banjo	Banjo	Banjo	밴조
+flute	Flute	Wooden Flute	피리
+maracas	Maracas	Maracas	마라카스
+long_drum	Long drum	Djembe	젬베
+headphone	Headphone	Headphones	헤드폰
+microphone	Microphone	Microphone	마이크
+studio_microphone	Studio microphone	Studio Mic	방송 마이크
+radio	Radio	Radio	라디오
+speaker_high_volume	Speaker high volume	Speaker	스피커
+control_knobs	Control knobs	Control Knobs	조절 다이얼
+loudspeaker	Loudspeaker	Bullhorn	전기 확성기
+bell	Bell	Bell	종
+megaphone	Megaphone	Cheer Megaphone	응원 메가폰
+postal_horn	Postal horn	Bugle	나팔
+alarm_clock	Alarm clock	Alarm Clock	알람 시계
+firecracker	Firecracker	Firecracker	폭죽
+telephone	Telephone	Telephone	전화기
+mobile_phone	Mobile phone	Smartphone	스마트폰
+bellhop_bell	Bellhop bell	Service Bell	호출 벨
+wind_chime	Wind chime	Wind Chime	풍경 종
+pencil	Pencil	Pencil	연필
+pen	Pen	Pen	볼펜
+fountain_pen	Fountain pen	Fountain Pen	만년필
+crayon	Crayon	Crayon	크레파스
+scissors	Scissors	Scissors	가위
+paperclip	Paperclip	Paperclip	클립
+pushpin	Pushpin	Pushpin	압정
+straight_ruler	Straight ruler	Ruler	자
+triangular_ruler	Triangular ruler	Triangle Ruler	삼각자
+notebook	Notebook	Notebook	공책
+memo	Memo	Memo	메모
+clipboard	Clipboard	Clipboard	클립보드
+black_nib	Black nib	Pen Nib	펜촉
+hammer	Hammer	Hammer	망치
+wrench	Wrench	Wrench	스패너
+screwdriver	Screwdriver	Screwdriver	드라이버
+carpentry_saw	Carpentry saw	Saw	톱
+pick	Pick	Pickaxe	곡괭이
+toolbox	Toolbox	Toolbox	연장통
+clamp	Clamp	Clamp	클램프
+crossed_swords	Crossed swords	Crossed Swords	엇갈린 검
+dagger	Dagger	Dagger	단검
+bow_and_arrow	Bow and arrow	Bow and Arrow	활과 화살
+shield	Shield	Shield	방패
+crown	Crown	Crown	왕관
+watch	Watch	Watch	손목시계
+stopwatch	Stopwatch	Stopwatch	스톱워치
+timer_clock	Timer clock	Kitchen Timer	타이머
+mantelpiece_clock	Mantelpiece clock	Mantel Clock	탁상시계
+hourglass_done	Hourglass done	Hourglass	모래시계
+locked	Locked	Padlock	자물쇠
+unlocked	Unlocked	Open Padlock	열린 자물쇠
+key	Key	Key	열쇠
+old_key	Old key	Old Key	옛날 열쇠
+syringe	Syringe	Syringe	주사기
+pill	Pill	Pill	알약
+stethoscope	Stethoscope	Stethoscope	청진기
+adhesive_bandage	Adhesive bandage	Adhesive Bandage	반창고
+thermometer	Thermometer	Thermometer	체온계
+x_ray	X-ray	X-Ray	엑스레이
+crutch	Crutch	Crutch	목발
+microscope	Microscope	Microscope	현미경
+test_tube	Test tube	Test Tube	시험관
+petri_dish	Petri dish	Petri Dish	페트리 접시
+alembic	Alembic	Flask	플라스크
+dna	Dna	DNA	DNA
+magnet	Magnet	Magnet	자석
+atom_symbol	Atom symbol	Atom	원자
+lab_coat	Lab coat	Lab Coat	실험복
+goggles	Goggles	Goggles	고글
+toilet	Toilet	Toilet	변기
+soap	Soap	Soap	비누
+toothbrush	Toothbrush	Toothbrush	칫솔
+sponge	Sponge	Sponge	스펀지
+razor	Razor	Razor	면도기
+lotion_bottle	Lotion bottle	Lotion	로션
+roll_of_paper	Roll of paper	Toilet Paper	휴지
+plunger	Plunger	Plunger	뚫어뻥
+bed	Bed	Bed	침대
+chair	Chair	Chair	의자
+couch_and_lamp	Couch and lamp	Sofa	소파
+mirror	Mirror	Mirror	거울
+broom	Broom	Broom	빗자루
+bucket	Bucket	Bucket	양동이
+wastebasket	Wastebasket	Wastebasket	휴지통
+sewing_needle	Sewing needle	Needle	바늘
+thread	Thread	Thread	실
+yarn	Yarn	Yarn	털실
+safety_pin	Safety pin	Safety Pin	옷핀
+artist_palette	Artist palette	Palette	팔레트
+paintbrush	Paintbrush	Paintbrush	붓
+framed_picture	Framed picture	Framed Painting	그림 액자
+basket	Basket	Basket	바구니
+jar	Jar	Jar	유리병
+package	Package	Package	택배 상자
+amphora	Amphora	Clay Jar	항아리
+oil_drum	Oil drum	Oil Barrel	드럼통
+takeout_box	Takeout box	Takeout Box	포장 용기
+canned_food	Canned food	Canned Food	통조림
+envelope	Envelope	Envelope	편지 봉투
+love_letter	Love letter	Love Letter	러브레터
+postbox	Postbox	Postbox	우체통
+closed_mailbox_with_raised_flag	Closed mailbox with raised flag	Mailbox	우편함
+coin	Coin	Coin	동전
+dollar_banknote	Dollar banknote	Dollar Bill	달러 지폐
+euro_banknote	Euro banknote	Euro Note	유로 지폐
+pound_banknote	Pound banknote	Pound Note	파운드 지폐
+yen_banknote	Yen banknote	Yen Note	엔화 지폐
+money_bag	Money bag	Money Bag	돈자루
+money_with_wings	Money with wings	Flying Money	날아가는 돈
+open_book	Open book	Open Book	펼친 책
+closed_book	Closed book	Red Book	빨간 책
+green_book	Green book	Green Book	초록 책
+blue_book	Blue book	Blue Book	파란 책
+orange_book	Orange book	Orange Book	주황 책
+books	Books	Stack of Books	책 더미
+page_facing_up	Page facing up	Document	문서
+scroll	Scroll	Scroll	두루마리
+newspaper	Newspaper	Newspaper	신문
+rolled_up_newspaper	Rolled-up newspaper	Rolled Newspaper	돌돌 만 신문
+bar_chart	Bar chart	Bar Chart	막대그래프
+chart_increasing	Chart increasing	Rising Chart	상승 그래프
+chart_decreasing	Chart decreasing	Falling Chart	하락 그래프
+calendar	Calendar	Calendar	달력
+file_cabinet	File cabinet	File Cabinet	서류 캐비닛
+file_folder	File folder	Folder	폴더
+briefcase	Briefcase	Briefcase	서류 가방
+printer	Printer	Printer	프린터
+magnifying_glass_tilted_left	Magnifying glass tilted left	Magnifying Glass	돋보기
+glasses	Glasses	Glasses	안경
+camera	Camera	Camera	카메라
+crystal_ball	Crystal ball	Crystal Ball	수정 구슬
+magic_wand	Magic wand	Wand	요술봉
+top_hat	Top hat	Top Hat	신사 모자
+joker	Joker	Joker	조커
+t_shirt	T-shirt	T-Shirt	티셔츠
+jeans	Jeans	Jeans	청바지
+dress	Dress	Dress	원피스
+coat	Coat	Coat	코트
+shorts	Shorts	Shorts	반바지
+kimono	Kimono	Kimono	기모노
+sari	Sari	Sari	사리
+womans_clothes	Womans clothes	Blouse	블라우스
+running_shirt	Running shirt	Tank Top	민소매 운동복
+running_shoe	Running shoe	Sneaker	운동화
+mans_shoe	Mans shoe	Dress Shoe	구두
+high_heeled_shoe	High-heeled shoe	High Heel	하이힐
+womans_sandal	Womans sandal	Sandal	샌들
+womans_boot	Womans boot	Boot	부츠
+flat_shoe	Flat shoe	Flats	플랫 슈즈
+ballet_shoes	Ballet shoes	Ballet Slippers	토슈즈
+womans_hat	Womans hat	Sun Hat	챙 모자
+billed_cap	Billed cap	Cap	야구 모자
+graduation_cap	Graduation cap	Graduation Cap	학사모
+military_helmet	Military helmet	Army Helmet	철모
+gem_stone	Gem stone	Gem	보석
+necktie	Necktie	Necktie	넥타이
+scarf	Scarf	Scarf	목도리
+gloves	Gloves	Gloves	장갑
+ribbon	Ribbon	Bow	리본
+handbag	Handbag	Handbag	핸드백
+clutch_bag	Clutch bag	Pouch	파우치
+skis	Skis	Skis	스키
+sled	Sled	Sled	썰매
+ice_skate	Ice skate	Ice Skate	스케이트
+one_piece_swimsuit	One-piece swimsuit	Swimsuit	수영복
+lipstick	Lipstick	Lipstick	립스틱
+nail_polish	Nail polish	Nail Polish	매니큐어
+hair_pick	Hair pick	Comb	빗
+laptop	Laptop	Laptop	노트북
+desktop_computer	Desktop computer	Desktop PC	데스크톱
+television	Television	Television	텔레비전
+video_camera	Video camera	Camcorder	캠코더
+keyboard	Keyboard	Keyboard	키보드
+computer_mouse	Computer mouse	Computer Mouse	마우스
+floppy_disk	Floppy disk	Floppy Disk	플로피 디스크
+videocassette	Videocassette	Videotape	비디오테이프
+pager	Pager	Pager	삐삐
+fax_machine	Fax machine	Fax Machine	팩스
+film_projector	Film projector	Film Projector	영사기
+computer_disk	Computer disk	Minidisc	미니디스크
+dvd	Dvd	DVD	DVD
+movie_camera	Movie camera	Movie Camera	촬영 카메라
+film_frames	Film frames	Film Strip	필름
+clapper_board	Clapper board	Clapperboard	슬레이트
+popcorn	Popcorn	Popcorn	팝콘
+battery	Battery	Battery	배터리
+low_battery	Low battery	Low Battery	배터리 부족
+electric_plug	Electric plug	Plug	플러그
+high_voltage	High voltage	High Voltage	고전압
+robot	Robot	Robot	로봇
+alien	Alien	Alien	외계인
+alien_monster	Alien monster	Pixel Alien	픽셀 외계인
+mechanical_arm	Mechanical arm	Robot Arm	로봇 팔
+mechanical_leg	Mechanical leg	Robot Leg	로봇 다리
+play_button	Play button	Play	재생
+pause_button	Pause button	Pause	일시 정지
+stop_button	Stop button	Stop	정지
+record_button	Record button	Record	녹화
+fast_forward_button	Fast-forward button	Fast Forward	빨리 감기
+eject_button	Eject button	Eject	꺼내기
+next_track_button	Next track button	Next Track	다음 곡
+shuffle_tracks_button	Shuffle tracks button	Shuffle	셔플
+repeat_button	Repeat button	Repeat	반복
+soccer_ball	Soccer ball	Soccer Ball	축구공
+basketball	Basketball	Basketball	농구공
+baseball	Baseball	Baseball	야구공
+softball	Softball	Softball	소프트볼공
+volleyball	Volleyball	Volleyball	배구공
+american_football	American football	American Football	미식축구공
+rugby_football	Rugby football	Rugby Ball	럭비공
+pool_8_ball	Pool 8 ball	Eight Ball	당구공
+tennis	Tennis	Tennis Racket	테니스 라켓
+badminton	Badminton	Badminton	배드민턴
+ping_pong	Ping pong	Ping Pong	탁구
+field_hockey	Field hockey	Field Hockey	필드하키
+ice_hockey	Ice hockey	Ice Hockey	아이스하키
+lacrosse	Lacrosse	Lacrosse	라크로스
+curling_stone	Curling stone	Curling Stone	컬링 스톤
+snowboarder	Snowboarder	Snowboarder	스노보더
+skier	Skier	Skier	스키 선수
+person_surfing	Person surfing	Surfer	서퍼
+person_swimming	Person swimming	Swimmer	수영 선수
+person_rowing_boat	Person rowing boat	Rower	노 젓는 사람
+person_playing_water_polo	Person playing water polo	Water Polo Player	수구 선수
+person_biking	Person biking	Cyclist	사이클 선수
+person_golfing	Person golfing	Golfer	골퍼
+person_lifting_weights	Person lifting weights	Weightlifter	역도 선수
+person_climbing	Person climbing	Rock Climber	암벽 등반가
+person_fencing	Person fencing	Fencer	펜싱 선수
+person_cartwheeling	Person cartwheeling	Gymnast	체조 선수
+person_running	Person running	Runner	육상 선수
+person_bouncing_ball	Person bouncing ball	Basketball Player	농구 선수
+horse_racing	Horse racing	Jockey	경마 기수
+trophy	Trophy	Trophy	트로피
+1st_place_medal	1st place medal	Gold Medal	금메달
+2nd_place_medal	2nd place medal	Silver Medal	은메달
+3rd_place_medal	3rd place medal	Bronze Medal	동메달
+sports_medal	Sports medal	Medal	메달
+military_medal	Military medal	Military Medal	훈장
+teddy_bear	Teddy bear	Teddy Bear	곰 인형
+yo_yo	Yo-yo	Yo-Yo	요요
+kite	Kite	Kite	연
+puzzle_piece	Puzzle piece	Puzzle Piece	퍼즐 조각
+nesting_dolls	Nesting dolls	Nesting Doll	마트료시카
+flying_disc	Flying disc	Flying Disc	원반
+water_pistol	Water pistol	Squirt Gun	물총
+balloon	Balloon	Balloon	풍선
+boomerang	Boomerang	Boomerang	부메랑
+game_die	Game die	Dice	주사위
+chess_pawn	Chess pawn	Chess Pawn	체스 말
+mahjong_red_dragon	Mahjong red dragon	Mahjong Tile	마작 패
+spade_suit	Spade suit	Spade Suit	스페이드 무늬
+heart_suit	Heart suit	Heart Suit	하트 무늬
+diamond_suit	Diamond suit	Diamond Suit	다이아 무늬
+club_suit	Club suit	Club Suit	클로버 무늬
+party_popper	Party popper	Party Popper	축하 폭죽
+confetti_ball	Confetti ball	Confetti Ball	축하 박
+wrapped_gift	Wrapped gift	Gift	선물
+pi_ata	Piñata	Piñata	피냐타
+mirror_ball	Mirror ball	Disco Ball	미러볼
+fireworks	Fireworks	Fireworks	불꽃놀이
+collision	Collision	Explosion	폭발
+bomb	Bomb	Bomb	폭탄
+santa_claus	Santa claus	Santa Claus	산타클로스
+mrs_claus	Mrs claus	Mrs. Claus	산타 할머니
+ghost	Ghost	Ghost	유령
+spider_web	Spider web	Spider Web	거미줄
+skull	Skull	Skull	해골
+headstone	Headstone	Tombstone	묘비
+circus_tent	Circus tent	Circus Tent	서커스 천막
+clown_face	Clown face	Clown	광대
+person_juggling	Person juggling	Juggler	저글링 곡예사
+performing_arts	Performing arts	Theater Masks	연극 가면
+musical_score	Musical score	Sheet Music	악보
+ticket	Ticket	Ticket	티켓
+singer	Singer	Singer	가수
+skull_and_crossbones	Skull and crossbones	Skull and Bones	해골 마크
+anchor	Anchor	Anchor	닻
+hook	Hook	Hook	갈고리
+princess	Princess	Princess	공주
+wedding	Wedding	Wedding Chapel	예식장
+person_with_veil	Person with veil	Bride	신부
+person_in_tuxedo	Person in tuxedo	Groom	신랑
+baby_bottle	Baby bottle	Baby Bottle	젖병
+baby_angel	Baby angel	Cherub	아기 천사
+baby_symbol	Baby symbol	Baby Care Room	수유실
+sleeping_face	Sleeping face	Sleepyhead	잠꾸러기
+person_in_bed	Person in bed	Sleeper	잠자는 사람
+ogre	Ogre	Goblin	도깨비
+person_zombie	Person zombie	Zombie	좀비
+person_vampire	Person vampire	Vampire	뱀파이어
+troll	Troll	Troll	트롤
+firefighter	Firefighter	Firefighter	소방관
+police_officer	Police officer	Police Officer	경찰관
+cook	Cook	Chef	요리사
+farmer	Farmer	Farmer	농부
+pilot	Pilot	Pilot	조종사
+teacher	Teacher	Teacher	선생님
+scientist	Scientist	Scientist	과학자
+health_worker	Health worker	Doctor	의사
+judge	Judge	Judge	판사
+mechanic	Mechanic	Mechanic	정비사
+artist	Artist	Artist	화가
+detective	Detective	Detective	탐정
+person_mage	Person mage	Wizard	마법사
+person_elf	Person elf	Elf	엘프
+person_genie	Person genie	Genie	지니
+prince	Prince	Prince	왕자
+thumbs_up	Thumbs up	Thumbs Up	엄지 척
+thumbs_down	Thumbs down	Thumbs Down	엄지 내리기
+victory_hand	Victory hand	Peace Sign	브이
+ok_hand	Ok hand	OK Sign	오케이
+waving_hand	Waving hand	Waving Hand	손 인사
+clapping_hands	Clapping hands	Applause	박수
+raised_fist	Raised fist	Fist	주먹
+crossed_fingers	Crossed fingers	Fingers Crossed	손가락 꼬기
+call_me_hand	Call me hand	Call Me	전화해
+folded_hands	Folded hands	Praying Hands	기도하는 손
+eye	Eye	Eye	눈동자
+mouth	Mouth	Lips	입술
+tongue	Tongue	Tongue	혀
+tooth	Tooth	Tooth	치아
+bone	Bone	Bone	뼈
+brain	Brain	Brain	뇌
+lungs	Lungs	Lungs	폐
+anatomical_heart	Anatomical heart	Human Heart	심장
+ear	Ear	Ear	귀
+nose	Nose	Nose	코
+foot	Foot	Foot	발
+leg	Leg	Leg	사람 다리
+footprints	Footprints	Footprints	발자국
+paw_prints	Paw prints	Paw Prints	동물 발자국
+kiss_mark	Kiss mark	Kiss Mark	입술 자국
+feather	Feather	Feather	깃털
+red_heart	Red heart	Red Heart	빨간 하트
+blue_heart	Blue heart	Blue Heart	파란 하트
+green_heart	Green heart	Green Heart	초록 하트
+yellow_heart	Yellow heart	Yellow Heart	노란 하트
+purple_heart	Purple heart	Purple Heart	보라 하트
+orange_heart	Orange heart	Orange Heart	주황 하트
+black_heart	Black heart	Black Heart	검은 하트
+white_heart	White heart	White Heart	하얀 하트
+brown_heart	Brown heart	Brown Heart	갈색 하트
+pink_heart	Pink heart	Pink Heart	분홍 하트
+red_circle	Red circle	Red Circle	빨간 동그라미
+blue_circle	Blue circle	Blue Circle	파란 동그라미
+green_circle	Green circle	Green Circle	초록 동그라미
+yellow_circle	Yellow circle	Yellow Circle	노란 동그라미
+purple_circle	Purple circle	Purple Circle	보라 동그라미
+orange_circle	Orange circle	Orange Circle	주황 동그라미
+brown_circle	Brown circle	Brown Circle	갈색 동그라미
+black_circle	Black circle	Black Circle	검은 동그라미
+white_circle	White circle	White Circle	하얀 동그라미
+red_square	Red square	Red Square	빨간 네모
+blue_square	Blue square	Blue Square	파란 네모
+green_square	Green square	Green Square	초록 네모
+yellow_square	Yellow square	Yellow Square	노란 네모
+purple_square	Purple square	Purple Square	보라 네모
+orange_square	Orange square	Orange Square	주황 네모
+brown_square	Brown square	Brown Square	갈색 네모
+black_large_square	Black large square	Black Square	검은 네모
+white_large_square	White large square	White Square	하얀 네모
+aries	Aries	Aries	양자리
+taurus	Taurus	Taurus	황소자리
+gemini	Gemini	Gemini	쌍둥이자리
+cancer	Cancer	Cancer	게자리
+leo	Leo	Leo	사자자리
+virgo	Virgo	Virgo	처녀자리
+libra	Libra	Libra	천칭자리
+scorpio	Scorpio	Scorpio	전갈자리
+sagittarius	Sagittarius	Sagittarius	사수자리
+capricorn	Capricorn	Capricorn	염소자리
+aquarius	Aquarius	Aquarius	물병자리
+pisces	Pisces	Pisces	물고기자리
+plus	Plus	Plus	더하기
+minus	Minus	Minus	빼기
+multiply	Multiply	Multiply	곱하기
+divide	Divide	Divide	나누기
+heavy_equals_sign	Heavy equals sign	Equals	등호
+infinity	Infinity	Infinity	무한대
+no_smoking	No smoking	No Smoking	금연
+prohibited	Prohibited	Prohibited	금지
+no_bicycles	No bicycles	No Bicycles	자전거 금지
+no_littering	No littering	No Littering	쓰레기 금지
+no_pedestrians	No pedestrians	No Pedestrians	보행 금지
+no_mobile_phones	No mobile phones	No Phones	휴대폰 금지
+warning	Warning	Warning Sign	경고 표지
+radioactive	Radioactive	Radiation	방사능
+biohazard	Biohazard	Biohazard	생물 재해
+mens_room	Mens room	Gentlemen	남자 화장실
+womens_room	Womens room	Ladies	여자 화장실
+restroom	Restroom	Restroom	화장실
+wheelchair_symbol	Wheelchair symbol	Wheelchair Access	휠체어 표지
+information	Information	Information	안내
+up_arrow	Up arrow	Up Arrow	위쪽 화살표
+down_arrow	Down arrow	Down Arrow	아래쪽 화살표
+left_arrow	Left arrow	Left Arrow	왼쪽 화살표
+right_arrow	Right arrow	Right Arrow	오른쪽 화살표
+left_right_arrow	Left-right arrow	Left-Right Arrow	좌우 화살표
+up_down_arrow	Up-down arrow	Up-Down Arrow	위아래 화살표
+keycap_1	Keycap 1	Number 1	숫자 1
+keycap_2	Keycap 2	Number 2	숫자 2
+keycap_3	Keycap 3	Number 3	숫자 3
+keycap_4	Keycap 4	Number 4	숫자 4
+keycap_5	Keycap 5	Number 5	숫자 5
+keycap_6	Keycap 6	Number 6	숫자 6
+keycap_7	Keycap 7	Number 7	숫자 7
+keycap_8	Keycap 8	Number 8	숫자 8
+keycap_9	Keycap 9	Number 9	숫자 9
+keycap_0	Keycap 0	Number 0	숫자 0
+cheese_wedge	Cheese wedge	Cheese	치즈
+front_facing_baby_chick	Front-facing baby chick	Chick	병아리
+boxing_glove	Boxing glove	Boxing Glove	권투 글러브
