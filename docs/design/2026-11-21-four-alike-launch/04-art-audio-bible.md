@@ -49,7 +49,7 @@
 |---|---|---|---|---|
 | 공통 스킨 | `godot/game/skins/candy_pop/` | SVG 9장, `skin.json`, `theme.tres` | `tools/art/build_candy_pop.py`와 공통 기반의 테마 생성 스크립트 | 자체 제작 |
 | 플레이 그림 | `godot/game/features/play/assets/` | SVG 30장(카드 판 3, 뒷면, 칸 3, 받침, 메달 2, 이름표, 표지, 버튼 판 4, 조작 아이콘 6, 배지, 체크, 광고 꼬리표, 더하기, 원, 하트 2, 별 2) | `tools/art/build_candy_pop.py` | 자체 제작 |
-| 카드 그림 | `godot/game/assets/icons/` | PNG 801장, 192×192, 투명 배경 | `tools/content/rasterize_icons.py`가 Fluent Emoji Flat SVG를 변환 | Microsoft Fluent Emoji, MIT. 원본 커밋 `1ffb34c` |
+| 카드 그림 | `godot/game/assets/icons/` | PNG 800장, 192×192, 투명 배경 | `tools/content/rasterize_icons.py`가 Fluent Emoji Flat SVG를 변환 | Microsoft Fluent Emoji, MIT. 원본 커밋 `1ffb34c` |
 | 꾸미기 | `godot/game/features/shop/assets/` | 뒷면 4, 배경 4 | 같은 생성 도구의 색 변형 | 자체 제작 |
 | 서체 | 공통 기반의 `fonts/` | Fredoka, Jua, Noto Sans KR, Noto Sans Mono | 공통 묶음 | SIL OFL 1.1 |
 | 효과음 | `godot/game/assets/audio/sfx/` | WAV 18개 | `tools/audio/build_sfx.py`(코드 합성) | 자체 제작 |

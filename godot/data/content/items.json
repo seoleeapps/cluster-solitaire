@@ -4610,12 +4610,6 @@
    "ko": "무한대"
   },
   {
-   "id": "no_smoking",
-   "icon": "no_smoking",
-   "en": "No Smoking",
-   "ko": "금연"
-  },
-  {
    "id": "prohibited",
    "icon": "prohibited",
    "en": "Prohibited",
