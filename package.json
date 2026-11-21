@@ -20,6 +20,6 @@
     "start": "python3 tools/run.py",
     "check:native": "python3 tools/check_native.py",
     "build:android": "python3 tools/export_native.py",
-    "check:generated": "python3 tools/content/build_content.py --check && python3 tools/art/build_candy_pop.py --check && python3 tools/audio/build_sfx.py --check"
+    "check:generated": "python3 tools/content/build_content.py --check && python3 tools/art/build_candy_pop.py --check && python3 tools/audio/build_sfx.py --check && python3 tools/art/build_store_art.py --check"
   }
 }
