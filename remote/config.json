@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "values": {
+    "rewarded_booster_enabled": true,
+    "rewarded_booster_cooldown_s": 30,
+    "rewarded_booster_session_cap": 2,
+    "rewarded_booster_daily_cap": 5,
+    "rewarded_continue_enabled": true,
+    "rewarded_continue_cooldown_s": 60,
+    "rewarded_continue_session_cap": 1,
+    "rewarded_continue_daily_cap": 2,
+    "rewarded_result_bonus_enabled": true,
+    "rewarded_result_bonus_cooldown_s": 60,
+    "rewarded_result_bonus_session_cap": 1,
+    "rewarded_result_bonus_daily_cap": 3,
+    "interstitial_level_end_enabled": true,
+    "interstitial_level_end_cooldown_s": 120,
+    "interstitial_level_end_session_cap": 3,
+    "interstitial_level_end_daily_cap": 8,
+    "interstitial_min_play_seconds": 180,
+    "interstitial_min_stages_between": 2
+  }
+}

@@ -1,0 +1,47 @@
+# 원격 설정(remote/)을 GitHub Pages에 올린다.
+# 앱이 읽는 주소는 https://seoleeapps.github.io/cluster-solitaire/config.json 이다.
+# Pages 사이트는 저장소당 하나다. deploy-godot-pages.yml(웹 빌드)을 실행하면 이 배포를 통째로 덮어쓴다.
+name: Deploy Remote Config
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'remote/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check the config against the monetization profile
+        run: python3 tools/check_remote_config.py
+      - name: Upload the Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: remote
+
+  deploy:
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
