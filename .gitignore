@@ -87,3 +87,6 @@ godot/addons/admob/ios/bin/
 
 # Local code-analysis cache
 .serena/
+
+# Agent worktrees
+.claude/
