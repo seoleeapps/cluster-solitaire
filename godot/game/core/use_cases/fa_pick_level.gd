@@ -35,13 +35,19 @@ func daily_size() -> int:
 
 
 ## 여정 스테이지(1부터)의 레벨. recent는 팩 뒤의 스테이지를 만들 때 피할 범주다.
+## 피할 범주 때문에 만들지 못하면 그 조건 없이 한 번 더 만든다. 같은 스테이지와 recent에서는 늘 같은 판이 나온다.
 ## 결과는 {ok: true, level} 또는 {ok: false, error}다.
 func journey(stage: int, recent: Array) -> Dictionary:
 	if stage < 1:
 		return {"ok": false, "error": "bad_stage"}
-	if stage > _journey.size():
-		return Generator.journey_level(_content, stage, recent)
-	return {"ok": true, "level": _level_at(_journey, stage)}
+	if stage <= _journey.size():
+		return {"ok": true, "level": _level_at(_journey, stage)}
+	var made: Dictionary = Generator.journey_level(_content, stage, recent)
+	if not made["ok"] and not recent.is_empty():
+		made = Generator.journey_level(_content, stage, [])
+	if not made["ok"]:
+		return {"ok": false, "error": made["error"]}
+	return {"ok": true, "level": made["level"]}
 
 
 ## 날짜(YYYY-MM-DD)의 일일 도전 레벨. 결과의 number는 그 날짜의 도전 번호다.

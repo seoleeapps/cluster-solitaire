@@ -17,6 +17,7 @@ func _initialize() -> void:
 	_section("보상형 상한과 간격", _rewarded_limits)
 	_section("날짜 변경과 실행 시작", _date_and_session)
 	_section("원격 설정", _overrides)
+	_section("수익화 프로필과 대조", _profile)
 	_section("상태 직렬화", _state)
 	print("Fa ad policy probe: %d checks, %d failed" % [_checks, _failed.size()])
 	for line: String in _failed:
@@ -229,7 +230,21 @@ func _overrides() -> bool:
 		"rewarded_continue_enabled", "rewarded_continue_cooldown_s", "rewarded_continue_session_cap", "rewarded_continue_daily_cap",
 		"rewarded_result_bonus_enabled", "rewarded_result_bonus_cooldown_s", "rewarded_result_bonus_session_cap", "rewarded_result_bonus_daily_cap",
 		"interstitial_level_end_enabled", "interstitial_level_end_cooldown_s", "interstitial_level_end_session_cap", "interstitial_level_end_daily_cap",
-	], "원격 설정 열쇠는 배치마다 켜짐, 간격, 실행 상한, 하루 상한")
+		"interstitial_min_play_seconds", "interstitial_min_stages_between",
+	], "원격 설정 열쇠는 배치마다 켜짐, 간격, 실행 상한, 하루 상한과 전면 광고 조건 둘")
+	var gate: Dictionary = Policy.config_from({"interstitial_min_play_seconds": 600, "interstitial_min_stages_between": 4})["interstitial_level_end"]
+	_check(gate["first_play_seconds"] == 600 and gate["completion_interval"] == 4, "전면 광고의 플레이 시간과 판 수 조건을 덮어쓴다")
+	gate = Policy.config_from({"interstitial_min_play_seconds": 1800.0, "interstitial_min_stages_between": 6})["interstitial_level_end"]
+	_check(gate["first_play_seconds"] == 1800 and gate["completion_interval"] == 6, "조건의 가장 큰 값")
+	for loose: Dictionary in [
+		{"interstitial_min_play_seconds": 179}, {"interstitial_min_play_seconds": 1801}, {"interstitial_min_play_seconds": 0},
+		{"interstitial_min_stages_between": 1}, {"interstitial_min_stages_between": 7}, {"interstitial_min_stages_between": "3"},
+	]:
+		_check(Policy.config_from(loose) == Policy.default_config(), "기본값보다 느슨하거나 범위를 넘는 조건은 받지 않는다: %s" % [loose])
+	var strict: Dictionary = Policy.config_from({"interstitial_min_stages_between": 3})
+	var waiting: Dictionary = _ready_state()
+	waiting["rounds_since_interstitial"] = 2
+	_check(_reason(waiting, "interstitial_level_end", NOON, "journey", strict) == "rounds", "덮어쓴 판 수 조건으로 판정한다")
 	var edge: Dictionary = Policy.config_from({
 		"interstitial_level_end_cooldown_s": 600, "interstitial_level_end_session_cap": 6, "interstitial_level_end_daily_cap": 16,
 		"rewarded_booster_cooldown_s": 600, "rewarded_booster_session_cap": 4, "rewarded_booster_daily_cap": 10,
@@ -268,6 +283,52 @@ func _overrides() -> bool:
 
 	config = Policy.config_from({"interstitial_level_end_enabled": false})
 	_check(_reason(_ready_state(), "interstitial_level_end", NOON, "journey", config) == "disabled", "덮어쓴 설정으로 판정한다")
+	return true
+
+
+## 코드의 기본값과 원격 설정 열쇠, 범위가 정본인 수익화 프로필과 같은지 본다.
+func _profile() -> bool:
+	var profile: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/monetization/bm-profile.json"))
+	var defaults: Dictionary = Policy.default_config()
+	_check(profile["ad_placements"].size() == defaults.size(), "배치 수가 프로필과 같다")
+	for placement: Dictionary in profile["ad_placements"]:
+		var id: String = placement["placement_id"]
+		var rule: Dictionary = defaults.get(id, {})
+		_check(not rule.is_empty(), id + ": 프로필의 배치가 코드에 있다")
+		if rule.is_empty():
+			continue
+		_check(rule["format"] == placement["format"] and rule["enabled"] == placement["enabled_default"], id + ": 형식과 기본 상태")
+		_check(rule["cooldown_s"] == placement["cooldown_s"], id + ": 간격")
+		_check(rule["session_cap"] == placement["session_cap"] and rule["daily_cap"] == placement["daily_cap"], id + ": 실행 상한과 하루 상한")
+		_check(rule["first_session"] == placement["first_eligible_at"]["session_index"], id + ": 최초 실행 조건")
+
+	var extra_fields: Dictionary = {
+		"interstitial_min_play_seconds": "first_play_seconds", "interstitial_min_stages_between": "completion_interval",
+	}
+	var profile_keys: Array = []
+	for entry: Dictionary in profile["remote_config"]:
+		var key: String = entry["key"]
+		profile_keys.append(key)
+		var placement_id: String = "interstitial_level_end"
+		var field: String = extra_fields.get(key, "")
+		for id: String in defaults:
+			if field.is_empty() and key.begins_with(id + "_"):
+				placement_id = id
+				field = key.trim_prefix(id + "_")
+		var code_default: Variant = defaults[placement_id].get(field)
+		_check(code_default == entry["default"], key + ": 기본값이 프로필과 같다")
+		if entry["type"] != "int":
+			continue
+		var low: int = int(entry["range"]["min"])
+		var high: int = int(entry["range"]["max"])
+		for inside: int in [low, high]:
+			_check(Policy.config_from({key: inside})[placement_id][field] == inside, "%s: 범위의 끝 값 %d를 받는다" % [key, inside])
+		for outside: int in [low - 1, high + 1]:
+			_check(Policy.config_from({key: outside})[placement_id][field] == code_default, "%s: 범위 밖의 값 %d는 기본값을 쓴다" % [key, outside])
+	var code_keys: Array = Array(Policy.remote_keys())
+	profile_keys.sort()
+	code_keys.sort()
+	_check(profile_keys == code_keys, "원격 설정 열쇠가 프로필과 같다")
 	return true
 
 

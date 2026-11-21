@@ -77,8 +77,9 @@ func _determinism() -> bool:
 		var first: Dictionary = Generator.generate(_content, 4242, tier, [])
 		var second: Dictionary = Generator.generate(_content, 4242, tier, [])
 		_check(first["ok"] and JSON.stringify(first) == JSON.stringify(second), "T%d: 같은 시드는 같은 레벨" % tier)
+		_check(first.keys() == ["ok", "attempts", "level"] and first["attempts"] >= 1 and first["attempts"] <= Generator.CATEGORY_ATTEMPTS, "T%d: 범주를 고른 횟수를 함께 돌려준다" % tier)
 		var other: Dictionary = Generator.generate(_content, 4243, tier, [])
-		_check(other["ok"] and JSON.stringify(first) != JSON.stringify(other), "T%d: 다른 시드는 다른 레벨" % tier)
+		_check(other["ok"] and JSON.stringify(first["level"]) != JSON.stringify(other["level"]), "T%d: 다른 시드는 다른 레벨" % tier)
 	_check(Generator.generate(_content, 1, 0, []) == {"ok": false, "error": "bad_tier"}, "없는 등급은 오류")
 	_check(Generator.generate(_content, 1, 6, [])["error"] == "bad_tier", "범위 밖 등급은 오류")
 	return true

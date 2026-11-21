@@ -18,6 +18,9 @@ const STAGE_REWARD_BASE := 10
 const STAGE_REWARD_PER_STAR := 3
 const AD_MULTIPLIER := 2
 const DAILY_REWARD := 30
+## 일일 도전을 7일 연속으로 성공할 때마다 주는 코인.
+const DAILY_STREAK_STEP := 7
+const DAILY_STREAK_REWARD := 100
 
 const PRICES := {BOOSTER_HINT: 100, BOOSTER_UNDO: 80, BOOSTER_SLOT: 150}
 const AD_BOOSTER_COUNT := 1
@@ -49,6 +52,11 @@ static func stars(mistakes: int, continued: bool) -> int:
 ## 별 수에 따른 스테이지 클리어 코인.
 static func stage_reward(star_count: int) -> int:
 	return STAGE_REWARD_BASE + STAGE_REWARD_PER_STAR * (star_count - STARS_MIN)
+
+
+## 일일 도전 연속 기록이 streak이 됐을 때의 코인. 7일 단위가 아니면 0.
+static func streak_reward(streak: int) -> int:
+	return DAILY_STREAK_REWARD if streak > 0 and streak % DAILY_STREAK_STEP == 0 else 0
 
 
 ## 결과 광고를 끝까지 봤을 때 더 받는 코인. base는 그 판에서 이미 받은 코인이다.

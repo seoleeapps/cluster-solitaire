@@ -3,7 +3,8 @@ extends RefCounted
 ## 레벨 생성기. 콘텐츠, 시드, 등급, 최근 사용 범주가 같으면 어느 기기에서나 같은 레벨을 만든다.
 ## 범주 4개와 카드 16장을 고르고, 묶는 방법이 하나뿐인지 전수 확인한 뒤,
 ## 임시 칸 2개로 풀리고 관대함이 등급 범위에 드는 배치가 나올 때까지 카드를 다시 놓는다.
-## 결과는 {ok: true, level} 또는 {ok: false, error}이고 error는 bad_tier, no_categories, exhausted 중 하나다.
+## 결과는 {ok: true, level, attempts} 또는 {ok: false, error}이고 error는 bad_tier, no_categories, exhausted 중 하나다.
+## attempts는 범주를 고른 횟수다. 1이면 처음 고른 범주로 만들었다는 뜻이고 팩 통계에 쓴다.
 
 const Self := preload("res://game/core/domain/fa_generator.gd")
 const Content := preload("res://game/core/domain/fa_content.gd")
@@ -103,7 +104,7 @@ func _build(tier: int, recent: Array) -> Dictionary:
 	for category: String in _content.category_ids():
 		if _content.category_tier(category) <= _rule["category_tier_max"] and not recent.has(category):
 			pool.append(category)
-	for _attempt: int in CATEGORY_ATTEMPTS:
+	for attempt: int in CATEGORY_ATTEMPTS:
 		var categories: Array[String] = _pick_categories(pool, layout["groups"])
 		if categories.size() < layout["groups"]:
 			return _failure("no_categories")
@@ -118,7 +119,7 @@ func _build(tier: int, recent: Array) -> Dictionary:
 		var placed: Dictionary = _place(groups, deck, layout)
 		if placed.is_empty():
 			continue
-		return {"ok": true, "level": {
+		return {"ok": true, "attempts": attempt + 1, "level": {
 			"layout": layout_id, "tier": tier, "f": placed["f"],
 			"groups": groups, "cols": placed["cols"], "reserve": placed["reserve"],
 		}}

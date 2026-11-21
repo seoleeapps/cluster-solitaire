@@ -181,7 +181,7 @@ func can_undo() -> bool:
 
 
 func can_unlock_slot() -> bool:
-	return _holds.size() < HOLD_SLOTS_MAX and not is_won()
+	return _holds.size() < HOLD_SLOTS_MAX and not is_won() and not is_failed()
 
 
 func continue_used() -> bool:

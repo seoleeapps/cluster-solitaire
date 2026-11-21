@@ -110,6 +110,17 @@ func _past_dates() -> bool:
 	result = Daily.record_success(state, "2027-01-05", "2027-01-05", _summary(1))
 	_check(result == {"recorded": true, "counted": true, "streak": 1}, "어제 것을 뒤늦게 풀어도 오늘은 1부터다")
 
+	var stale: Dictionary = Daily.default_state()
+	_play(stale, "2027-01-05")
+	result = Daily.record_success(stale, "2027-01-03", "2027-01-03", _summary(0))
+	_check(result == {"recorded": true, "counted": false, "streak": 0}, "묵혀 둔 판을 뒤늦게 끝내면 결과만 남긴다")
+	_check(stale["streak"] == 1 and stale["last"] == "2027-01-05", "더 뒤의 날까지 이어진 연속 기록은 되돌아가지 않는다")
+	var overnight: Dictionary = Daily.default_state()
+	_play(overnight, "2027-01-30")
+	result = Daily.record_success(overnight, "2027-01-31", "2027-01-31", _summary(0))
+	_check(result == {"recorded": true, "counted": true, "streak": 2}, "시작한 날로 판정하므로 자정이나 달을 넘겨 끝내도 연속 기록에 들어간다")
+	_check(_play(overnight, "2027-02-01")["streak"] == 3, "그다음 날로 이어진다")
+
 	_check(Daily.record_success(state, "2027-01-07", "2027-01-06", _summary(0))["recorded"] == false, "앞날의 판은 기록하지 않는다")
 	_check(Daily.record_success(state, "2026-11-30", "2027-01-06", _summary(0))["recorded"] == false, "기준일 전의 판은 기록하지 않는다")
 	_check(Daily.record_success(state, "bad", "2027-01-06", _summary(0))["recorded"] == false, "잘못된 날짜는 기록하지 않는다")

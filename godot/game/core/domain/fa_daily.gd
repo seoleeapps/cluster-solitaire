@@ -95,19 +95,22 @@ static func can_play(state: Dictionary, date: String, today: String) -> bool:
 	return days_between(date, today) >= 0 and same_month(date, today)
 
 
-## date의 판을 성공으로 기록한다. 오늘의 판이면 연속 기록에 넣고, 지난 날짜는 결과만 남긴다.
-## 돌려주는 값은 {recorded, counted, streak}이고 streak은 today 기준으로 살아 있는 연속 기록이다.
-static func record_success(state: Dictionary, date: String, today: String, summary: Dictionary) -> Dictionary:
+## date의 판을 성공으로 기록한다. played_on은 그 판을 시작한 날이고, 자정을 넘겨 끝내도 시작한 날로 판정한다.
+## 시작한 날의 판이면 연속 기록에 넣고, 지난 날짜의 판은 결과만 남긴다.
+## 이미 더 뒤의 날까지 연속 기록에 넣었다면(오래 묵힌 판을 뒤늦게 끝낸 경우) 결과만 남긴다.
+## 돌려주는 값은 {recorded, counted, streak}이고 streak은 played_on 기준으로 살아 있는 연속 기록이다.
+static func record_success(state: Dictionary, date: String, played_on: String, summary: Dictionary) -> Dictionary:
 	var clean: Dictionary = _summary_from(summary)
-	var recorded: bool = not clean.is_empty() and can_play(state, date, today)
-	var counted: bool = recorded and date == today
+	var recorded: bool = not clean.is_empty() and can_play(state, date, played_on)
+	var last: String = state["last"]
+	var counted: bool = recorded and date == played_on and (last.is_empty() or days_between(last, date) > 0)
 	if recorded:
 		state["results"][date] = clean
 	if counted:
-		state["streak"] = streak(state, today) + 1
+		state["streak"] = streak(state, played_on) + 1
 		state["best"] = maxi(state["best"], state["streak"])
-		state["last"] = today
-	return {"recorded": recorded, "counted": counted, "streak": streak(state, today)}
+		state["last"] = played_on
+	return {"recorded": recorded, "counted": counted, "streak": streak(state, played_on)}
 
 
 static func _summary_from(raw: Variant) -> Dictionary:

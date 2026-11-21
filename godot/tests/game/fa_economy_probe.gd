@@ -43,6 +43,8 @@ func _stage_rewards() -> bool:
 	_check(Economy.AD_MULTIPLIER == 2, "광고 2배")
 	_check(Economy.ad_bonus(13) == 13 and Economy.ad_bonus(30) == 30, "광고를 보면 받은 만큼 더 받는다")
 	_check(Economy.DAILY_REWARD == 30, "일일 도전 보상 30")
+	_check(Economy.streak_reward(7) == 100 and Economy.streak_reward(14) == 100 and Economy.streak_reward(70) == 100, "일일 도전 7일 연속마다 100")
+	_check(Economy.streak_reward(0) == 0 and Economy.streak_reward(1) == 0 and Economy.streak_reward(6) == 0 and Economy.streak_reward(8) == 0, "7일 단위가 아니면 0")
 	return true
 
 

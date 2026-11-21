@@ -2,8 +2,8 @@ class_name FaContent
 extends RefCounted
 ## 카드와 범주 원장의 색인. 두 JSON 문서를 Dictionary로 받아 조회와 형식 검증을 제공한다.
 ## 한 범주의 후보는 소속(members)과 그 범주로도 보일 수 있는 카드(also)의 합이다.
+## 문서의 version은 콘텐츠 판 번호(1 이상)다. 두 문서의 번호가 같아야 하고, 레벨 팩의 content_version과 맞춰 본다.
 
-const VERSION := 1
 const TIER_MIN := 1
 const TIER_MAX := 4
 const MIN_MEMBERS := 4
@@ -21,14 +21,17 @@ var _item_categories: Dictionary = {}
 
 
 func _init(items_doc: Dictionary, categories_doc: Dictionary) -> void:
-	var items_ok: bool = _check_document(items_doc, "items")
-	var categories_ok: bool = _check_document(categories_doc, "categories")
-	if items_ok:
+	var items_version: int = _document_version(items_doc, "items")
+	var categories_version: int = _document_version(categories_doc, "categories")
+	if items_version > 0:
 		_index_items(items_doc["items"])
-	if categories_ok:
+	if categories_version > 0:
 		_index_categories(categories_doc["categories"])
-	if items_ok and categories_ok:
-		_version = VERSION
+	if items_version > 0 and categories_version > 0:
+		if items_version == categories_version:
+			_version = items_version
+		else:
+			_problems.append("version_mismatch: items %d categories %d" % [items_version, categories_version])
 
 
 ## 형식 문제 목록. 한 줄은 "코드: 대상" 꼴이고 비어 있으면 문제가 없다.
@@ -36,7 +39,7 @@ func problems() -> PackedStringArray:
 	return _problems
 
 
-## 두 문서가 모두 읽을 수 있는 버전이면 그 버전, 아니면 0.
+## 콘텐츠 판 번호. 두 문서를 읽을 수 없거나 번호가 서로 다르면 0.
 func version() -> int:
 	return _version
 
@@ -100,14 +103,15 @@ func _localized(entry: Dictionary, language: String) -> String:
 	return entry.get(language, entry.get("en", ""))
 
 
-func _check_document(doc: Dictionary, list_key: String) -> bool:
+## 문서의 판 번호. 목록이 없거나 번호가 1 이상의 정수가 아니면 문제로 남기고 0을 돌려준다.
+func _document_version(doc: Dictionary, list_key: String) -> int:
 	if not doc.get(list_key) is Array:
 		_problems.append("bad_document: " + list_key)
-		return false
-	if not _is_whole(doc.get("version")) or int(doc["version"]) != VERSION:
+		return 0
+	if not _is_whole(doc.get("version")) or doc["version"] < 1:
 		_problems.append("bad_version: " + list_key)
-		return false
-	return true
+		return 0
+	return int(doc["version"])
 
 
 func _index_items(entries: Array) -> void:

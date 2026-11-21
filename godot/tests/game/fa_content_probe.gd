@@ -58,13 +58,26 @@ func _categories() -> Dictionary:
 func _shipped_content() -> bool:
 	var content: Content = Content.new(_read("res://data/content/items.json"), _read("res://data/content/categories.json"))
 	_check(content.problems().is_empty(), "실은 콘텐츠에 형식 문제가 없다: " + ", ".join(content.problems()))
-	_check(content.version() == 1, "콘텐츠 버전 1")
-	_check(content.item_ids().size() == 845, "카드 845장")
-	_check(content.category_ids().size() == 164, "범주 164개")
-	_check(content.item_name("banana", "ko") == "바나나" and content.item_name("banana", "en") == "Banana", "카드 이름 두 언어")
-	_check(content.category_name("fruits", "ko") == "과일", "범주 이름")
-	_check(content.category_tier("fruits") == 1 and content.category_domain("fruits") == "food", "범주 난도와 대분류")
-	_check(content.category_members("fruits").size() == 16, "과일 소속 16장")
+	_check(content.version() >= 1, "콘텐츠 판 번호")
+	_check(content.item_ids().size() >= 700, "카드 700장 이상(%d)" % content.item_ids().size())
+	_check(content.category_ids().size() >= 150, "범주 150개 이상(%d)" % content.category_ids().size())
+	var unnamed: Array = []
+	var unused: Array = []
+	for item: String in content.item_ids():
+		if content.item_name(item, "en").is_empty() or content.item_name(item, "ko").is_empty() or content.item_icon(item).is_empty():
+			unnamed.append(item)
+		if content.categories_of_item(item).is_empty():
+			unused.append(item)
+	_check(unnamed.is_empty(), "모든 카드에 두 언어 이름과 아이콘이 있다: %s" % [unnamed.slice(0, 5)])
+	_check(unused.is_empty(), "모든 카드가 한 범주 이상의 후보다: %s" % [unused.slice(0, 5)])
+	var thin: Array = []
+	var tiers: Dictionary = {}
+	for category: String in content.category_ids():
+		if content.category_members(category).size() < 4 or content.category_name(category, "en").is_empty() or content.category_name(category, "ko").is_empty():
+			thin.append(category)
+		tiers[content.category_tier(category)] = true
+	_check(thin.is_empty(), "모든 범주에 소속 4장 이상과 두 언어 이름이 있다: %s" % [thin.slice(0, 5)])
+	_check(tiers.has(1) and tiers.has(2) and tiers.has(3) and tiers.has(4) and tiers.size() == 4, "범주 난도는 1~4")
 	return true
 
 
@@ -144,7 +157,18 @@ func _validation() -> bool:
 
 	items = _items()
 	items["version"] = 2
-	_check(_problems_of(items, _categories()).contains("bad_version: items"), "카드 문서 버전")
+	var mismatched: Content = Content.new(items, _categories())
+	_check("\n".join(mismatched.problems()).contains("version_mismatch: items 2 categories 1") and mismatched.version() == 0, "두 문서의 판 번호가 다르면 문제다")
+	categories = _categories()
+	categories["version"] = 2.0
+	var bumped: Content = Content.new(items, categories)
+	_check(bumped.problems().is_empty() and bumped.version() == 2, "판 번호는 함께 올릴 수 있다")
+	items["version"] = 0
+	_check(_problems_of(items, _categories()).contains("bad_version: items"), "판 번호 0")
+	items["version"] = "1"
+	_check(_problems_of(items, _categories()).contains("bad_version: items"), "글자로 된 판 번호")
+	items["version"] = 1.5
+	_check(_problems_of(items, _categories()).contains("bad_version: items"), "정수가 아닌 판 번호")
 	_check(_problems_of({}, {}).contains("bad_document: items") and _problems_of({}, {}).contains("bad_document: categories"), "빈 문서")
 
 	var broken: Content = Content.new(_items(), {"version": 1, "categories": [{"id": "fruits"}, 7]})

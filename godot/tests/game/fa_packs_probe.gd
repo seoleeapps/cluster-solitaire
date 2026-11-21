@@ -198,10 +198,15 @@ func _pick_level() -> bool:
 	_check(pick.journey(600, [])["level"]["n"] == 600, "팩의 마지막 스테이지")
 	_check(pick.journey(0, []) == {"ok": false, "error": "bad_stage"}, "스테이지 0은 오류")
 
-	var beyond: Dictionary = pick.journey(601, ["fruits"])
-	_check(beyond["ok"] and beyond["level"]["n"] == 601, "팩을 넘는 스테이지는 생성기로 만든다")
-	_check(JSON.stringify(beyond) == JSON.stringify(Generator.journey_level(_content, 601, ["fruits"])), "생성기에 스테이지 번호와 최근 범주를 그대로 넘긴다")
-	_check(pick.journey(601, Array(_content.category_ids()))["error"] == "no_categories", "생성 실패는 오류로 돌려준다")
+	var avoided: Array = Array(_content.category_ids()).slice(0, 12)
+	var beyond: Dictionary = pick.journey(601, avoided)
+	_check(beyond.keys() == ["ok", "level"] and beyond["ok"] and beyond["level"]["n"] == 601, "팩을 넘는 스테이지는 생성기로 만든다")
+	_check(JSON.stringify(beyond["level"]) == JSON.stringify(Generator.journey_level(_content, 601, avoided)["level"]), "생성기에 스테이지 번호와 최근 범주를 그대로 넘긴다")
+	for group: Dictionary in beyond["level"]["groups"]:
+		_check(not avoided.has(group["cat"]), "피하라고 한 범주 %s는 쓰지 않는다" % group["cat"])
+	var everything: Array = Array(_content.category_ids())
+	_check(not Generator.journey_level(_content, 601, everything)["ok"], "모든 범주를 피하면 생성기는 만들지 못한다")
+	_check(JSON.stringify(pick.journey(601, everything)["level"]) == JSON.stringify(Generator.journey_level(_content, 601, [])["level"]), "피할 범주 때문에 못 만들면 그 조건 없이 다시 만든다")
 
 	var base: Dictionary = pick.daily("2026-12-01")
 	_check(base["ok"] and base["number"] == 1 and base["level"]["n"] == 1 and base["level"]["tier"] == 3, "기준일은 일일 도전 1번")
@@ -219,6 +224,6 @@ func _pick_level() -> bool:
 	_check(broken.journey(1, [])["ok"] and broken.journey(1, [])["level"]["n"] == 1, "여정 팩이 없으면 첫 스테이지부터 생성한다")
 	_check(broken.daily("2026-12-01") == {"ok": false, "error": "no_pack"}, "일일 도전 팩이 없으면 오류")
 	var stale: Dictionary = _journey.duplicate()
-	stale["content_version"] = 2
-	_check(Array(PickLevel.new(_content, stale, _daily).problems()) == ["bad_pack: journey"], "콘텐츠 버전이 다른 팩을 알린다")
+	stale["content_version"] = _content.version() + 1
+	_check(Array(PickLevel.new(_content, stale, _daily).problems()) == ["bad_pack: journey"], "콘텐츠 판 번호가 다른 팩을 알린다")
 	return true

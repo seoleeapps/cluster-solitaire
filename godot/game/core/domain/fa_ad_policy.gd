@@ -1,7 +1,8 @@
 class_name FaAdPolicy
 extends RefCounted
 ## 광고를 지금 내도 되는지 판정하는 규칙. 설정과 상태를 받아 {ok, reason}을 돌려준다.
-## 열쇠 이름은 사내 수익화 프로필(bm-profile.json)의 배치 필드를 따른다.
+## 배치와 기본값, 원격 설정 열쇠와 범위의 정본은 수익화 프로필(godot/data/monetization/bm-profile.json)이고,
+## 여기의 상수는 그것을 옮겨 적은 것이다. 둘이 같은지는 fa_ad_policy_probe.gd가 대조한다.
 ##
 ## 배치 설정: format, enabled, cooldown_s(같은 배치의 노출 간격), session_cap(한 번 실행 상한),
 ##   daily_cap(하루 상한), first_session(몇 번째 실행부터), first_play_seconds(누적 플레이 몇 초부터).
@@ -43,13 +44,18 @@ const DEFAULTS := {
 ## 일일 도전에서 막는 배치. 튜토리얼에서는 모든 배치를 막는다.
 const BLOCKED_IN_DAILY: Array[String] = [REWARDED_BOOSTER, REWARDED_CONTINUE, INTERSTITIAL_LEVEL_END]
 
-## 원격 설정으로 덮어쓸 수 있는 필드. 열쇠는 "<배치 id>_<필드>"다.
+## 원격 설정으로 덮어쓸 수 있는 배치별 필드. 열쇠는 "<배치 id>_<필드>"다.
 const REMOTE_SWITCH := "enabled"
 const REMOTE_NUMBERS: Array[String] = ["cooldown_s", "session_cap", "daily_cap"]
-## 덮어쓸 수 있는 범위는 0부터, 간격은 기본값의 4배와 600초 중 큰 값, 상한은 기본값의 2배까지다.
+## 배치별 숫자의 범위는 0부터, 간격은 기본값의 4배와 600초 중 큰 값, 상한은 기본값의 2배까지다.
 const COOLDOWN_RANGE_FACTOR := 4
 const COOLDOWN_RANGE_FLOOR := 600
 const CAP_RANGE_FACTOR := 2
+## 전면 광고의 조건을 덮어쓰는 열쇠. 기본값보다 느슨하게는 바꿀 수 없게 최소가 기본값이다.
+const REMOTE_INTERSTITIAL := {
+	"interstitial_min_play_seconds": {"field": "first_play_seconds", "min": 180, "max": 1800},
+	"interstitial_min_stages_between": {"field": "completion_interval", "min": 2, "max": 6},
+}
 
 const STATE_COUNTS: Array[String] = ["session_no", "play_seconds", "rounds_since_interstitial", "rewarded_at", "declined_at"]
 const STATE_TABLES: Array[String] = ["daily", "session", "last"]
@@ -66,6 +72,8 @@ static func remote_keys() -> Array[String]:
 		keys.append(_remote_key(placement, REMOTE_SWITCH))
 		for field: String in REMOTE_NUMBERS:
 			keys.append(_remote_key(placement, field))
+	for key: String in REMOTE_INTERSTITIAL:
+		keys.append(key)
 	return keys
 
 
@@ -80,6 +88,11 @@ static func config_from(values: Dictionary) -> Dictionary:
 			var value: Variant = values.get(_remote_key(placement, field))
 			if _is_count(value) and value <= _field_max(field, DEFAULTS[placement][field]):
 				config[placement][field] = int(value)
+	for key: String in REMOTE_INTERSTITIAL:
+		var rule: Dictionary = REMOTE_INTERSTITIAL[key]
+		var value: Variant = values.get(key)
+		if _is_count(value) and value >= rule["min"] and value <= rule["max"]:
+			config[INTERSTITIAL_LEVEL_END][rule["field"]] = int(value)
 	return config
 
 

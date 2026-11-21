@@ -3,7 +3,7 @@ extends RefCounted
 ## 제품 저장 모델. GDD "저장과 리셋 계약"의 묶음을 한 Dictionary로 들고 규칙에 맞게만 고친다.
 ##   profile: 코인, 부스터 개수, 가진 테마(themes)와 종류별로 고른 테마(selected)
 ##   journey: 현재 스테이지, 스테이지별 최고 별, 최근 판의 범주
-##   run: 진행 중인 판 {mode, stage, date, seconds, board}. 없으면 빈 값
+##   run: 진행 중인 판 {mode, stage, date, started, seconds, board}. 없으면 빈 값
 ##   daily: 날짜별 결과와 연속 기록(FaDaily 상태)   album: 범주별 본 카드
 ##   attendance: 마지막 수령일과 주기 안의 날   ads: 광고 정책 상태(FaAdPolicy 상태)
 ##   flags: 켜진 표시   grants: 이미 지급한 보상의 열쇠
@@ -179,6 +179,14 @@ func best_stars(stage_number: int) -> int:
 	return _data["journey"]["stars"].get(str(stage_number), 0)
 
 
+## 지금까지 모은 별(스테이지별 최고 별의 합).
+func total_stars() -> int:
+	var total: int = 0
+	for star_count: int in _data["journey"]["stars"].values():
+		total += star_count
+	return total
+
+
 ## 스테이지 클리어를 반영한다. 지금 풀 차례인 스테이지를 처음 깼으면 다음 스테이지를 열고 true를 돌려준다.
 ## 이미 깬 스테이지는 최고 별만 고치고, 아직 열리지 않은 스테이지와 범위 밖의 별은 반영하지 않는다.
 func clear_stage(stage_number: int, star_count: int, categories: Array) -> bool:
@@ -209,16 +217,20 @@ func has_run() -> bool:
 	return not _data["run"].is_empty()
 
 
-## 진행 중인 판 {mode, stage, date, seconds, board}의 사본. 없으면 빈 값.
+## 진행 중인 판 {mode, stage, date, started, seconds, board}의 사본. 없으면 빈 값.
 func run() -> Dictionary:
 	return _data["run"].duplicate(true)
 
 
 ## 진행 중인 판을 기록한다. 여정은 stage, 일일 도전은 date가 판의 id이고 seconds는 지금까지 쓴 시간이다.
-func set_run(mode: String, stage_number: int, date: String, seconds: int, board: Board) -> bool:
-	if not _is_run(mode, stage_number, date, seconds):
+## started는 일일 도전 판을 시작한 날이다. 자정을 넘겨 끝내도 그날로 판정하려고 남긴다. 다른 판은 ""다.
+func set_run(mode: String, stage_number: int, date: String, started: String, seconds: int, board: Board) -> bool:
+	if not _is_run(mode, stage_number, date, started, seconds):
 		return false
-	_data["run"] = {"mode": mode, "stage": stage_number, "date": date, "seconds": seconds, "board": board.to_dict()}
+	_data["run"] = {
+		"mode": mode, "stage": stage_number, "date": date, "started": started,
+		"seconds": seconds, "board": board.to_dict(),
+	}
 	return true
 
 
@@ -239,9 +251,9 @@ func can_play_daily(date: String, today: String) -> bool:
 	return Daily.can_play(_data["daily"], date, today)
 
 
-## 일일 도전 성공을 기록한다. 결과는 FaDaily.record_success와 같다.
-func record_daily_success(date: String, today: String, summary: Dictionary) -> Dictionary:
-	return Daily.record_success(_data["daily"], date, today, summary)
+## 일일 도전 성공을 기록한다. played_on은 그 판을 시작한 날이고 결과는 FaDaily.record_success와 같다.
+func record_daily_success(date: String, played_on: String, summary: Dictionary) -> Dictionary:
+	return Daily.record_success(_data["daily"], date, played_on, summary)
 
 
 ## 날짜의 일일 도전 결과 요약. 성공한 적이 없으면 빈 값.
@@ -419,22 +431,28 @@ static func _run_from(raw: Variant) -> Variant:
 		return {}
 	var mode: Variant = raw.get("mode")
 	var date: Variant = raw.get("date")
-	if not mode is String or not date is String or not _is_count(raw.get("stage")) or not _is_count(raw.get("seconds")):
+	var started: Variant = raw.get("started")
+	if not mode is String or not date is String or not started is String:
 		return null
-	if not _is_run(mode, int(raw["stage"]), date, int(raw["seconds"])) or not raw.get("board") is Dictionary:
+	if not _is_count(raw.get("stage")) or not _is_count(raw.get("seconds")) or not raw.get("board") is Dictionary:
+		return null
+	if not _is_run(mode, int(raw["stage"]), date, started, int(raw["seconds"])):
 		return null
 	var board: Board = Board.from_dict(raw["board"])
 	if board == null:
 		return null
-	return {"mode": mode, "stage": int(raw["stage"]), "date": date, "seconds": int(raw["seconds"]), "board": board.to_dict()}
+	return {
+		"mode": mode, "stage": int(raw["stage"]), "date": date, "started": started,
+		"seconds": int(raw["seconds"]), "board": board.to_dict(),
+	}
 
 
-static func _is_run(mode: String, stage_number: int, date: String, seconds: int) -> bool:
+static func _is_run(mode: String, stage_number: int, date: String, started: String, seconds: int) -> bool:
 	if not RoundMode.ALL.has(mode) or stage_number < 0 or seconds < 0:
 		return false
-	if mode == RoundMode.JOURNEY and stage_number < 1:
-		return false
-	return mode != RoundMode.DAILY or Daily.is_date(date)
+	if mode == RoundMode.DAILY:
+		return Daily.is_date(date) and Daily.is_date(started)
+	return started.is_empty() and (mode != RoundMode.JOURNEY or stage_number >= 1)
 
 
 static func _album_from(raw: Variant) -> Variant:
