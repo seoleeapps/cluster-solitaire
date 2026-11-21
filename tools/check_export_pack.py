@@ -8,8 +8,8 @@
 그래서 원문은 생성 도구가 만든 JSON 묶음(svg_sources.json)으로 싣는다. JSON은 설정 없이 그대로 내보내진다.
 이 검사는 실제로 자료 묶음을 만들어(`--export-pack`, 내보내기 템플릿과 Android SDK가 필요 없다) 다음을 본다.
 
-- SVG 원문 묶음이 들어 있고 저장소의 파일과 같으며, 두 그림 폴더의 모든 SVG를 담고 있다
-- 원문으로 읽는 자료(콘텐츠, 레벨 팩, 수익화 프로필, 제품 설정, 스킨 설정)가 들어 있다
+- SVG 원문 묶음이 들어 있고 저장소의 파일과 같으며, 세 그림 폴더(스킨, 플레이, 바깥 화면)의 모든 SVG를 담고 있다
+- 원문으로 읽는 자료(콘텐츠, 레벨 팩, 수익화 프로필, 제품 설정, 스킨 설정, 오픈소스 고지의 라이선스 원문)가 들어 있다
 - 카드 그림과 소리가 가져온 결과로 들어 있다
 
 출력은 build/ 아래에 두고 추적 파일을 바꾸지 않는다.
@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PRESET = 'Android'
 SVG_PACK = 'game/features/shared/svg_sources.json'
-SVG_FOLDERS = ('game/skins/candy_pop', 'game/features/play/assets')
+SVG_FOLDERS = ('game/skins/candy_pop', 'game/features/play/assets', 'game/features/outgame/assets')
 # 실행 중에 파일 그대로 읽는 자료.
 RAW_FILES = (
     SVG_PACK,
@@ -39,12 +39,19 @@ RAW_FILES = (
     'data/monetization/bm-profile.json',
     'game/skins/candy_pop/skin.json',
     'addons/seorilabs_game/skins/soft_adventure/skin.json',
+    # 설정의 오픈소스 고지가 원문으로 읽는 라이선스 파일(내보내기 설정의 포함 목록이 싣는다).
+    'data/licenses/FluentEmoji-MIT.txt',
+    'data/licenses/AdMob-MIT.txt',
+    'addons/seorilabs_game/fonts/Fredoka-OFL.txt',
+    'addons/seorilabs_game/fonts/Jua-OFL.txt',
+    'addons/seorilabs_game/fonts/NotoSansKR-OFL.txt',
+    'addons/seorilabs_game/fonts/NotoSansMono-OFL.txt',
 )
 TIMEOUT_SECONDS = 600
 
 
 def expected_svgs(project):
-    """두 그림 폴더에 있는 SVG의 res:// 경로."""
+    """그림 폴더에 있는 SVG의 res:// 경로."""
     paths = []
     for folder in SVG_FOLDERS:
         paths.extend('res://' + path.relative_to(project).as_posix() for path in sorted((project / folder).glob('*.svg')))

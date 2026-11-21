@@ -10,6 +10,7 @@ signal drag_ended(view: Control, at: Vector2)
 
 const Art := preload("res://game/features/shared/fa_art.gd")
 const Fonts := preload("res://game/features/shared/fa_fonts.gd")
+const Look := preload("res://game/features/shared/fa_look.gd")
 const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
 
 const ICON_DIR := "res://game/assets/icons/"
@@ -64,6 +65,8 @@ var _shadow: NinePatchRect
 var _plate: NinePatchRect
 var _back: NinePatchRect
 var _dots_clip: Control
+var _pattern: TextureRect
+var _mask: NinePatchRect
 var _icon: TextureRect
 var _tick: TextureRect
 var _icon_size: float = 54.0
@@ -89,15 +92,16 @@ func _init() -> void:
 	_shadow = Art.plate(Art.play("soft_shadow"), SHADOW_MARGINS)
 	_shadow.visible = false
 	_body.add_child(_shadow)
-	_back = Art.plate(Art.play("card_back"), FACE_MARGINS)
+	# 뒷면은 고른 꾸미기 테마의 판과 무늬다(카드를 만들 때의 테마).
+	_back = Art.plate(Look.back_plate(), FACE_MARGINS)
 	_body.add_child(_back)
 	_dots_clip = Control.new()
 	_dots_clip.clip_contents = true
 	_dots_clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_body.add_child(_dots_clip)
-	var dots: TextureRect = Art.picture(Art.play("card_back_dots"))
-	dots.position = -Vector2.ONE * BACK_EDGE
-	_dots_clip.add_child(dots)
+	_pattern = Art.picture(Look.back_pattern())
+	_pattern.position = -Vector2.ONE * BACK_EDGE
+	_dots_clip.add_child(_pattern)
 	_plate = Art.plate(Art.play("card_face"), FACE_MARGINS)
 	_body.add_child(_plate)
 	_icon = TextureRect.new()
@@ -115,6 +119,8 @@ func _init() -> void:
 	_tick.visible = false
 	_body.add_child(_tick)
 	resized.connect(_arrange)
+	# 처음부터 앞면 상태로 그린다(뒷면 무늬를 숨긴다). 기울인 앞면 카드에서 사각 자르기의 무늬가 비어져 나오지 않게 한다.
+	_refresh()
 
 
 ## 카드의 크기와 아이콘 크기, 글자 설정을 정한다.
@@ -124,6 +130,29 @@ func configure(card_size: Vector2, icon_size: float, language: String, large_tex
 	_large_text = large_text
 	size = card_size
 	_arrange()
+
+
+## 기울여 그리는 카드(타이틀의 부채꼴, 홈의 다음 판)는 뒷면 무늬를 사각 자르기 대신 둥근 판 모양으로 자른다.
+## 사각 자르기(clip_contents)는 화면 축에 맞춘 사각형이라 카드를 기울이면 무늬가 카드 밖으로 비어져 나온다.
+func clip_back_to_shape() -> void:
+	if _mask != null:
+		return
+	_mask = Art.plate(Art.play("card_mask"), [12, 12, 12, 12])
+	_mask.clip_children = CanvasItem.CLIP_CHILDREN_ONLY
+	_body.add_child(_mask)
+	_body.move_child(_mask, _dots_clip.get_index())
+	_pattern.reparent(_mask, false)
+	_dots_clip.queue_free()
+	_dots_clip = _mask
+	_arrange()
+	_refresh()
+
+
+## 뒷면을 다른 꾸미기 테마로 그린다(상점의 미리 보기). id가 ""이면 기본 뒷면이다.
+func set_back_theme(id: String) -> void:
+	_back.texture = Look.back_plate(id)
+	_pattern.texture = Look.back_pattern(id)
+	_pattern.size = _pattern.texture.get_size()
 
 
 ## 앞면의 카드를 정한다. 이름은 화면이 콘텐츠에서 언어에 맞게 가져온 것이다.

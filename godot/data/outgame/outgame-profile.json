@@ -16,7 +16,9 @@
         "godot/addons/seorilabs_game/flow/popup_queue.gd",
         "godot/addons/seorilabs_platform/platform_client.gd",
         "godot/addons/seorilabs_platform/core/atomic_json_store.gd",
-        "godot/tests/common/outgame_contract_probe.gd"
+        "godot/tests/common/outgame_contract_probe.gd",
+        "godot/game/features/outgame/title_screen.gd",
+        "godot/game/adapters/fa_live_services.gd"
       ]
     },
     "tutorial": {
@@ -61,7 +63,8 @@
         "godot/addons/seorilabs_game/services/services.gd",
         "godot/addons/seorilabs_game/flow/popup_queue.gd",
         "godot/addons/seorilabs_platform/platform_client.gd",
-        "godot/addons/seorilabs_platform/core/atomic_json_store.gd"
+        "godot/addons/seorilabs_platform/core/atomic_json_store.gd",
+        "godot/game/features/outgame/licenses_screen.gd"
       ]
     },
     "inbox": {
@@ -75,7 +78,8 @@
         "godot/addons/seorilabs_game/services/services.gd",
         "godot/addons/seorilabs_game/flow/popup_queue.gd",
         "godot/addons/seorilabs_platform/platform_client.gd",
-        "godot/addons/seorilabs_platform/core/atomic_json_store.gd"
+        "godot/addons/seorilabs_platform/core/atomic_json_store.gd",
+        "godot/game/features/outgame/inbox_screen.gd"
       ]
     },
     "commerce": {
@@ -123,8 +127,8 @@
   },
   "optional": {
     "attendance": {
-      "enabled": false,
-      "reason": "출석 보상은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
+      "enabled": true,
+      "reason": "출석 보상(7일 주기, 건너뛰어도 이어서 받음). 홈의 출석 버튼과 팝업(SCR-011)"
     },
     "missions": {
       "enabled": false,
@@ -135,12 +139,12 @@
       "reason": "첫 출시 범위 밖"
     },
     "events": {
-      "enabled": false,
-      "reason": "일일 도전은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
+      "enabled": true,
+      "reason": "일일 도전(날짜마다 한 판, 연속 기록, 결과 복사). 홈의 일일 도전 카드와 진입 화면(SCR-008)"
     },
     "shop": {
-      "enabled": false,
-      "reason": "코인 상점(결제 없음)은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
+      "enabled": true,
+      "reason": "코인 상점(결제 없음). 부스터와 꾸미기(카드 뒷면, 배경)를 코인으로 산다(SCR-010)"
     },
     "pass": {
       "enabled": false,
@@ -179,19 +183,19 @@
       "binding": ""
     },
     "ads": {
-      "status": "unsupported",
-      "exposed": false,
-      "binding": ""
+      "status": "wired",
+      "exposed": true,
+      "binding": "godot/game/adapters/fa_admob_ads.gd"
     },
     "analytics": {
-      "status": "local",
+      "status": "wired",
       "exposed": true,
-      "binding": "godot/addons/seorilabs_game/flow/state.gd"
+      "binding": "godot/game/adapters/fa_ga4_analytics.gd"
     },
     "remote_config": {
-      "status": "local",
+      "status": "wired",
       "exposed": false,
-      "binding": "godot/addons/seorilabs_game/services/services.gd"
+      "binding": "godot/game/adapters/fa_remote_config.gd"
     },
     "mailbox": {
       "status": "local",
@@ -207,7 +211,7 @@
     ],
     "rewardKey": "tutorial-first"
   },
-  "bmProfile": "",
+  "bmProfile": "godot/data/monetization/bm-profile.json",
   "evidence": {},
   "verification": {
     "runner": "tools/check.py"
@@ -244,7 +248,6 @@
       "godot/game/bootstrap/fa_session.gd",
       "godot/game/adapters/fa_file_store.gd",
       "godot/game/adapters/fa_system_clock.gd",
-      "godot/game/features/home/home.gd",
       "godot/game/features/play/play_screen.tscn",
       "godot/game/features/play/play_screen.gd",
       "godot/game/features/play/play_layout.gd",
@@ -263,7 +266,23 @@
       "godot/game/skins/candy_pop/theme.tres",
       "godot/data/levels/tutorial.json",
       "godot/config/product.json",
-      "godot/project.godot"
+      "godot/project.godot",
+      "godot/game/features/outgame/title_screen.gd",
+      "godot/game/features/outgame/home_screen.gd",
+      "godot/game/features/outgame/daily_screen.gd",
+      "godot/game/features/outgame/album_screen.gd",
+      "godot/game/features/outgame/shop_screen.gd",
+      "godot/game/features/outgame/attendance_popup.gd",
+      "godot/game/features/outgame/inbox_screen.gd",
+      "godot/game/features/outgame/licenses_screen.gd",
+      "godot/game/features/shared/fa_ui.gd",
+      "godot/game/features/shared/fa_look.gd",
+      "godot/game/core/use_cases/fa_shop.gd",
+      "godot/game/core/use_cases/fa_attendance.gd",
+      "godot/game/adapters/fa_live_services.gd",
+      "godot/game/adapters/fa_admob_ads.gd",
+      "godot/game/adapters/fa_ga4_analytics.gd",
+      "godot/game/adapters/fa_remote_config.gd"
     ],
     "bundleLock": "common-bundle.lock.json"
   }

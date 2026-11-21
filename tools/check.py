@@ -63,7 +63,8 @@ def main():
         head = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
         env = {**os.environ, 'GITHUB_SHA': head}
         for i, command in enumerate(commands):
-            run = subprocess.run(command, capture_output=True, text=True, timeout=180, env=env)
+            # 제품 여정은 바깥 화면까지 20개 시나리오라 headless로 2분 가까이 걸린다. 같은 기기의 다른 작업과 겹쳐도 넉넉하게 둔다.
+            run = subprocess.run(command, capture_output=True, text=True, timeout=600 if script in command else 180, env=env)
             log = run.stdout + run.stderr
             (out / f'godot-{i}.log').write_text(log)
             if run.returncode or re.search(r'^(?:SCRIPT ERROR|ERROR:)', log, re.M):

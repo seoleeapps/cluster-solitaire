@@ -26,7 +26,7 @@ const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
 const AdsPort := preload("res://game/core/ports/fa_ads_port.gd")
 const UseBooster := preload("res://game/core/use_cases/fa_use_booster.gd")
 const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
-const CurrencyChip := preload("res://addons/seorilabs_game/ui_kit/currency_chip.tscn")
+const Ui := preload("res://game/features/shared/fa_ui.gd")
 const Sparkle := preload("res://addons/seorilabs_game/ui_kit/particles/sparkle.tscn")
 
 enum Phase { DEALING, PLAYING, ENDED }
@@ -46,7 +46,7 @@ const RIBBON_HEIGHT := 31.0
 const RIBBON_PAD := 14.0
 const RIBBON_MARGINS := [18, 15, 18, 19]
 ## 코인 칩의 판 그림은 사방에 1의 빈 테두리가 있다. 보이는 높이는 32다.
-const CHIP_HEIGHT := 34.0
+const CHIP_HEIGHT := Ui.CHIP_HEIGHT
 const CHIP_EDGE := 1.0
 const SHADOW_MARGINS := [34, 34, 34, 34]
 const TRAY_MARGINS := [24, 24, 24, 24]
@@ -408,31 +408,8 @@ func _build_hud() -> void:
 		_hud_layer.add_child(heart)
 		_hearts.append(heart)
 
-	coin_chip = CurrencyChip.instantiate()
-	coin_chip.name = "play_coins"
-	coin_chip.show_add = shop_available
+	coin_chip = Ui.coin_chip("play_coins", shop_available)
 	_hud_layer.add_child(coin_chip)
-	coin_chip.add_theme_stylebox_override("panel", Art.box(Art.skin("ui_chip"), [22, 14, 22, 14], [0, 0, 5, 0]))
-	coin_chip.custom_minimum_size.y = CHIP_HEIGHT
-	coin_chip.set_icon(Art.skin("icon_coin"))
-	var row: HBoxContainer = coin_chip.get_node("Row")
-	row.add_theme_constant_override("separation", 5)
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	var chip_icon: TextureRect = coin_chip.get_node("Row/Icon")
-	chip_icon.custom_minimum_size = Vector2(28, 28)
-	chip_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var value: Label = coin_chip.get_node("Row/Value")
-	value.add_theme_font_override("font", Fonts.display(600))
-	value.add_theme_font_size_override("font_size", 16)
-	value.add_theme_color_override("font_color", Color.WHITE)
-	value.add_theme_constant_override("outline_size", 0)
-	var add: Button = coin_chip.get_node("Row/Add")
-	add.text = ""
-	add.custom_minimum_size = Vector2(22, 24)
-	add.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var plus: StyleBoxTexture = Art.box(Art.play("plus_button"), [0, 0, 0, 0], [0, 0, 0, 0])
-	for style: String in ["normal", "hover", "pressed", "disabled", "focus"]:
-		add.add_theme_stylebox_override(style, plus)
 	coin_chip.add_pressed.connect(func() -> void:
 		if idle():
 			shop_requested.emit())

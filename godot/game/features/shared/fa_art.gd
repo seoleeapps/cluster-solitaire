@@ -5,6 +5,7 @@ extends RefCounted
 
 const PACK_PATH := "res://game/features/shared/svg_sources.json"
 const PLAY := "res://game/features/play/assets/"
+const OUTGAME := "res://game/features/outgame/assets/"
 const SKIN := "res://game/skins/candy_pop/"
 
 static var _sources: Dictionary = {}
@@ -29,6 +30,11 @@ static func texture(path: String) -> Texture2D:
 ## 플레이 화면 그림(features/play/assets)의 이름으로 찾는다.
 static func play(name: String) -> Texture2D:
 	return texture(PLAY + name + ".svg")
+
+
+## 바깥 화면 그림(features/outgame/assets)의 이름으로 찾는다.
+static func outgame(name: String) -> Texture2D:
+	return texture(OUTGAME + name + ".svg")
 
 
 ## 스킨 그림(skins/candy_pop)의 이름으로 찾는다.

@@ -72,7 +72,11 @@
       "foundation": false,
       "paths": [
         "godot/addons/seorilabs_game/**",
-        "godot/game/**"
+        "godot/game/**",
+        "godot/game/adapters/fa_ga4_analytics.gd",
+        "godot/game/adapters/fa_ga4_events.gd",
+        "godot/game/adapters/fa_remote_config.gd",
+        "godot/game/adapters/fa_remote_config_rules.gd"
       ]
     },
     {
@@ -186,7 +190,15 @@
         "godot/game/core/ports/fa_ads_port.gd",
         "godot/game/adapters/fa_scripted_ads.gd",
         "godot/game/features/play/**",
-        "godot/data/monetization/bm-profile.json"
+        "godot/data/monetization/bm-profile.json",
+        "godot/game/adapters/fa_admob_ads.gd",
+        "godot/game/adapters/fa_ad_show.gd",
+        "godot/game/adapters/fa_ad_sdk.gd",
+        "godot/game/adapters/fa_live_services.gd"
+      ],
+      "platformPaths": [
+        "godot/game/adapters/fa_admob_sdk.gd",
+        "godot/project.godot"
       ]
     },
     {
@@ -200,6 +212,58 @@
         "godot/game/core/use_cases/fa_start_round.gd",
         "godot/game/core/use_cases/fa_load_progress.gd",
         "godot/game/bootstrap/fa_session.gd"
+      ]
+    },
+    {
+      "id": "title_home",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/title_screen.gd",
+        "godot/game/features/outgame/home_screen.gd",
+        "godot/game/bootstrap/main.gd",
+        "godot/game/features/shared/fa_ui.gd",
+        "godot/game/features/outgame/assets/**"
+      ]
+    },
+    {
+      "id": "daily_challenge",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/daily_screen.gd",
+        "godot/game/core/domain/fa_daily.gd",
+        "godot/data/levels/daily.json"
+      ]
+    },
+    {
+      "id": "album",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/album_screen.gd",
+        "godot/game/core/domain/fa_progress.gd"
+      ]
+    },
+    {
+      "id": "shop",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/shop_screen.gd",
+        "godot/game/core/use_cases/fa_shop.gd",
+        "godot/game/core/domain/fa_economy.gd",
+        "godot/game/features/shared/fa_look.gd",
+        "godot/game/features/play/assets/card_back_*.svg"
+      ]
+    },
+    {
+      "id": "attendance",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/attendance_popup.gd",
+        "godot/game/core/use_cases/fa_attendance.gd"
       ]
     }
   ]

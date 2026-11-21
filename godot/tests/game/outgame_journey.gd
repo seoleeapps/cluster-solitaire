@@ -1,6 +1,7 @@
 extends SceneTree
 ## 제품 여정. 실제 시작 장면을 띄우고 화면 좌표 입력만으로 진행한다.
-## 대역은 광고(ScriptedAds), 시계(FakeClock), 분석 기록(FaMemoryAnalytics), 저장 경로뿐이다. 판의 상태는 읽어서 확인만 한다.
+## 대역은 광고와 동의(ScriptedAds), 시계(FakeClock), 분석 기록(FaMemoryAnalytics), 저장 경로, 그리고 OS 경계 셋(앱 끝내기,
+## 바깥 주소 열기, 클립보드)뿐이다. 판의 상태는 읽어서 확인만 한다. 상점의 꾸미기를 사는 단계만 코인을 넣은 저장 파일(고정 자료)로 다시 띄운다.
 ## 단계 이름의 AC-번호는 GDD 인수 시나리오의 조건이다.
 
 const Driver := preload("res://tests/common/e2e_driver.gd")
@@ -12,6 +13,13 @@ const MemoryAnalytics := preload("res://game/adapters/fa_memory_analytics.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const Economy := preload("res://game/core/domain/fa_economy.gd")
 const Solver := preload("res://game/core/domain/fa_solver.gd")
+const Daily := preload("res://game/core/domain/fa_daily.gd")
+const Look := preload("res://game/features/shared/fa_look.gd")
+const Art := preload("res://game/features/shared/fa_art.gd")
+const FileStore := preload("res://game/adapters/fa_file_store.gd")
+const AdmobAds := preload("res://game/adapters/fa_admob_ads.gd")
+const AtomicStore := preload("res://addons/seorilabs_platform/core/atomic_json_store.gd")
+const Licenses := preload("res://game/features/outgame/licenses_screen.gd")
 
 const SLOW := 1.0
 ## 같은 화면 흐름을 되풀이해 스테이지를 넘길 때만 시간을 빨리 돌린다.
@@ -26,6 +34,12 @@ var clock: Pilot.FakeClock
 var recorder: MemoryAnalytics
 var save_dir: String = ""
 var main: Control
+## OS 경계의 대역: 앱 끝내기 횟수, 연 주소, 클립보드에 넣은 글.
+var quits: int = 0
+var opened_urls: Array[String] = []
+var clipboard: Array[String] = []
+## 스테이지 1 결과 창이 도감에 새로 담았다고 보인 범주.
+var first_album: Array = []
 
 
 func _initialize() -> void:
@@ -38,6 +52,16 @@ func arg(args: PackedStringArray, key: String, fallback: String) -> String:
 
 func b(node_name: String) -> Control:
 	return main.find_child(node_name, true, false) as Control
+
+
+## 그림 판 버튼(FaUi.button)의 글자.
+func label_of(control: Control) -> String:
+	return str(control.get_meta("label", "")) if control != null else ""
+
+
+## 바깥 화면의 팝업(출석, 도감 상세)이 다 열렸는지.
+func outgame_popup_open() -> bool:
+	return await d.wait_for(func() -> bool: return main.outgame_popup != null and main.outgame_popup.state == "open", 600)
 
 
 func player() -> RefCounted:
@@ -78,7 +102,7 @@ func play_fit_step(label: String) -> void:
 	d.step(label + " fits the screen (AC-018)", problem.is_empty(), problem)
 
 
-func mount_game(save_name: String, locale: String) -> void:
+func mount_game(save_name: String, locale: String, wait_ready: bool = true) -> void:
 	main = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
 	main.state = State.new(save_dir + "/" + save_name + ".json")
 	main.device_locale = locale
@@ -87,9 +111,19 @@ func mount_game(save_name: String, locale: String) -> void:
 	services.clock = clock
 	services.analytics = recorder
 	main.game_services = services
+	_hook_os(main)
 	pilot.main = main
 	await d.mount(main)
-	d.step("actual startup completes", await d.wait_for(func() -> bool: return main.initialized))
+	if wait_ready:
+		d.step("actual startup completes", await d.wait_for(func() -> bool: return main.start_ready()))
+
+
+func _hook_os(game: Control) -> void:
+	game.quit_app = func() -> void: quits += 1
+	game.open_url = func(url: String) -> void: opened_urls.append(url)
+	game.clipboard_writer = func(text: String) -> bool:
+		clipboard.append(text)
+		return true
 
 
 func restart_game(save_name: String, locale: String) -> void:
@@ -138,6 +172,15 @@ func run() -> void:
 	await dead_end_notice()
 	await settings_support_focus()
 	await replay_guide()
+	await daily_challenge()
+	await album_screen()
+	await shop_and_decor()
+	await attendance_checkin()
+	await settings_privacy_licenses()
+	await back_to_exit()
+	await outgame_english()
+	await title_error_retry()
+	await live_services_offline()
 
 	await d.unmount(main)
 	for file_name: String in DirAccess.get_files_at(save_dir):
@@ -148,12 +191,26 @@ func run() -> void:
 
 ## (1) 첫 실행: 타이틀, 튜토리얼 세 단계, 시작 선물, 홈, 스테이지 1 클리어, 결과, 다음.
 func first_run() -> void:
-	d.begin("first-run-tutorial-stage-one", ["startup", "tutorial", "core_play", "result_rewards", "account_save", "run_save",
+	d.begin("first-run-tutorial-stage-one", ["startup", "title_home", "tutorial", "core_play", "result_rewards", "account_save", "run_save",
 		"inbox", "commerce", "operations", "observability", "ui_leaderboard", "ui_kit"])
-	await mount_game("play", "ko-KR")
+	# 규제 지역처럼 동의 확인이 끝나지 않은 채로 시작한다(동의 창이 먼저 뜬 상태).
+	ads.consent_done = false
+	await mount_game("play", "ko-KR", false)
+	d.step("SCR-001 the title waits at the privacy step", await d.wait_for(func() -> bool: return main.title_progress()["stage"] == "privacy"))
+	d.expect_equal("SCR-001 consent state: no start button and the waiting text", [b("start").visible, b("status").text], [false, "개인정보 선택을 기다리는 중"])
+	d.step("SCR-001 the bar shows the finished steps only", main.title_view.fill_ratio() < 1.0)
+	await d.shot("title-consent")
+	ads.settle_consent(false)
+	d.step("SCR-001 the start button shows once consent is settled", await d.wait_for(func() -> bool: return main.start_ready()) and b("start").is_visible_in_tree())
 	d.step("portrait flow on a portrait screen", not main.landscape and d.viewport.size.x < d.viewport.size.y)
 	d.step("product skin theme is applied", main.skin_dir == "res://game/skins/candy_pop" and main.theme != null)
+	d.expect_equal("SCR-001 title identity in Korean", [b("logo").text, b("subtitle").text, b("ribbon_label").text, label_of(b("start"))], ["끼리끼리", "연상 카드 퍼즐", "과일", "시작하기"])
+	d.step("SCR-001 four fan cards", ["banana", "lemon", "grapes", "strawberry"].all(func(card: String) -> bool: return b("fan_" + card) != null))
+	d.step("SCR-001 the bar is full when ready", await d.wait_for(func() -> bool: return is_equal_approx(main.title_view.fill_ratio(), 1.0)) and b("status").text == "준비 완료")
+	d.expect_equal("SCR-001 version and studio", b("version").text, "v%s · %s" % [ProjectSettings.get_setting("application/config/version"), main.studio_name])
+	d.expect_equal("title_ready is reported once", recorder.count("title_ready"), 1)
 	fit_step("title")
+	await d.frames(60)
 	await d.shot("title")
 	d.step("first start opens the tutorial board", await d.tap(b("start")) and main.screen == "play" and await pilot.settle())
 	var play: Control = main.play
@@ -204,18 +261,32 @@ func first_run() -> void:
 	d.step("reward ceremony settle", await d.wait_for(func() -> bool: return main.ceremony.phase == "settle", 600))
 	await d.shot("reward-settle", false)
 	d.step("reward ceremony finished", await d.wait_for(func() -> bool: return main.ceremony.phase == "done", 900))
+	d.step("the ceremony and its dim are gone", await d.wait_for(func() -> bool: return not main.ceremony.visible and b("reward_dim") == null, 300))
 
-	# 홈: 다음 스테이지와 시작 버튼.
-	d.step("home shows the next stage", b("home_stage") != null and b("home_stage").stage_number == 1)
+	# 홈: 스테이지 카드와 시작 버튼, 일일 도전, 아래 줄.
+	var home: Control = main.home_view
+	d.step("SCR-002 home shows the next stage", home != null and home.stage_number == 1 and b("stage_title").text == "스테이지 1")
 	d.step("home coin chip shows the product coins", b("coins") != null and b("coins").value == gifted)
-	d.step("unsupported commerce and ranking hidden", b("shop") == null and b("leaderboard") == null)
-	d.step("home play action is the primary skin", b("play") != null and b("play").theme_type_variation == &"PrimaryButton")
+	d.expect_equal("SCR-002 primary action names the stage", label_of(b("play")), "스테이지 1 시작")
+	d.step("SCR-002 daily card and the album, shop, check-in buttons", b("daily") != null and b("album") != null and b("shop") != null and b("attendance") != null)
+	d.step("ranking stays hidden", b("leaderboard") == null)
+	d.step("SCR-002 today's daily is not done (red dot)", b("daily_dot") != null and b("daily_tick") == null)
+	d.step("SCR-002 check-in has something to claim and pulses", home.pulsing.has("attendance"))
+	d.step("SCR-002 the inbox shows a badge", b("inbox").find_child("badge", true, false) != null)
+	d.step("home play action is the primary skin", b("play").theme_type_variation == &"PrimaryButton")
 	fit_step("home")
 	await d.shot("home")
 	d.step("open inbox", await d.tap(b("inbox")) and main.screen == "inbox")
 	await d.shot("popup-open", false)
+	var welcome: Control = b("mail_local-welcome")
+	d.expect_equal("SCR-015 the welcome message is the product's", welcome.find_child("title", true, false).text, "끼리끼리에 오신 걸 환영해요!")
 	await d.shot("inbox")
+	var before_mail: int = player().coins()
+	d.step("claim the welcome coins", await d.tap(welcome.find_child("claim", true, false)) and player().coins() == before_mail + 5)
+	d.step("the message shows it was received", b("mail_local-welcome").find_child("claimed", true, false) != null)
 	d.step("close to home", await d.tap(b("close")) and main.screen == "home")
+	d.step("the inbox badge is gone", b("inbox").find_child("badge", true, false) == null)
+	gifted = player().coins()
 
 	# 스테이지 1: 쉬운 판을 끝까지 풀고 결과를 본다.
 	d.step("start stage 1", await start_from_home())
@@ -228,6 +299,8 @@ func first_run() -> void:
 	d.expect_equal("AC-006 three stars for no mistakes and the next stage opens", [play.result["stars"], player().stage(), player().best_stars(1)], [3, 2, 3])
 	d.expect_equal("AC-006 stage coins match the stars", play.result["coins"], Economy.stage_reward(3))
 	d.expect_equal("AC-016 no interstitial in the first session", ads.shown.count("interstitial"), 0)
+	first_album = play.result["album"]["new"]
+	d.step("SCR-007 the result names the new album categories", not first_album.is_empty() and play.popup.find_child("album_new", true, false) != null)
 	d.step("AC-017 the double button is offered while a rewarded ad is ready", play.popup_button("double") != null and play.popup_button("double").visible)
 	await d.wait_for(func() -> bool: return play.result_settled, 900)
 	await d.shot("result")
@@ -347,12 +420,12 @@ func resume_in_english() -> void:
 	await restart_game("play", "ko-KR")
 	d.step("restart goes to the home screen", await d.tap(b("start")) and main.screen == "home")
 	d.expect_equal("AC-015 the starter gift is not granted again", [player().booster("hint"), player().booster("undo"), player().booster("slot"), player().coins()], saved_boosters)
-	d.expect_equal("home offers to continue the round", b("play").text, "이어 하기")
+	d.expect_equal("home offers to continue the round", label_of(b("play")), "이어 하기")
 	d.step("settings", await d.tap(b("settings")) and main.screen == "settings")
 	d.step("language", await d.tap(b("language")))
 	d.step("English selection", await d.tap(b("en")) and main.language() == "en")
 	d.step("close settings to home", await d.tap(b("close")) and main.screen == "home")
-	d.expect_equal("AC-018 home action is in English", b("play").text, "Continue")
+	d.expect_equal("AC-018 home action is in English", label_of(b("play")), "Continue")
 	d.step("continue the round", await start_from_home())
 	play = main.play
 	d.expect_equal("AC-012 the board is exactly as it was", pilot.board().to_dict(), saved_board)
@@ -409,7 +482,7 @@ func pause_restart_home() -> void:
 	d.step("pause", await d.tap(play.pause_button) and await pilot.popup_open("pause"))
 	d.step("home asks first", await pilot.tap_popup("home") and play.popup_button("confirm") != null)
 	d.step("confirm home", await pilot.tap_popup("confirm") and await d.wait_for(func() -> bool: return main.screen == "home" and main.play == null, 600))
-	d.expect_equal("the round is dropped and the stage is kept", [player().has_run(), player().stage(), b("play").text], [false, 4, "Play Stage 4"])
+	d.expect_equal("the round is dropped and the stage is kept", [player().has_run(), player().stage(), label_of(b("play"))], [false, 4, "Play Stage 4"])
 	fit_step("English home")
 	d.step("start stage 4 again", await start_from_home())
 	d.end()
@@ -643,4 +716,270 @@ func replay_guide() -> void:
 	d.step("finish", await pilot.tap_popup("claim") and await d.wait_for(func() -> bool: return main.screen == "home", 600))
 	d.expect_equal("AC-015 no second gift", [player().coins(), player().booster("hint"), player().booster("undo"), player().booster("slot")], [coins] + boosters)
 	d.expect_equal("the guide is complete again", main.state.data.tutorial.status, "complete")
+	d.end()
+
+
+## 일일 도전 진입 화면(SCR-008): 오늘의 판, 결과와 결과 복사, 놓친 날 다시 풀기(연속 기록 제외).
+func daily_challenge() -> void:
+	d.begin("daily-challenge", ["daily_challenge", "core_play", "result_rewards", "ui_navigation"])
+	d.step("open daily from home", main.screen == "home" and await d.tap(b("daily")) and main.screen == "daily")
+	var view: Control = main.outgame_view
+	d.expect_equal("SCR-008 today is open and selected", [view.selected, b("day_" + clock.date).get_meta("state")], [clock.date, "open"])
+	d.step("SCR-008 the no-booster rule and the today button", b("rule") != null and label_of(b("play_daily")) == "오늘의 도전")
+	d.step("SCR-008 no history yet", b("no_history") != null)
+	fit_step("daily")
+	await d.shot("daily")
+	d.step("play today", await d.tap(b("play_daily")) and main.screen == "play" and await pilot.settle())
+	d.expect_equal("today's daily board", [main.play.mode, main.play.date], ["daily", clock.date])
+	Engine.time_scale = FAST
+	d.step("clear the daily board", await pilot.clear_board() and await pilot.popup_open("result"))
+	Engine.time_scale = SLOW
+	d.expect_equal("AC-014 the success counts toward the streak", [main.play.result["counted"], player().daily_streak(clock.date)], [true, 1])
+	d.step("OK goes home", await pilot.tap_popup("next") and await d.wait_for(func() -> bool: return main.screen == "home" and main.play == null, 600))
+	d.step("SCR-002 today's daily shows a tick", b("daily_tick") != null and b("streak_days").text == "1")
+	d.step("open daily again", await d.tap(b("daily")) and main.screen == "daily")
+	d.step("SCR-008 today's result with a copy button", b("result") != null and b("copy") != null)
+	var order: Array = player().daily_result(clock.date)["order"]
+	d.step("copy the result", await d.tap(b("copy")) and clipboard.size() == 1 and clipboard.back().contains("#1"))
+	d.step("the shared text does not give away the categories", not clipboard.back().contains(main.session.catalog.category_name(order[0], "ko")))
+	d.expect_equal("share is reported", recorder.last("share"), {"mode": "daily", "level": 1})
+	await d.shot("daily-done")
+	# 이틀 뒤: 어제를 놓쳐 연속 기록이 끊겼고, 놓친 날은 다시 풀 수 있지만 연속 기록에 들어가지 않는다.
+	clock.date = "2026-12-03"
+	clock.now += 2 * 86400
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.step("open daily two days later", await d.tap(b("daily")) and main.screen == "daily")
+	d.expect_equal("SCR-008 calendar: done, missed, today", [b("day_2026-12-01").get_meta("state"), b("day_2026-12-02").get_meta("state"), b("day_2026-12-03").get_meta("state")], ["done", "open", "open"])
+	d.step("SCR-008 the missed day shows an empty ring", b("day_2026-12-02").find_child("ring", true, false) != null and b("day_2026-12-01").find_child("tick", true, false) != null)
+	d.expect_equal("SCR-008 the streak broke after a missed day", [b("streak_now").text, b("streak_best").text], ["0일 연속", "최고 1일"])
+	d.step("pick the missed day", await d.tap(b("day_2026-12-02")) and main.outgame_view.selected == "2026-12-02")
+	d.step("SCR-008 past days don't count toward the streak", b("past_note") != null and label_of(b("play_daily")) == "이 날 풀기")
+	await d.shot("daily-past")
+	d.step("play the missed day", await d.tap(b("play_daily")) and main.screen == "play" and await pilot.settle() and main.play.date == "2026-12-02")
+	d.step("pause", await d.tap(main.play.pause_button) and await pilot.popup_open("pause"))
+	d.step("home", await pilot.tap_popup("home") and await pilot.tap_popup("confirm") and await d.wait_for(func() -> bool: return main.screen == "home" and main.play == null, 600))
+	d.end()
+
+
+## 도감(SCR-009): 모은 수, 결과 창과 같은 범주, 칸 위에서 밀어도 스크롤, 상세(본 카드는 채움, 못 본 카드는 윤곽).
+func album_screen() -> void:
+	d.begin("album", ["album", "result_rewards", "ui_navigation"])
+	d.step("open the album", await d.tap(b("album")) and main.screen == "album")
+	var total: int = main.session.catalog.category_ids().size()
+	d.expect_equal("SCR-009 collected count", b("album_count").text, "모은 범주 %d / %d" % [player().album_count(), total])
+	d.step("SCR-007 the categories the first result named are collected here", first_album.all(func(category: String) -> bool: return b("category_" + category) != null and b("category_" + category).get_meta("collected")))
+	fit_step("album")
+	await d.shot("album")
+	var scroll: ScrollContainer = b("album_scroll")
+	var from: Vector2 = scroll.get_global_rect().get_center()
+	var before: int = scroll.scroll_vertical
+	await d.drag(from, from - Vector2(0, 200), 10, 0.25)
+	await d.frames(10)
+	d.step("SCR-009 dragging over the cells scrolls the list without opening one", scroll.scroll_vertical > before and main.outgame_popup == null)
+	var collected: String = player().album_categories()[0]
+	d.step("open a collected category", await d.tap(b("category_" + collected)) and await outgame_popup_open())
+	var cards: Array = main.outgame_popup.find_children("card_*", "", true, false)
+	var filled: int = cards.filter(func(node: Node) -> bool: return node.get_meta("seen", false)).size()
+	d.expect_equal("SCR-009 seen cards are filled and the rest are outlines", [filled, cards.size()], [player().album_items(collected).size(), main.session.catalog.category_members(collected).size()])
+	await d.shot("album-detail")
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("the back key closes the detail first", await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and main.screen == "album")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.end()
+
+
+## 상점(SCR-010): 플레이 화면의 코인 칩에서 열기, 부스터 사기, 코인 부족 표시, 꾸미기 사기와 사용, 판에 적용.
+func shop_and_decor() -> void:
+	d.begin("shop-and-decor", ["shop", "boosters", "core_play", "ui_navigation"])
+	d.step("start a board", await start_from_home())
+	var add: Control = main.play.coin_chip.get_node("Row/Add")
+	d.step("the play coin chip offers the shop", add.is_visible_in_tree())
+	d.step("SCR-010 the plus opens the shop", await d.tap(add) and await d.wait_for(func() -> bool: return main.screen == "shop", 300))
+	var coins: int = player().coins()
+	var hints: int = player().booster("hint")
+	d.step("enough coins for a hint", coins >= Economy.price("hint"))
+	d.step("buy a hint for 100", await d.tap(b("buy_hint")) and player().coins() == coins - Economy.price("hint") and player().booster("hint") == hints + 1)
+	d.expect_equal("the owned count and the spend are recorded", [b("owned_hint").text, recorder.last("spend_virtual_currency")["item_name"]], ["보유 %d개" % (hints + 1), "hint"])
+	fit_step("shop")
+	await d.shot("shop")
+	d.step("decor tab", await d.tap(b("tab_decor")) and main.outgame_view.tab == "decor")
+	coins = player().coins()
+	var dear: Control = b("buy_background_night")
+	d.step("SCR-010 a theme you cannot afford shows a red price", dear != null and dear.get_meta("unaffordable", false))
+	d.step("tapping it only tells the shortage", await d.tap(dear) and player().coins() == coins and not player().owns_theme("background_night"))
+	d.expect_equal("shortage toast", main.toasts.back(), "코인이 %d개 모자라요" % (Economy.theme_price("background_night") - coins))
+	await d.shot("shop-decor")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.expect_equal("the board was kept", label_of(b("play")), "이어 하기")
+
+	# 고정 자료: 저장 파일에 코인을 넣고 다시 띄워 꾸미기를 사고 쓴다.
+	await d.unmount(main)
+	var save_path: String = save_dir + "/play-progress.json"
+	var saved: Dictionary = AtomicStore.read_dictionary(save_path)["value"]
+	saved["profile"]["coins"] = int(saved["profile"]["coins"]) + 3000
+	d.step("fixture: 3,000 coins added to the save", AtomicStore.write(save_path, saved))
+	await mount_game("play", "ko-KR")
+	d.step("start goes home", await d.tap(b("start")) and main.screen == "home")
+	d.step("open the shop", await d.tap(b("shop")) and main.screen == "shop")
+	d.step("decor tab", await d.tap(b("tab_decor")))
+	coins = player().coins()
+	d.step("buy mint card backs", await d.tap(b("buy_card_back_mint")) and player().owns_theme("card_back_mint") and player().coins() == coins - 600)
+	d.step("SCR-010 the bought theme is in use and the default can be picked", b("using_card_back_mint") != null and b("use_card_back_default") != null)
+	d.step("buy the peach background", await d.tap(b("buy_background_peach")) and main.backdrop.theme_id == "background_peach")
+	await d.shot("shop-bought")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	var next_back: Control = b("next_backs").get_child(0)
+	d.step("the home shows the mint card backs", next_back._back.texture == Look.back_plate("card_back_mint"))
+	await d.shot("home-decor")
+	d.step("continue the board with the new look", await start_from_home() and main.play.get_node("Backdrop").theme_id == "background_peach")
+	await d.shot("board-decor")
+	d.step("pause", await d.tap(main.play.pause_button) and await pilot.popup_open("pause"))
+	d.step("home", await pilot.tap_popup("home") and await pilot.tap_popup("confirm") and await d.wait_for(func() -> bool: return main.screen == "home", 600))
+	d.step("open the shop again", await d.tap(b("shop")) and await d.tap(b("tab_decor")))
+	d.step("use the default card back again", await d.tap(b("use_card_back_default")) and player().selected_theme("card_back") == "" and Look.card_back_id == "")
+	d.step("use the default background again", await d.tap(b("use_background_default")) and main.backdrop.theme_id == "")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.end()
+
+
+## 출석(SCR-011): 받을 것이 있으면 맥동, 일곱 칸, 받기와 보상 연출, 받은 날은 내일을 기다림, 하루를 건너뛰어도 이어서 받음.
+func attendance_checkin() -> void:
+	d.begin("attendance", ["attendance", "ui_kit"])
+	d.step("SCR-002 check-in pulses", main.home_view.pulsing.has("attendance"))
+	d.step("open check-in", await d.tap(b("attendance")) and await outgame_popup_open())
+	var days: Array = main.outgame_popup.find_children("day_*", "", true, false)
+	d.expect_equal("SCR-011 seven days and today is day 1", [days.size(), b("day_1").get_meta("state"), b("day_2").get_meta("state")], [7, "today", "later"])
+	await d.shot("attendance")
+	var coins: int = player().coins()
+	d.step("claim day 1", await d.tap(b("claim")) and await d.wait_for(func() -> bool: return main.outgame_popup == null and main.screen == "home", 600))
+	d.expect_equal("20 coins paid and reported", [player().coins(), recorder.last("attendance_claim")], [coins + 20, {"day": 1}])
+	d.step("reward ceremony impact", await d.wait_for(func() -> bool: return main.ceremony.phase == "impact", 600))
+	await d.shot("attendance-reward", false)
+	d.step("reward ceremony finished", await d.wait_for(func() -> bool: return main.ceremony.phase == "done", 900))
+	d.step("the pulse stops after claiming", not main.home_view.pulsing.has("attendance"))
+	d.step("open check-in again", await d.tap(b("attendance")) and await outgame_popup_open())
+	d.step("day 1 is ticked and claiming waits for tomorrow", b("day_1").get_meta("state") == "claimed" and b("claim").disabled)
+	d.step("close", await d.tap(main.outgame_popup.get_node("Center/Frame/Body/Header/Close")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300))
+	# 이틀을 건너뛰어도 2일째(힌트 1)를 받는다.
+	clock.date = "2026-12-05"
+	clock.now += 2 * 86400
+	var hints: int = player().booster("hint")
+	d.step("open check-in two days later", await d.tap(b("attendance")) and await outgame_popup_open() and b("day_2").get_meta("state") == "today")
+	d.step("claim day 2", await d.tap(b("claim")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 600) and player().booster("hint") == hints + 1)
+	d.step("ceremony finished", await d.wait_for(func() -> bool: return main.ceremony.phase == "done", 900))
+	d.end()
+
+
+## 설정(SCR-014): 개인정보처리방침, 동의 지역에서만 보이는 개인정보 선택, 오픈소스 고지, 제품 스위치.
+func settings_privacy_licenses() -> void:
+	d.begin("settings-privacy-licenses", ["settings_support", "ad_placements", "ui_navigation", "ui_analytics_opt_out"])
+	d.step("settings", await d.tap(b("settings")) and main.screen == "settings")
+	d.step("SCR-014 no privacy choice outside consent regions", b("privacy_choice") == null)
+	d.step("the privacy policy opens the site", await d.tap(b("privacy_policy")) and opened_urls == ["https://www.seorilabs.com/en/apps/four-alike/privacy/"])
+	ads.settle_consent(true)
+	d.step("SCR-014 the privacy choice appears when it is required", await d.wait_for(func() -> bool: return b("privacy_choice") != null and main.screen == "settings"))
+	# 설정 화면이 다시 그려졌다. 자리가 잡힌 뒤에 누른다.
+	await d.frames(3)
+	d.step("it opens the consent form", await d.tap(b("privacy_choice")) and ads.privacy_opened == 1)
+	d.step("toggles use the product switch", (b("music") as CheckButton).get_theme_icon("checked") == Art.outgame("switch_on"))
+	await d.shot("settings-privacy")
+	d.step("open-source notices", await d.tap(b("licenses")) and main.screen == "licenses")
+	d.step("read the Fluent Emoji notice", await d.tap(b("license_fluent")) and b("license_text") != null and b("license_text").text.contains("MIT License"))
+	d.step("every notice text ships with the game", Licenses.ENTRIES.all(func(entry: Array) -> bool: return not Licenses.text_of(entry[3]).is_empty()))
+	await d.shot("licenses")
+	d.step("back to settings", await d.tap(b("back")) and main.screen == "settings")
+	d.step("vibration toggle reports the change", await d.tap(b("vibration")) and recorder.last("settings_change") == {"key": "vibration", "value": "false"} and not main.audio.vibration)
+	d.step("turn it back on", await d.tap(b("vibration")) and main.audio.vibration)
+	ads.settle_consent(false)
+	d.step("close to home", await d.tap(b("close")) and main.screen == "home")
+	d.end()
+
+
+## 홈에서 뒤로 가기: 처음에는 안내만 하고, 곧바로 한 번 더 누르면 끝낸다.
+func back_to_exit() -> void:
+	d.begin("back-to-exit", ["ui_navigation"])
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("the first back only tells you", quits == 0 and main.toasts.back() == "한 번 더 누르면 게임을 끝내요" and main.screen == "home")
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("a second back exits", quits == 1)
+	d.end()
+
+
+## 영어와 큰 글자(앞 시나리오에서 켰다)로 바깥 화면을 다시 돌며 화면 밖으로 나가거나 겹치는 곳이 없는지 본다(AC-018).
+func outgame_english() -> void:
+	d.begin("outgame-english-large-text", ["title_home", "daily_challenge", "album", "shop", "attendance", "inbox", "ui_locale_offline"])
+	d.step("settings", await d.tap(b("settings")) and main.screen == "settings")
+	d.step("language", await d.tap(b("language")))
+	d.step("English", await d.tap(b("en")) and main.language() == "en")
+	d.step("close to home", await d.tap(b("close")) and main.screen == "home")
+	d.step("large text is still on", main.state.data.settings.large_text)
+	d.expect_equal("AC-018 home in English", [b("stage_title").text, label_of(b("play"))], ["Stage %d" % player().stage(), "Play Stage %d" % player().stage()])
+	fit_step("AC-018 English large-text home")
+	await d.shot("home-en")
+	d.step("daily", await d.tap(b("daily")) and main.screen == "daily")
+	fit_step("AC-018 English large-text daily")
+	await d.shot("daily-en")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.step("album", await d.tap(b("album")) and main.screen == "album")
+	fit_step("AC-018 English large-text album")
+	await d.shot("album-en")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.step("shop", await d.tap(b("shop")) and main.screen == "shop")
+	fit_step("AC-018 English large-text shop")
+	await d.shot("shop-en")
+	d.step("decor tab", await d.tap(b("tab_decor")))
+	await d.shot("shop-decor-en")
+	d.step("back home", await d.tap(b("back")) and main.screen == "home")
+	d.step("check-in", await d.tap(b("attendance")) and await outgame_popup_open())
+	await d.shot("attendance-en")
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("the back key closes the popup", await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and main.screen == "home")
+	d.step("inbox", await d.tap(b("inbox")) and main.screen == "inbox")
+	d.expect_equal("SCR-015 the welcome message in English", b("mail_local-welcome").find_child("title", true, false).text, "Welcome to Four Alike!")
+	fit_step("AC-018 English large-text inbox")
+	await d.shot("inbox-en")
+	d.step("close to home", await d.tap(b("close")) and main.screen == "home")
+	d.end()
+
+## 타이틀의 오류 상태(SCR-001): 공통 저장을 읽지 못하면 막대 대신 문구와 다시 시도가 보이고, 고친 뒤 다시 시도하면 준비된다.
+func title_error_retry() -> void:
+	d.begin("title-error-retry", ["startup", "title_home", "account_save"])
+	await d.unmount(main)
+	var broken: String = save_dir + "/broken.json"
+	var file := FileAccess.open(broken, FileAccess.WRITE)
+	file.store_string("{not json")
+	file.close()
+	await mount_game("broken", "ko-KR", false)
+	d.step("SCR-001 the title shows the error", await d.wait_for(func() -> bool: return main.title_progress()["stage"] == "error"))
+	d.step("SCR-001 retry instead of start, no bar", b("retry").is_visible_in_tree() and not b("start").visible and not b("bar").visible)
+	d.expect_equal("SCR-001 the error text", b("status").text, "저장을 읽지 못했습니다. 기존 데이터는 보존했습니다.")
+	await d.frames(60)
+	await d.shot("title-error")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(broken))
+	d.step("retry after the save is fixed", await d.tap(b("retry")) and await d.wait_for(func() -> bool: return main.start_ready()))
+	d.step("start opens the tutorial board", await d.tap(b("start")) and main.screen == "play" and await pilot.settle())
+	d.end()
+
+## 실제 어댑터(FaLiveServices)를 끼운 기본 구성: 개발 PC에는 광고 SDK가 없어 광고는 준비되지 않고, 동의는 기다릴 것이 없다.
+func live_services_offline() -> void:
+	d.begin("live-services-offline", ["startup", "ad_placements", "observability", "tutorial"])
+	await d.unmount(main)
+	main = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
+	main.state = State.new(save_dir + "/live.json")
+	main.device_locale = "en-US"
+	main.game_services.store = FileStore.new(save_dir + "/live-progress.json")
+	main.game_services.clock = clock
+	main.use_live_services(save_dir + "/live-services")
+	_hook_os(main)
+	pilot.main = main
+	await d.mount(main)
+	d.step("startup with the real adapters", await d.wait_for(func() -> bool: return main.start_ready()))
+	d.step("FaLiveServices runs as a direct child of the start scene", main.live != null and main.live.get_parent() == main)
+	d.step("the real adapters fill the ports and the analytics choice", main.game_services.ads is AdmobAds and main.analytics.port == main.live.analytics and main.config["analytics_policy_allowed"])
+	d.step("without the native SDK no ad is ready and there is no consent to wait for", not main.game_services.ads.is_ready("rewarded") and main.game_services.ads.consent_settled())
+	d.expect_equal("SCR-001 English title", [b("logo").text, b("subtitle").text, label_of(b("start"))], ["Four Alike", "HIDDEN CATEGORY CARDS", "Play"])
+	await d.frames(60)
+	await d.shot("title-en")
+	d.step("first start opens the tutorial board", await d.tap(b("start")) and main.screen == "play" and await pilot.settle())
+	d.step("no ad is offered without an ad", main.play.hold_cell(2) == null or main.play.hold_cell(2).tag != "ad")
 	d.end()

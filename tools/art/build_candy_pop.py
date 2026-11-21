@@ -1,20 +1,22 @@
-"""Write the Candy Pop skin and play-screen textures as SVG.
+"""Write the Candy Pop skin, play-screen and outgame-screen textures as SVG.
 
 Usage: python3 tools/art/build_candy_pop.py [--check]
-Writes godot/game/skins/candy_pop, godot/game/features/play/assets and the SVG source pack
-godot/game/features/shared/svg_sources.json. Every file is derived from the constants below, so the art can be
-regenerated and compared byte for byte (--check exits 1 when a file on disk differs).
+Writes godot/game/skins/candy_pop, godot/game/features/play/assets, godot/game/features/outgame/assets and the SVG
+source pack godot/game/features/shared/svg_sources.json. Every file is derived from the constants below, so the art can
+be regenerated and compared byte for byte (--check exits 1 when a file on disk differs).
 
 The pack holds the text of every SVG keyed by its res:// path. The game builds its textures from that text
 (DPITexture) so they stay sharp on 2.5x-3x phone screens; an exported build has no raw .svg files, only the pack.
 """
 import json
+import math
 import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SKIN_DIR = ROOT / "godot/game/skins/candy_pop"
 PLAY_DIR = ROOT / "godot/game/features/play/assets"
+OUTGAME_DIR = ROOT / "godot/game/features/outgame/assets"
 PACK = ROOT / "godot/game/features/shared/svg_sources.json"
 RES_ROOT = ROOT / "godot"
 
@@ -143,6 +145,51 @@ def back_dots(w, h):
         for row in range(h // 8 + 1) for col in range(w // 8 + 1) if (col + row) % 2 == 0)
 
 
+def back_stripes(w, h):
+    """Diagonal stripes, 3px wide every 12px, running from lower left to upper right."""
+    lines = "".join(f'<path d="M{x} {h}L{x + h} 0" stroke="{WHITE}" stroke-opacity="0.5" stroke-width="3"/>'
+                    for x in range(-h, w + 12, 12))
+    return svg(w, h, lines)
+
+
+def back_stars(w, h):
+    """Four-point stars on a 16px grid; every other row is shifted by half a cell."""
+    stars = []
+    for row in range(h // 16 + 1):
+        for col in range(w // 16 + 1):
+            cx, cy = col * 16 + (8 if row % 2 else 0), row * 16 + 4
+            stars.append(f'<path d="M{cx} {cy - 4.2}Q{cx + 0.8} {cy - 0.8} {cx + 4.2} {cy}Q{cx + 0.8} {cy + 0.8} {cx} {cy + 4.2}'
+                         f'Q{cx - 0.8} {cy + 0.8} {cx - 4.2} {cy}Q{cx - 0.8} {cy - 0.8} {cx} {cy - 4.2}z" fill="{WHITE}" fill-opacity="0.85"/>')
+    return svg(w, h, "".join(stars))
+
+
+def back_sparkles(w, h):
+    """Small gold dots every 12px with a larger dot in every third cell of every third row."""
+    dots = []
+    for row in range(h // 12 + 1):
+        for col in range(w // 12 + 1):
+            big = row % 3 == 1 and col % 3 == 1
+            dots.append(circle(col * 12 + (6 if row % 2 else 0), row * 12 + 2, 2.6 if big else 1.4, GOLD, f'fill-opacity="{0.95 if big else 0.7}"'))
+    return svg(w, h, "".join(dots))
+
+
+# Card back themes sold in the shop (05 economy doc): plate gradient, lip and the pattern drawn over the plate.
+CARD_BACKS = {
+    "card_back_mint": ("#4FE0C0", "#1FB0A3", "#13857A", back_stripes),
+    "card_back_sunset": ("#FFB15C", "#FF6A7A", "#D9445A", back_stars),
+    "card_back_night": ("#454AB8", "#25236A", "#15124A", back_sparkles),
+}
+
+
+def card_back(top, bot, lip):
+    """Card back plate: white edge 4, gradient panel, lip 6 and depth shadow 3 (9-slice margins 20/20/20/29)."""
+    return svg(
+        64, 73,
+        rect(0, 9, 64, 64, 16, DEPTH, 'fill-opacity="0.28"') + rect(0, 6, 64, 64, 16, lip)
+        + rect(0, 0, 64, 64, 16, WHITE) + rect(4, 4, 56, 56, 12, "url(#g)"),
+        grad("g", [(0, top), (1, bot)]))
+
+
 def soft_shadow():
     """A blurred shadow built from stacked translucent rounded squares (the engine's SVG reader has no blur filter).
     The 64x64 core sits 14px inside the 92x92 canvas; nine-slice margins of 34 keep every rounded corner fixed."""
@@ -222,12 +269,13 @@ def play_files():
     f["card_selected.svg"] = framed_card(YELLOW, YELLOW_DEEP)
     f["card_hint.svg"] = framed_card(SKY_BOT, SKY_LIP)
     # card back: white edge 4, purple panel, lip 6, depth shadow 3 (9-slice margins 20/20/20/29); dots are a separate layer
-    f["card_back.svg"] = svg(
-        64, 73,
-        rect(0, 9, 64, 64, 16, DEPTH, 'fill-opacity="0.28"') + rect(0, 6, 64, 64, 16, PURPLE_LIP)
-        + rect(0, 0, 64, 64, 16, WHITE) + rect(4, 4, 56, 56, 12, "url(#g)"),
-        grad("g", [(0, PURPLE_TOP), (1, PURPLE_BOT)]))
+    f["card_back.svg"] = card_back(PURPLE_TOP, PURPLE_BOT, PURPLE_LIP)
     f["card_back_dots.svg"] = svg(96, 136, back_dots(96, 136))
+    # mask for the back pattern on tilted cards: the inner panel of the card back (radius 12, 9-slice margins 12)
+    f["card_mask.svg"] = svg(56, 56, rect(0, 0, 56, 56, 12, WHITE))
+    for name, (top, bot, lip, pattern) in CARD_BACKS.items():
+        f[name + ".svg"] = card_back(top, bot, lip)
+        f[name + "_pattern.svg"] = pattern(96, 136)
     f["soft_shadow.svg"] = soft_shadow()
     f["cell_empty.svg"] = svg(64, 64, rect(0, 0, 64, 64, 16, "#281E82", 'fill-opacity="0.22"') + '<path d="M16 0h32a16 16 0 0 1 16 16v4a16 16 0 0 0-16-16H16A16 16 0 0 0 0 20v-4A16 16 0 0 1 16 0z" fill="#1E146E" fill-opacity="0.25"/>')
     f["cell_target.svg"] = dashed_cell()
@@ -276,6 +324,118 @@ def play_files():
     return f
 
 
+HUD_GLYPH = "#5B5FE0"
+GREEN_TOP = "#8CF29B"
+ALBUM_GLYPH = ('M4.5 8c3.2-1.6 6.3-1.6 9.5 0v14c-3.2-1.6-6.3-1.6-9.5 0z', 'M14 8c3.2-1.6 6.3-1.6 9.5 0v14c-3.2-1.6-6.3-1.6-9.5 0z')
+SHOP_GLYPH = ('M6.5 11h15l-1.2 11.6a2 2 0 0 1-2 1.8H9.7a2 2 0 0 1-2-1.8z', 'M10.5 11V9a3.5 3.5 0 0 1 7 0v2')
+CALENDAR_GLYPH = ('M7.5 7h13a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3h-13a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z', 'M4.5 12.5h19',
+                  'M10 4.5v4', 'M18 4.5v4', 'M10.5 18l2.5 2.5 4.5-5')
+FLAME = 'M12 2.5c.9 3.6 6.5 5.6 6.5 11.6a6.5 6.5 0 0 1-13 0c0-3.1 1.7-5.2 3-7 .4 2 1.3 3.2 2.8 3.4-.9-2.8-.8-5.4.7-8z'
+
+
+def gear(cx, cy, outer, inner, hole, teeth=8):
+    """Cog wheel as one even-odd path: square teeth on a ring with a round hole."""
+    points = []
+    step = 360.0 / teeth
+    for i in range(teeth):
+        a = i * step
+        for angle, radius in ((a - step / 2 + 4, inner), (a - 13, inner), (a - 10, outer), (a + 10, outer), (a + 13, inner)):
+            r = math.radians(angle)
+            points.append(f"{cx + radius * math.cos(r):.2f} {cy + radius * math.sin(r):.2f}")
+    ring = "M" + "L".join(points) + "z"
+    hole_path = f"M{cx - hole} {cy}a{hole} {hole} 0 1 0 {hole * 2} 0a{hole} {hole} 0 1 0 {-hole * 2} 0z"
+    return f'<path d="{ring}{hole_path}" fill="{HUD_GLYPH}" fill-rule="evenodd"/>'
+
+
+def pill(w, h, top, bot, lip, ring=0, lip_size=4, band=""):
+    """A rounded bar with an optional white ring around the body and a lip below it (the lip sits over the ring)."""
+    r = h / 2
+    body = ""
+    if ring:
+        body += rect(0, 0, w + ring * 2, h + ring * 2, r + ring, WHITE)
+    body += rect(ring, ring + lip_size, w, h, r, lip) + rect(ring, ring, w, h, r, "url(#g)")
+    if band:
+        body += f'<g clip-path="url(#c)">{rect(ring, ring - h + 3, w, h, r, band)}</g>'
+    defs = grad("g", [(0, top), (1, bot)]) + f'<clipPath id="c"><rect x="{ring}" y="{ring}" width="{w}" height="{h}" rx="{r}"/></clipPath>'
+    return svg(w + ring * 2, h + ring * 2 + lip_size, body, defs)
+
+
+def switch(on, faded=False):
+    """Settings toggle: a 52x30 track with a 3px lip and a white knob on the side it is switched to."""
+    track, lip = (GREEN, GREEN_LIP) if on else ("#C9CDE6", "#A3A8CC")
+    knob_x = 37 if on else 15
+    opacity = 'opacity="0.45"' if faded else ""
+    body = (rect(0, 3, 52, 30, 15, lip) + rect(0, 0, 52, 30, 15, track)
+            + circle(knob_x, 17, 11, DEPTH, 'fill-opacity="0.25"') + circle(knob_x, 15, 11, WHITE))
+    return svg(52, 33, f'<g {opacity}>{body}</g>' if faded else body)
+
+
+def ink_glyph(body):
+    """A 24x24 settings-row icon: 2.2px round ink strokes (shapes may add their own fill)."""
+    stroke = f'fill="none" stroke="{INK}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"'
+    return svg(24, 24, f'<g {stroke}>{body}</g>')
+
+
+# Settings-row icons, keyed by the settings button or toggle name they sit on.
+SETTINGS_GLYPHS = {
+    "music": '<path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/>',
+    "sfx": '<path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+    "vibration": '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4.5 9v6M19.5 9v6"/>',
+    "analytics": '<path d="M5 19.5v-7M10 19.5V5.5M15 19.5v-4M20 19.5V9"/>',
+    "language": '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>',
+    "account": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5"/>',
+    "support": '<path d="M5 13.5V12a7 7 0 0 1 14 0v1.5"/><rect x="3.5" y="12.5" width="4.5" height="6" rx="2"/><rect x="16" y="12.5" width="4.5" height="6" rx="2"/>',
+    "accessibility": '<circle cx="12" cy="5" r="2"/><path d="M5 9l7 1.5L19 9"/><path d="M12 10.5V15M9 21l3-6 3 6"/>',
+    "replay": '<path d="M5 12a7 7 0 1 0 2.1-5"/><path d="M6.5 3.5V7.5h4"/>',
+    "privacy_policy": '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4.5"/>',
+    "privacy_choice": '<path d="M4.5 8h15M4.5 16h15"/><circle cx="9" cy="8" r="2.4" fill="#FFFFFF"/><circle cx="15" cy="16" r="2.4" fill="#FFFFFF"/>',
+    "licenses": '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h5.5M9.5 15.5h5.5"/>',
+    "chevron": '<path d="M10 6l6 6-6 6"/>',
+}
+
+
+def outgame_files():
+    f = {}
+    for name, body in SETTINGS_GLYPHS.items():
+        f["set_" + name + ".svg"] = ink_glyph(body)
+    # title: coral category ribbon (white 3 ring, 4 lip) and the loading bar
+    f["ribbon.svg"] = pill(58, 31, CORAL_TOP, CORAL_BOT, CORAL_LIP, ring=3)
+    f["bar_track.svg"] = svg(48, 18, rect(0, 0, 48, 18, 9, NAVY, 'fill-opacity="0.5"') + rect(1, 1, 46, 16, 8, "none", f'stroke="{WHITE}" stroke-opacity="0.5" stroke-width="2"'))
+    shine = rect(0, -10, 24, 12, 6, WHITE, 'fill-opacity="0.5"')
+    f["bar_fill.svg"] = svg(24, 12, rect(0, 0, 24, 12, 6, "url(#g)") + f'<g clip-path="url(#c)">{shine}</g>',
+                            grad("g", [(0, GREEN_TOP), (1, GREEN)]) + '<clipPath id="c"><rect x="0" y="0" width="24" height="12" rx="6"/></clipPath>')
+    # home: square HUD glyphs (drawn on hud_button), round menu buttons, daily card bits
+    f["icon_settings.svg"] = svg(24, 24, gear(12, 12, 10.5, 7.5, 3.4))
+    f["icon_inbox.svg"] = svg(24, 24, rect(2, 5, 20, 15, 3.5, HUD_GLYPH) + f'<path d="M4.8 8.2l7.2 5.4 7.2-5.4" fill="none" stroke="{WHITE}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>')
+    f["icon_back.svg"] = svg(24, 24, f'<path d="M15 5l-7 7 7 7" fill="none" stroke="{INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>')
+    f["icon_close.svg"] = svg(24, 24, f'<path d="M7 7l10 10M17 7L7 17" fill="none" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>')
+    f["icon_copy.svg"] = svg(24, 24, rect(8, 3, 13, 15, 3, "none", f'stroke="{WHITE}" stroke-width="2.4"') + rect(3, 7, 13, 15, 3, WHITE))
+    f["icon_flame.svg"] = svg(24, 24, f'<path d="{FLAME}" fill="url(#g)"/><path d="M12 13.5c1.6 1.8 3 2.6 3 4.4a3 3 0 0 1-6 0c0-1.6 1.6-2.6 3-4.4z" fill="#FFE27A"/>',
+                              grad("g", [(0, "#FFB13D"), (1, "#FF5A3C")]))
+    f["round_album.svg"] = round_button(CORAL_TOP, CORAL_BOT, CORAL_LIP, ALBUM_GLYPH)
+    f["round_shop.svg"] = round_button(GREEN_TOP, GREEN, GREEN_LIP, SHOP_GLYPH)
+    f["round_attendance.svg"] = round_button(SKY_TOP, SKY_BOT, SKY_LIP, CALENDAR_GLYPH)
+    f["round_daily.svg"] = round_button(GOLD, "#FFB000", GOLD_LIP, CALENDAR_GLYPH)
+    # calendar and attendance cells on the white sheet
+    f["day_cell.svg"] = svg(40, 44, rect(0, 4, 40, 40, 11, LIP) + rect(0, 0, 40, 40, 11, WHITE, f'stroke="{LIP}" stroke-width="1.5"'))
+    f["day_today.svg"] = svg(40, 44, rect(0, 4, 40, 40, 11, YELLOW_DEEP) + rect(0, 0, 40, 40, 11, YELLOW) + rect(3, 3, 34, 34, 8, WHITE))
+    f["day_selected.svg"] = svg(40, 44, rect(0, 4, 40, 40, 11, PURPLE_LIP) + rect(0, 0, 40, 40, 11, VIOLET_BOT) + rect(3, 3, 34, 34, 8, WHITE))
+    f["day_dim.svg"] = svg(40, 40, rect(0, 0, 40, 40, 11, "#EEF0FB"))
+    f["ring.svg"] = svg(24, 24, circle(12, 12, 9.5, "none", f'stroke="{LIP}" stroke-width="3"'))
+    # card outline for cards not seen yet in the album detail
+    f["card_outline.svg"] = svg(64, 64, rect(1.5, 1.5, 61, 61, 14.5, "#F4F5FC", f'stroke="{LIP}" stroke-width="3" stroke-dasharray="7 5"'))
+    # shop tabs and the rounded mask for theme previews
+    f["tab_track.svg"] = svg(48, 48, rect(0, 0, 48, 48, 24, "#E6E9FA"))
+    f["tab_on.svg"] = pill(42, 38, PURPLE_TOP, PURPLE_BOT, PURPLE_LIP, lip_size=4)
+    f["mask_round.svg"] = svg(48, 48, rect(0, 0, 48, 48, 14, WHITE))
+    # settings toggles
+    f["switch_on.svg"] = switch(True)
+    f["switch_off.svg"] = switch(False)
+    f["switch_on_disabled.svg"] = switch(True, faded=True)
+    f["switch_off_disabled.svg"] = switch(False, faded=True)
+    return f
+
+
 def source_pack(folders):
     """The text of every generated SVG keyed by its res:// path, in one JSON file the exported game can read."""
     sources = {}
@@ -289,7 +449,7 @@ def source_pack(folders):
 def main():
     check = "--check" in sys.argv
     bad = []
-    folders = ((SKIN_DIR, skin_files()), (PLAY_DIR, play_files()))
+    folders = ((SKIN_DIR, skin_files()), (PLAY_DIR, play_files()), (OUTGAME_DIR, outgame_files()))
     for d, files in folders:
         d.mkdir(parents=True, exist_ok=True)
         for name, text in sorted(files.items()):
@@ -315,7 +475,7 @@ def main():
     if check and bad:
         print("out of date:", *bad, sep="\n  ")
         return 1
-    print("ok", len(skin_files()), "skin files,", len(play_files()), "play files, 1 source pack")
+    print("ok", len(skin_files()), "skin files,", len(play_files()), "play files,", len(outgame_files()), "outgame files, 1 source pack")
     return 0
 
 

@@ -11,6 +11,7 @@ const HANGUL_EMBOLDEN := 0.66
 const BOLD_FROM := 600
 
 const INK := Color("3a3470")
+const WORD_JOINER := "⁠"
 ## 배경 위 흰 글자의 그림자(남보라, 아래로 2).
 const SHADE := Color(0.165, 0.125, 0.47, 0.4)
 
@@ -67,6 +68,26 @@ static func text(value: String, font: Font, size: int, color: Color = Color.WHIT
 	node.add_theme_constant_override("outline_size", 0)
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return node
+
+
+## 한국어 글을 낱말 단위로만 줄을 바꾸게 한다. 줄바꿈 규칙(UAX #14)은 한글 음절 사이 어디서나 줄을 바꿀 수 있어
+## "이어서"가 "이/어서"로 갈린다. 한글이 낀 두 글자 사이에 폭 없는 낱말 이음표(U+2060)를 넣어 띄어쓰기에서만 바꾸게 한다.
+## 보이는 글자와 폭은 그대로다. 줄 수를 직접 맞추는 카드 이름에는 쓰지 않는다.
+static func keep_words(value: String) -> String:
+	var out: PackedStringArray = []
+	for index: int in value.length():
+		var here: String = value[index]
+		out.append(here)
+		if index + 1 < value.length():
+			var next: String = value[index + 1]
+			if not (here.strip_edges().is_empty() or next.strip_edges().is_empty()) and (_hangul(here) or _hangul(next)):
+				out.append(WORD_JOINER)
+	return "".join(out)
+
+
+static func _hangul(character: String) -> bool:
+	var code: int = character.unicode_at(0)
+	return (code >= 0xAC00 and code <= 0xD7A3) or (code >= 0x1100 and code <= 0x11FF) or (code >= 0x3130 and code <= 0x318F)
 
 
 ## 글자 아래에 번지지 않는 그림자를 둔다(배경 위 흰 글자, 주 버튼의 글자).

@@ -3,11 +3,11 @@ extends RefCounted
 ## 부스터 얻기(SCR-013), 튜토리얼 끝 카드(SCR-012). 모두 공통 기반의 popup_base를 쓰고 화면이 Popup 층에 올린다.
 ## 버튼은 이름으로 찾는다(resume, restart, home, confirm, cancel, undo, slot, continue, next, double, buy, watch, claim).
 
-const PopupBase := preload("res://addons/seorilabs_game/ui_kit/popup_base.tscn")
 const Sparkle := preload("res://addons/seorilabs_game/ui_kit/particles/sparkle.tscn")
 const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
 const Art := preload("res://game/features/shared/fa_art.gd")
 const Fonts := preload("res://game/features/shared/fa_fonts.gd")
+const Ui := preload("res://game/features/shared/fa_ui.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const Economy := preload("res://game/core/domain/fa_economy.gd")
 const AdPolicy := preload("res://game/core/domain/fa_ad_policy.gd")
@@ -15,18 +15,7 @@ const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
 const UseBooster := preload("res://game/core/use_cases/fa_use_booster.gd")
 const ContinueRound := preload("res://game/core/use_cases/fa_continue_round.gd")
 
-const ICON_DIR := "res://game/assets/icons/"
-const WIDTH := 318.0
-const BUTTON_HEIGHT := 54.0
-## 버튼 안에서 글자와 아이콘이 쓸 수 있는 폭(창의 폭에서 틀과 버튼의 안쪽 여백을 뺀 값), 둘 사이 간격, 아래 옆면의 높이.
-const BUTTON_TEXT_ROOM := 234.0
-const BUTTON_ICON_GAP := 8
-const BUTTON_LIP := 6.0
-const BUTTON_FONT_SIZES: Array[int] = [20, 18, 16]
-const BUTTON_SECOND_LINE := 14.0
-const PRIMARY_SHADE := Color("b85a00")
-const DIM := Color(0.09, 0.07, 0.3, 0.62)
-const RED := Color("ff4b5c")
+const BUTTON_HEIGHT := Ui.BUTTON_HEIGHT
 const STAR_SIZE := 52.0
 const STAR_GAP := 0.25
 const COUNT_SECONDS := 0.6
@@ -526,19 +515,7 @@ func _t(en: String, ko: String) -> String:
 
 ## 창의 틀: 제목, 닫기(closable일 때만), 어두운 배경. 버튼은 내용 칸에 세로로 쌓는다.
 func _base(title: String, closable: bool) -> Control:
-	var popup: Control = PopupBase.instantiate()
-	popup.dismiss_on_dim = closable
-	popup.set_title(title)
-	(popup.get_node("Dim") as ColorRect).color = DIM
-	var frame: Control = popup.get_node("Center/Frame")
-	frame.custom_minimum_size.x = minf(WIDTH, _screen.size.x - 24.0)
-	(popup.get_node("Center/Frame/Body/Actions") as Control).visible = false
-	var close: Button = popup.get_node("Center/Frame/Body/Header/Close")
-	close.visible = closable
-	close.focus_mode = Control.FOCUS_NONE
-	var heading: Label = popup.get_node("Center/Frame/Body/Header/Title")
-	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if closable else HORIZONTAL_ALIGNMENT_CENTER
-	return popup
+	return Ui.popup(title, closable, _screen.size.x)
 
 
 func _column(popup: Control) -> VBoxContainer:
@@ -563,82 +540,20 @@ func _equalize(box: Control) -> void:
 
 
 func _note(text: String) -> Label:
-	var label: Label = Fonts.text(text, Fonts.body(), 15, Fonts.INK)
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	return label
+	return Ui.note(text)
 
 
 func _card_icon(icon_key: String, icon_size: float) -> TextureRect:
-	var icon := TextureRect.new()
-	icon.texture = load(ICON_DIR + icon_key + ".png")
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	icon.custom_minimum_size = Vector2.ONE * icon_size
-	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return icon
+	return Ui.card_icon(icon_key, icon_size)
 
 
-## 창의 버튼. 판은 스킨 테마가 그리고, 글자와 아이콘은 한 줄로 묶어 가운데에 둔다. 글자는 제목 서체이고
-## 주 버튼은 흰 글자에 짙은 주황 그림자다. 글자가 넘치면 한 단계 줄이고, 그래도 넘치면 두 줄로 나누며 버튼이 높아진다.
-## primary는 한 창에 하나만 준다.
+## 창의 버튼(FaUi.button). primary는 한 창에 하나만 준다.
 func _button(button_name: String, text: String, primary: bool, action: Callable, icon: Texture2D = null, icon_size: Vector2 = Vector2.ZERO) -> Button:
-	var button := Button.new()
-	button.name = button_name
-	button.set_meta("label", text)
-	button.set_meta("needed", BUTTON_HEIGHT)
-	button.custom_minimum_size.y = BUTTON_HEIGHT
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.focus_mode = Control.FOCUS_NONE
-	if primary:
-		button.theme_type_variation = &"PrimaryButton"
-		button.set_meta("ui_sfx_kind", "confirm")
-	button.pressed.connect(action)
-	button.button_down.connect(Juice.press_punch.bind(button, 0.96, 0.1))
-	if text.is_empty():
-		return button
-	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", BUTTON_ICON_GAP)
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	row.offset_bottom = -BUTTON_LIP
-	button.add_child(row)
-	var room: float = BUTTON_TEXT_ROOM
-	if icon != null:
-		var picture: TextureRect = Art.picture(icon, icon_size)
-		picture.custom_minimum_size = picture.size
-		picture.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(picture)
-		room -= picture.size.x + BUTTON_ICON_GAP
-	var font: Font = Fonts.display(700)
-	var label: Label = Fonts.text(text, font, BUTTON_FONT_SIZES[0], Color.WHITE if primary else Fonts.INK)
-	label.name = "label"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	if primary:
-		Fonts.shade(label, PRIMARY_SHADE)
-	for font_size: int in BUTTON_FONT_SIZES:
-		label.add_theme_font_size_override("font_size", font_size)
-		if font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x <= room:
-			row.add_child(label)
-			return button
-	# 가장 작은 글자로도 한 줄에 안 들어가면 두 줄로 나눈다.
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.custom_minimum_size.x = room
-	label.add_theme_constant_override("line_spacing", -2)
-	button.set_meta("needed", BUTTON_HEIGHT + BUTTON_SECOND_LINE)
-	button.custom_minimum_size.y = BUTTON_HEIGHT + BUTTON_SECOND_LINE
-	row.add_child(label)
-	return button
+	return Ui.button(button_name, text, primary, action, icon, icon_size)
 
 
-## 보상형 광고 버튼: 무엇을 얻는지와 광고 시청을 함께 적고 초록 재생 꼬리표를 붙인다.
 func _ad_button(button_name: String, text: String, primary: bool, action: Callable) -> Button:
-	return _button(button_name, text, primary, action, Art.play("icon_ad"))
+	return Ui.ad_button(button_name, text, primary, action)
 
 
 ## 코인으로 사는 버튼. label은 가격 자리(%d)가 있는 문구다. 코인이 모자라면 가격이 빨간 비활성 모양이고 누르면 모자란 수를 알린다.
@@ -658,19 +573,8 @@ func _buy(kind: String) -> void:
 	_screen.close_popup(_screen.apply_booster.bind(kind, UseBooster.SOURCE_COINS))
 
 
-## 살 수 없는 가격: 보조 버튼의 비활성 판에 빨간 글자. 눌러서 모자란 수를 알 수 있게 버튼은 살려 둔다.
 func _mark_unaffordable(button: Button) -> void:
-	button.theme_type_variation = &""
-	button.set_meta("unaffordable", true)
-	button.set_meta("ui_sfx_kind", "error")
-	var plate: StyleBox = _screen.get_theme_stylebox("disabled", "Button")
-	for style: String in ["normal", "hover", "pressed"]:
-		button.add_theme_stylebox_override(style, plate)
-	var label: Label = button.find_child("label", true, false) as Label
-	if label != null:
-		label.add_theme_color_override("font_color", RED)
-		label.add_theme_constant_override("shadow_offset_y", 0)
-		label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
+	Ui.mark_unaffordable(button, _screen)
 
 
 ## 지금 가진 코인.

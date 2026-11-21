@@ -5,11 +5,10 @@ extends SceneTree
 ##   godot --audio-driver Dummy --path godot --script res://tests/game/play_capture.gd -- --out <폴더> [--only <묶음>]
 ##   묶음: reference(기준 그림과 같은 상태, 한국어와 영어, 3배), sizes(세 화면 크기), layouts(모든 배치),
 ##         states(카드·칸·버튼의 상태 시트), motion(묶음 완성·오답·결과 연출의 중간 프레임),
-##         daily(일일 도전 모드. 진입 화면이 아직 없어 시작 장면의 launch_daily를 직접 부른다)
+##         daily(일일 도전 모드. 진입 화면을 거치지 않고 시작 장면의 launch_daily로 바로 띄운다)
 ## 렌더링 모드(--headless 없이)에서만 PNG가 남는다. 출력 폴더는 build/ 아래에 둔다.
 ##
 ## 기준 그림은 위 50, 아래 30의 여백으로 그려졌다. 같은 여백이 나오게 안전 영역을 위 34, 아래 16으로 넣는다.
-## 코인 칩의 더하기는 상점 경로가 있을 때만 보이므로 여기서는 빈 상점 경로를 등록한다.
 
 const Driver := preload("res://tests/common/e2e_driver.gd")
 const Pilot := preload("res://tests/game/play_pilot.gd")
@@ -276,10 +275,9 @@ func open_game(save_name: String, size: Vector2i, insets: Vector2, enter_play: b
 	services.clock = clock
 	main.game_services = services
 	main.safe_insets_override = insets
-	main.feature_routes["shop"] = func() -> void: pass
 	pilot.main = main
 	await d.mount(main)
-	if not await d.wait_for(func() -> bool: return main.initialized):
+	if not await d.wait_for(func() -> bool: return main.start_ready()):
 		return false
 	if not await d.tap(main.find_child("start", true, false)):
 		return false

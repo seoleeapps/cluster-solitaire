@@ -1,13 +1,11 @@
 extends Control
 ## 캔디 팝 배경: 하늘색에서 파랑, 보라로 내려가는 세로 그라데이션과 천천히 떠다니는 흰 원 네 개.
-## 움직임 줄이기에서는 원이 멈춘다. 입력은 받지 않는다.
+## 색은 고른 배경 테마(FaLook)를 따른다. 움직임 줄이기에서는 원이 멈춘다. 입력은 받지 않는다.
 
 const Art := preload("res://game/features/shared/fa_art.gd")
+const Look := preload("res://game/features/shared/fa_look.gd")
 const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
 
-const TOP := Color("58c4ff")
-const MIDDLE := Color("6e8cff")
-const BOTTOM := Color("a56bff")
 const MIDDLE_AT := 0.46
 ## 원: 화면 비율 위치(x, y), 반지름, 불투명도, 떠다니는 주기(초)와 움직이는 거리.
 const BUBBLES: Array[Dictionary] = [
@@ -19,6 +17,9 @@ const BUBBLES: Array[Dictionary] = [
 
 var _bubbles: Array[TextureRect] = []
 var _time: float = 0.0
+var _gradient: Gradient
+## 그리고 있는 배경 테마.
+var theme_id: String = ""
 
 
 func _ready() -> void:
@@ -26,7 +27,8 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var gradient := Gradient.new()
 	gradient.offsets = PackedFloat32Array([0.0, MIDDLE_AT, 1.0])
-	gradient.colors = PackedColorArray([TOP, MIDDLE, BOTTOM])
+	_gradient = gradient
+	refresh()
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
 	texture.fill_from = Vector2(0, 0)
@@ -47,6 +49,12 @@ func _ready() -> void:
 		_bubbles.append(bubble)
 	resized.connect(_place)
 	_place()
+
+
+## 고른 배경 테마의 색으로 다시 칠한다.
+func refresh() -> void:
+	theme_id = Look.background_id
+	_gradient.colors = Look.colors(theme_id)
 
 
 func _process(delta: float) -> void:
