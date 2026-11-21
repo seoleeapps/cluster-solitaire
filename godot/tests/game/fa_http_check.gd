@@ -54,6 +54,11 @@ func _run() -> void:
 		print("usage: -- --base http://127.0.0.1:<port>")
 		quit(1)
 		return
+	var outside: Http = Http.new()
+	var early: Dictionary = await _send(outside, {"method": "GET", "url": base + "/config.json", "timeout": 5.0, "max_bytes": 16384})
+	_check(not early["ok"] and early["status"] == 0, "트리 밖에서 보낸 요청은 실패로 돌려준다")
+	outside.free()
+
 	var http: Http = Http.new()
 	root.add_child(http)
 

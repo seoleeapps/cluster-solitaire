@@ -83,7 +83,6 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	analytics.flush()
 	ads.stop()
 
 

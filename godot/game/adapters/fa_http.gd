@@ -11,6 +11,10 @@ const DEFAULT_MAX_BYTES := 64 * 1024
 
 
 func send(request: Dictionary, on_done: Callable) -> void:
+	# 트리 밖에서는 요청을 보낼 수 없다. 엔진이 오류를 찍기 전에 실패로 돌려준다.
+	if not is_inside_tree():
+		on_done.call({"ok": false, "status": 0, "text": ""})
+		return
 	var http: HTTPRequest = HTTPRequest.new()
 	http.timeout = float(request.get("timeout", DEFAULT_TIMEOUT_SECONDS))
 	http.body_size_limit = int(request.get("max_bytes", DEFAULT_MAX_BYTES))
