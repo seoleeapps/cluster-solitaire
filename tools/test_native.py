@@ -67,6 +67,11 @@ class NativeExportTests(unittest.TestCase):
                 root=self.clone_config(folder);p=root/'godot/export_presets.cfg';text=p.read_text()
                 self.assertIn('permissions/'+permission+'=true',text);p.write_text(text.replace('permissions/'+permission+'=true','permissions/'+permission+'=false'))
                 self.assertIn('Android must request the '+permission+' permission',check_native.validate(root))
+    def test_device_check_arguments_in_the_preset_are_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'godot/export_presets.cfg'
+            p.write_text(p.read_text().replace('permissions/vibrate=true','permissions/vibrate=true\ncommand_line/extra_args="-- --fa-consent-geography=eea"'))
+            self.assertIn('Android preset must not carry extra command line arguments',check_native.validate(root))
     def test_left_over_injected_service_values_are_rejected_without_echo(self):
         with tempfile.TemporaryDirectory() as folder:
             root=self.clone_config(folder);p=root/'godot/project.godot'

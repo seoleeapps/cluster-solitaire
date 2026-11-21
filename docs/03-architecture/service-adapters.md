@@ -35,12 +35,25 @@
 | `consent_pending()` | 동의 상태를 아직 모르는지. 분석이 버릴지 기다릴지를 정하는 데 쓴다 |
 | `can_request_ads()` | 광고를 요청해도 되는 동의 상태인지 |
 | `start()`, `advance(seconds)`, `resume()`, `stop()` | `FaLiveServices`가 부른다 |
+| `set_consent_debug(geography, device_ids)` | 기기 검수용. 아래 "기기에서 동의 양식 확인하기"에 적었다 |
 | `presenting_changed(active)` | 광고가 화면을 덮기 직전에 `true`, 결과가 정해진 직후(`on_result`보다 먼저)에 `false` |
 | `availability_changed`, `consent_changed` | 준비 여부, 동의 상태나 개인정보 선택 요건이 바뀌었을 수 있음 |
 
 결과 판정은 `FaAdShow`가 맡는다. 보상 알림과 닫힘 알림은 어느 쪽이 먼저 와도 `earned`다. 보상형이 보상 없이 닫히면 늦은 보상 알림을 1.5초 기다린 뒤 `dismissed`로 정한다. 떴다는 알림 없이 10초가 지나면 `failed`, 뜬 뒤 90초 동안 아무 알림이 없으면 받은 알림만으로 정한다. 이 시간은 게임이 화면 앞에서 돌아간 시간만 센다. 광고가 화면을 덮는 동안에는 게임이 멈춰 있어 흐르지 않고, 돌아온 첫 프레임의 긴 간격은 0.25초로만 센다.
 
 불러오기에 실패하면 10, 30, 60, 120, 300초 간격으로 다시 시도하고 300초에서 더 늘지 않는다. 불러오기 답이 60초 안에 오지 않으면 실패로 본다. 동의 갱신이 실패했고 상태를 모르면 같은 간격으로 다시 갱신하며, 앱이 화면으로 돌아오면 기다리지 않고 다시 갱신한다.
+
+### 기기에서 동의 양식 확인하기
+
+동의 양식은 규제 지역(EEA, 영국, 스위스)에서만 뜬다. 다른 지역의 기기에서 기기 확인 항목 AND-05를 보려면 UMP의 디버그 지역 설정을 써야 하고, `FaLiveServices`는 디버그 빌드에서만 그 설정을 실행 인자로 받는다. 순서는 다음과 같다. 이 경로는 프로브로 플러그인의 요청 값까지 확인했고 기기에서는 아직 실행하지 않았다.
+
+1. `python3 tools/prepare_services.py`로 제품의 AdMob 앱 ID를 넣는다. 동의 메시지는 앱 ID에 딸려 있어서, 플러그인 기본값인 Google의 테스트 앱 ID로는 이 제품의 양식이 오지 않는다. 디버그 빌드의 광고 단위는 이때도 테스트 단위다.
+2. 디버그로 내보내 기기에서 한 번 실행하고, 로그에서 UMP가 알려 주는 기기 해시를 읽는다(`addTestDeviceHashedId`가 든 줄).
+3. Android preset의 `command_line/extra_args`에 `-- --fa-consent-geography=eea --fa-consent-device=<기기 해시>`를 넣고 디버그로 다시 내보낸다. `not_eea`를 주면 규제 지역이 아닌 것으로 다룬다.
+4. 앱 데이터를 지우고 실행하면 동의 양식이 뜬다. 선택을 마친 뒤 다시 실행해 양식이 다시 뜨지 않는지, 설정의 개인정보 선택 항목으로 다시 열 수 있는지 본다.
+5. 확인이 끝나면 preset을 되돌리고 `python3 tools/prepare_services.py --restore`를 실행한다. preset에 인자가 남아 있으면 `npm run check:native`가 실패한다.
+
+릴리스 빌드는 이 인자를 듣지 않는다. `tools/check_aab.py`도 인자가 든 AAB를 거부한다.
 
 ## 분석
 

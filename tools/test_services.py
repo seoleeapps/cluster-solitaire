@@ -395,6 +395,13 @@ class BundleCheckTests(unittest.TestCase):
         self.assertTrue(any('Native libraries must be exactly' in error for error in check_aab.check_contents(names - {'base/lib/arm64-v8a/libgodot_android.so'}, ADAPTIVE_ICON_BYTES)[0]))
         self.assertIn('Test files were exported: 1 files under assets/tests',
                       check_aab.check_contents(names | {'assetPackInstallTime/assets/tests/game/x.gdc'}, ADAPTIVE_ICON_BYTES)[0])
+        self.assertEqual([], check_aab.check_contents(names, ADAPTIVE_ICON_BYTES, b'\x02\x00\x00\x00--xr-mode\x03off')[0])
+        self.assertEqual(['The bundle carries device-check command line arguments'],
+                         check_aab.check_contents(names, ADAPTIVE_ICON_BYTES, b'--xr-mode\x1a--fa-consent-geography=eea')[0])
+        live = (ROOT / 'godot/game/adapters/fa_live_services.gd').read_text()
+        for argument in re.findall(r'const CONSENT_\w+_ARGUMENT := "([^"]+)"', live):
+            self.assertTrue(argument.encode().startswith(check_aab.DEVICE_CHECK_ARGUMENT), argument)
+        self.assertEqual(2, len(re.findall(r'const CONSENT_\w+_ARGUMENT := ', live)))
 
     def test_signer_fingerprints_are_parsed_from_keytool_output(self):
         output = 'Signer #1:\n\nCertificate #1:\nOwner: CN=Test\nCertificate fingerprints:\n\t SHA1: 01:02\n\t SHA256: %s\nSignature algorithm name: SHA256withRSA\n' % check_aab.UPLOAD_CERTIFICATE_SHA256.lower()

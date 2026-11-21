@@ -12,6 +12,9 @@ const CONSENT_OBTAINED := 3
 
 const RATING_PG := "PG"
 
+const GEOGRAPHY_EEA := "eea"
+const GEOGRAPHY_NOT_EEA := "not_eea"
+
 
 ## SDK를 쓸 수 있는지.
 func available() -> bool:
@@ -20,6 +23,12 @@ func available() -> bool:
 
 ## 동의 정보를 갱신한다. 끝나면 on_done(성공 여부)를 부른다.
 func update_consent(_on_done: Callable) -> void:
+	pass
+
+
+## 기기 검수용. 이후의 동의 갱신에서 UMP가 이 기기를 geography(GEOGRAPHY_*)에 있는 것으로 다루게 한다.
+## device_ids는 UMP가 로그에 알려 주는 기기 해시다. 등록한 기기에서만 듣는다.
+func set_consent_debug(_geography: String, _device_ids: PackedStringArray) -> void:
 	pass
 
 

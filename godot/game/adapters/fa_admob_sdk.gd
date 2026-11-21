@@ -24,6 +24,8 @@ var _serial: Dictionary = {}
 ## 플러그인의 불러오기 객체는 답을 받을 때까지 스스로를 붙들었다가 놓는데, 그때 다른 곳에서 붙들고 있지 않으면
 ## 지워지지 않고 남는다. 다음 불러오기까지 여기서 붙들어 두어 제대로 지워지게 한다.
 var _loaders: Dictionary = {}
+## 기기 검수용 동의 설정. 정하지 않았으면 null이다.
+var _consent_debug: ConsentDebugSettings = null
 
 
 func available() -> bool:
@@ -34,10 +36,19 @@ func available() -> bool:
 
 
 func update_consent(on_done: Callable) -> void:
+	var parameters: ConsentRequestParameters = ConsentRequestParameters.new()
+	parameters.consent_debug_settings = _consent_debug
 	UserMessagingPlatform.consent_information.update(
-		ConsentRequestParameters.new(),
+		parameters,
 		func() -> void: on_done.call(true),
 		func(_error: Variant) -> void: on_done.call(false))
+
+
+func set_consent_debug(geography: String, device_ids: PackedStringArray) -> void:
+	_consent_debug = ConsentDebugSettings.new()
+	_consent_debug.debug_geography = DebugGeography.Values.EEA if geography == GEOGRAPHY_EEA else DebugGeography.Values.NOT_EEA
+	for device_id: String in device_ids:
+		_consent_debug.test_device_hashed_ids.append(device_id)
 
 
 func consent_status() -> int:

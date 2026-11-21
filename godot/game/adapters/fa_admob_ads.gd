@@ -61,6 +61,12 @@ static func retry_delay(failures: int) -> float:
 	return RETRY_SECONDS[clampi(failures, 1, RETRY_SECONDS.size()) - 1]
 
 
+## 기기 검수용. start() 전에 부르면 UMP가 이 기기를 geography(FaAdSdk.GEOGRAPHY_*)에 있는 것으로 다룬다.
+## FaLiveServices가 디버그 빌드에서 실행 인자를 받았을 때만 부른다.
+func set_consent_debug(geography: String, device_ids: PackedStringArray) -> void:
+	_sdk.set_consent_debug(geography, device_ids)
+
+
 ## 실행마다 한 번 부른다. 동의 정보를 갱신하고, 지난 실행에서 이미 광고를 요청해도 되는 상태였으면 바로 준비를 시작한다.
 func start() -> void:
 	if _started or not _sdk.available():

@@ -23,6 +23,11 @@ const ADMOB_SINGLETON := "PoingGodotAdMob"
 const PROFILE_PATH := "res://data/monetization/bm-profile.json"
 ## 프로필을 읽지 못했을 때 쓰는 값. 프로필의 caps.interstitial_session_reset_s와 같다.
 const SESSION_RESET_FALLBACK_SECONDS := 1800
+## 기기 검수용 실행 인자. 디버그 빌드에서만 듣는다. 동의 양식은 규제 지역에서만 뜨므로,
+## 다른 지역의 기기에서 양식을 확인하려면 UMP가 로그에 알려 주는 기기 해시와 함께 지역을 정해 준다.
+##   --fa-consent-geography=eea 또는 not_eea, --fa-consent-device=<기기 해시>(여러 번 줄 수 있다)
+const CONSENT_GEOGRAPHY_ARGUMENT := "--fa-consent-geography="
+const CONSENT_DEVICE_ARGUMENT := "--fa-consent-device="
 
 ## 광고가 화면을 덮기 직전에 true, 닫혀 결과가 정해진 직후에 false. 게임 소리를 멈추고 되돌리는 데 쓴다.
 signal ad_presenting_changed(active: bool)
@@ -57,6 +62,11 @@ func _init(storage_dir: String = JsonFiles.DEFAULT_DIR) -> void:
 	_http = Http.new()
 	add_child(_http)
 	ads = AdmobAds.new(_make_sdk(), values.ad_units())
+	var arguments: PackedStringArray = OS.get_cmdline_args()
+	arguments.append_array(OS.get_cmdline_user_args())
+	var consent_debug: Dictionary = consent_debug_from(arguments, OS.is_debug_build())
+	if not consent_debug.is_empty():
+		ads.set_consent_debug(consent_debug["geography"], consent_debug["devices"])
 	analytics = Ga4Analytics.new(
 		values, files, _http.send, _analytics_gate, Time.get_unix_time_from_system,
 		str(ProjectSettings.get_setting("application/config/version", "")), OS.is_debug_build())
@@ -96,6 +106,22 @@ func _notification(what: int) -> void:
 				session_restarted.emit()
 		NOTIFICATION_WM_CLOSE_REQUEST:
 			analytics.flush()
+
+
+## 실행 인자에서 검수용 동의 설정 {geography, devices}를 읽는다. 디버그 빌드가 아니거나 지역 인자가 없으면 빈 값이다.
+static func consent_debug_from(arguments: PackedStringArray, debug_build: bool) -> Dictionary:
+	if not debug_build:
+		return {}
+	var geography: String = ""
+	var devices: PackedStringArray = []
+	for argument: String in arguments:
+		if argument.begins_with(CONSENT_GEOGRAPHY_ARGUMENT):
+			geography = argument.trim_prefix(CONSENT_GEOGRAPHY_ARGUMENT)
+		elif argument.begins_with(CONSENT_DEVICE_ARGUMENT) and argument.length() > CONSENT_DEVICE_ARGUMENT.length():
+			devices.append(argument.trim_prefix(CONSENT_DEVICE_ARGUMENT))
+	if geography != AdSdk.GEOGRAPHY_EEA and geography != AdSdk.GEOGRAPHY_NOT_EEA:
+		return {}
+	return {"geography": geography, "devices": devices}
 
 
 ## 분석을 보내도 되는지를 광고 어댑터의 동의 상태로 정한다.

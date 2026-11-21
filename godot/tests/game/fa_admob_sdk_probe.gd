@@ -213,6 +213,7 @@ func _journey() -> void:
 
 	# 동의 갱신: 첫 시도는 실패, 화면으로 돌아와 다시 시도해 성공.
 	_check(consent.updates.size() == 1 and consent.updates[0].get("tag_for_under_age_of_consent") == false, "트리에 들어가면 동의 갱신을 요청한다(미성년 동의 태그 없음)")
+	_check(consent.updates[0].has("consent_debug_settings") and consent.updates[0]["consent_debug_settings"] == null, "검수용 동의 설정은 넣지 않는다")
 	_check(ads_native.initialized == 0, "동의를 모르는 동안 광고 SDK를 초기화하지 않는다")
 	consent.on_consent_info_updated_failure.emit({"error_code": 2, "message": "offline"})
 	await _frames()
@@ -339,6 +340,15 @@ func _journey() -> void:
 	live.queue_free()
 	await _frames()
 	_check(rewarded.destroyed.size() + interstitial.destroyed.size() == destroyed + 2, "트리에서 빠지면 불러 둔 광고를 버린다")
+
+	# 기기 검수용 설정: 등록한 기기를 규제 지역에 있는 것으로 다루게 한다.
+	var debug_live: LiveServices = LiveServices.new("user://fa-admob-sdk-probe-unused")
+	debug_live.ads.set_consent_debug("eea", ["AAAA", "BBBB"])
+	root.add_child(debug_live)
+	await _frames()
+	_check(consent.updates[-1]["consent_debug_settings"] == {"debug_geography": 1, "test_device_hashed_ids": {0: "AAAA", 1: "BBBB"}}, "검수용 설정은 UMP의 지역(EEA)과 기기 해시로 전해진다")
+	debug_live.queue_free()
+	await _frames()
 
 
 ## 플러그인의 정적 변수가 붙들고 있는 콜백을 놓는다. 놓지 않으면 끝날 때 어댑터가 남는다.

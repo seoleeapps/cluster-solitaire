@@ -8,6 +8,7 @@ const AdSdk := preload("res://game/adapters/fa_ad_sdk.gd")
 const AdShow := preload("res://game/adapters/fa_ad_show.gd")
 const Ads := preload("res://game/adapters/fa_admob_ads.gd")
 const Values := preload("res://game/adapters/fa_service_values.gd")
+const LiveServices := preload("res://game/adapters/fa_live_services.gd")
 
 const UNITS := {"rewarded": "unit-rewarded", "interstitial": "unit-interstitial"}
 
@@ -31,9 +32,13 @@ class FakeSdk extends AdSdk:
 	var init_done: Callable
 	var load_done: Dictionary = {}
 	var show_event: Dictionary = {}
+	var consent_debug: Array = []
 
 	func available() -> bool:
 		return present
+
+	func set_consent_debug(geography: String, device_ids: PackedStringArray) -> void:
+		consent_debug = [geography, device_ids]
 
 	func update_consent(on_done: Callable) -> void:
 		calls.append("update")
@@ -98,6 +103,7 @@ func _initialize() -> void:
 	_section("보여 주기", _showing)
 	_section("개인정보 선택", _privacy)
 	_section("주입 값과 테스트 단위", _service_values)
+	_section("검수용 동의 설정", _consent_debug)
 	for sdk: FakeSdk in _sdks:
 		sdk.release()
 	print("Fa ads adapter probe: %d checks, %d failed" % [_checks, _failed.size()])
@@ -595,4 +601,20 @@ func _service_values() -> bool:
 
 	var packed: Values = Values.load_packed()
 	_check(packed.uses_test_ads() and not packed.analytics_configured() and packed.config_url() == "", "에디터와 headless 실행은 주입 파일을 읽지 않는다")
+	return true
+
+
+func _consent_debug() -> bool:
+	var arguments: PackedStringArray = ["--fa-consent-geography=eea", "--fa-consent-device=AAAA", "--other", "--fa-consent-device=BBBB", "--fa-consent-device="]
+	_check(LiveServices.consent_debug_from(arguments, true) == {"geography": "eea", "devices": PackedStringArray(["AAAA", "BBBB"])}, "디버그 빌드는 실행 인자의 지역과 기기 해시를 읽는다")
+	_check(LiveServices.consent_debug_from(arguments, false).is_empty(), "릴리스 빌드는 인자가 있어도 듣지 않는다")
+	_check(LiveServices.consent_debug_from(["--fa-consent-geography=not_eea"], true) == {"geography": "not_eea", "devices": PackedStringArray()}, "규제 지역이 아닌 것으로도 정할 수 있다")
+	for unusable: PackedStringArray in [PackedStringArray(), PackedStringArray(["--fa-consent-device=AAAA"]), PackedStringArray(["--fa-consent-geography=mars"]), PackedStringArray(["--fa-consent-geography="])]:
+		_check(LiveServices.consent_debug_from(unusable, true).is_empty(), "지역 인자가 없거나 모르는 값이면 듣지 않는다: " + str(unusable))
+
+	var sdk: FakeSdk = _sdk()
+	var ads: Ads = Ads.new(sdk, UNITS)
+	_check(sdk.consent_debug.is_empty(), "정하지 않으면 SDK에 검수 설정을 넘기지 않는다")
+	ads.set_consent_debug("eea", ["AAAA"])
+	_check(sdk.consent_debug == ["eea", PackedStringArray(["AAAA"])], "정한 검수 설정을 SDK에 넘긴다")
 	return true

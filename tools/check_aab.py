@@ -11,7 +11,7 @@
   - AdMob 플러그인의 네이티브 싱글턴이 등록돼 있고, AdMob 앱 ID가 매니페스트에 있으며 테스트 ID가 아니다
   - 앱이 읽는 서비스 값(release.json)이 들어 있고, 광고 단위가 테스트 단위가 아니며 앱 ID와 같은 게시자다
   - 적응형 아이콘이 전경, 배경, 단색 층을 가리키고 그 그림들이 들어 있다
-  - arm64 라이브러리만 들어 있고 테스트 파일이 없으며 크기가 예산 안이다
+  - arm64 라이브러리만 들어 있고 테스트 파일과 기기 검수용 실행 인자가 없으며 크기가 예산 안이다
 
 매니페스트는 bundletool로, 서명은 JDK의 jarsigner와 keytool로 읽는다. 하나라도 없으면 검사하지 못한 것으로 실패한다.
 BUNDLETOOL과 JAVA_HOME으로 위치를 바꿀 수 있다. 식별자와 비밀값은 출력하지 않는다.
@@ -54,6 +54,9 @@ PORTRAIT = '1'
 # Godot의 Gradle AAB는 프로젝트 파일을 설치 시점 자산 팩에 넣는다.
 ASSETS = 'assetPackInstallTime/assets/'
 RELEASE_VALUES = ASSETS + 'data/services/release.json'
+# Godot이 실행 인자를 적어 두는 파일과, 디버그 빌드의 기기 검수에서만 쓰는 인자의 머리말(fa_live_services.gd).
+COMMAND_LINE = ASSETS + '_cl_'
+DEVICE_CHECK_ARGUMENT = b'--fa-consent-'
 ADAPTIVE_ICON = 'base/res/mipmap-anydpi-v26/icon.xml'
 ICON_LAYERS = ['icon_foreground', 'icon_background', 'icon_monochrome']
 LIBRARY_PREFIX = 'base/lib/'
@@ -215,9 +218,11 @@ def check_values(manifest, release_text):
     return errors
 
 
-def check_contents(names, adaptive_icon=b''):
-    """AAB 안의 파일 이름과 적응형 아이콘 정의로 보는 문제 목록과 요약."""
+def check_contents(names, adaptive_icon=b'', command_line=b''):
+    """AAB 안의 파일 이름, 적응형 아이콘 정의, 실행 인자로 보는 문제 목록과 요약."""
     errors = []
+    if DEVICE_CHECK_ARGUMENT in command_line:
+        errors.append('The bundle carries device-check command line arguments')
     abis = {name[len(LIBRARY_PREFIX):].split('/')[0] for name in names if name.startswith(LIBRARY_PREFIX)}
     if abis != EXPECTED_ABIS:
         errors.append('Native libraries must be exactly %s, found %s' % (sorted(EXPECTED_ABIS), sorted(abis)))
@@ -261,8 +266,9 @@ def check(root, bundle):
         names = set(archive.namelist())
         release_text = archive.read(RELEASE_VALUES).decode('utf-8', 'replace') if RELEASE_VALUES in names else None
         adaptive_icon = archive.read(ADAPTIVE_ICON) if ADAPTIVE_ICON in names else b''
+        command_line = archive.read(COMMAND_LINE) if COMMAND_LINE in names else b''
     errors += check_values(manifest, release_text)
-    content_errors, contents = check_contents(names, adaptive_icon)
+    content_errors, contents = check_contents(names, adaptive_icon, command_line)
     errors += content_errors
     size = bundle.stat().st_size
     if size > MAX_BYTES:

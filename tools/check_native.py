@@ -83,6 +83,8 @@ def validate(root):
         if value(cfg,options,'package/signed') is not True:errors.append('Android release signing must be enabled')
         for permission in ['internet','vibrate']:
             if value(cfg,options,'permissions/'+permission) is not True:errors.append('Android must request the '+permission+' permission')
+        # Extra arguments are how a device check switches the consent geography in a debug build. They never belong in the tracked preset.
+        if value(cfg,options,'command_line/extra_args'):errors.append('Android preset must not carry extra command line arguments')
         for key in ['keystore/release','keystore/release_user','keystore/release_password']:
             if value(cfg,options,key):errors.append('Signing values must come from the environment: '+key)
         if (root/'godot'/str(value(cfg,base,'export_path'))).resolve()!=(root/str(play.get('aabPath'))).resolve():errors.append('Android bundle path mismatch')
