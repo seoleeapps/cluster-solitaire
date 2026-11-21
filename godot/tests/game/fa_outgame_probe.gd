@@ -1,5 +1,5 @@
 extends SceneTree
-## 바깥 화면의 규칙 검사: 꾸미기 목록과 가격, 상점(부스터와 꾸미기 사기, 고르기), 출석 받기.
+## 바깥 화면의 규칙 검사: 꾸미기 목록과 가격, 상점(부스터와 꾸미기 사기, 고르기), 출석 받기, 도감 칸의 범주 이름 맞춤.
 ## 저장은 메모리 대역, 분석은 FaMemoryAnalytics에 받아 무엇을 보냈는지 본다.
 
 const Economy := preload("res://game/core/domain/fa_economy.gd")
@@ -8,6 +8,9 @@ const Shop := preload("res://game/core/use_cases/fa_shop.gd")
 const Attendance := preload("res://game/core/use_cases/fa_attendance.gd")
 const StorePort := preload("res://game/core/ports/fa_store_port.gd")
 const MemoryAnalytics := preload("res://game/adapters/fa_memory_analytics.gd")
+const Content := preload("res://game/core/domain/fa_content.gd")
+const AlbumScreen := preload("res://game/features/outgame/album_screen.gd")
+const Fonts := preload("res://game/features/shared/fa_fonts.gd")
 
 
 class MemoryStore extends StorePort:
@@ -29,6 +32,7 @@ func _initialize() -> void:
 	_section("상점: 부스터", _boosters)
 	_section("상점: 꾸미기", _themes)
 	_section("출석", _attendance)
+	_section("도감 칸의 범주 이름", _album_names)
 	print("Fa outgame probe: %d checks, %d failed" % [_checks, _failed.size()])
 	for line: String in _failed:
 		print("  FAILED ", line)
@@ -133,3 +137,48 @@ func _attendance() -> bool:
 	var next: Dictionary = attendance.status(progress, "2026-12-09")
 	_check(next["can_claim"] and next["today"] == 0 and next["claimed"] == 0, "다음 날 다시 1일째부터")
 	return true
+
+
+## 모든 범주의 한국어와 영어 이름이 가장 좁은 도감 칸(폭 360 화면)에서 두 줄 안에 들어가고, 한국어는 낱말 가운데서 줄이 바뀌지 않는다.
+func _album_names() -> bool:
+	var content := Content.new(_read("res://data/content/items.json"), _read("res://data/content/categories.json"))
+	var ids: PackedStringArray = content.category_ids()
+	_check(ids.size() == 158, "범주 158개를 모두 본다: %d" % ids.size())
+	for language: String in ["en", "ko"]:
+		var cut: PackedStringArray = []
+		var shrunk: int = 0
+		for category: String in ids:
+			var display_name: String = content.category_name(category, language)
+			var fit: Dictionary = AlbumScreen.fit_name(display_name, language, AlbumScreen.NAME_MIN_WIDTH)
+			if not fit["fits"] or int(fit["lines"]) > AlbumScreen.NAME_LINES:
+				cut.append(display_name)
+			elif int(fit["size"]) < AlbumScreen.NAME_SIZES[0]:
+				shrunk += 1
+		_check(cut.is_empty(), "%s category names fit two lines of the narrowest album cell: %s" % [language, ", ".join(cut)])
+		print("  %s: %d of %d names use a smaller size" % [language, shrunk, ids.size()])
+	# 띄어쓰기에서만 나뉜다: 두 줄이면 첫 줄은 낱말 경계에서 끝난다.
+	var pot: Dictionary = AlbumScreen.fit_name("냄비와 그릇 요리", "ko", AlbumScreen.NAME_MIN_WIDTH)
+	_check(pot["fits"] and int(pot["lines"]) == 2 and _breaks_at_spaces(pot["text"], int(pot["size"]), AlbumScreen.NAME_MIN_WIDTH),
+		"'냄비와 그릇 요리' breaks at a space, not inside 요리")
+	var long_word: Dictionary = AlbumScreen.fit_name("브라키오사우루스", "ko", AlbumScreen.NAME_MIN_WIDTH)
+	_check(not long_word["fits"] and int(long_word["size"]) == AlbumScreen.NAME_SIZES.back(), "a word wider than the cell is never broken inside; it is reported as not fitting")
+	return true
+
+
+## 낱말 이음표를 넣은 글이 폭 width에서 줄마다 띄어쓰기로 끝나는지(마지막 줄 빼고).
+func _breaks_at_spaces(text: String, font_size: int, width: float) -> bool:
+	var paragraph := TextParagraph.new()
+	paragraph.width = width
+	paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND
+	paragraph.add_string(text, Fonts.label("ko"), font_size)
+	for line: int in paragraph.get_line_count() - 1:
+		var span: Vector2i = paragraph.get_line_range(line)
+		var tail: String = text.substr(span.x, span.y - span.x).replace(Fonts.WORD_JOINER, "")
+		if not tail.ends_with(" "):
+			return false
+	return true
+
+
+func _read(path: String) -> Dictionary:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	return parsed if parsed is Dictionary else {}

@@ -37,3 +37,13 @@ func write(data: Dictionary) -> bool:
 	var saved: bool = AtomicStore.write(_path, data)
 	_wrote = _wrote or saved
 	return saved
+
+
+## 본 파일, 백업, 쓰다 남은 임시 파일을 지운다. 지운 뒤 첫 쓰기는 새로 설치한 앱의 첫 쓰기와 같다(백업을 만들지 않는다).
+func erase() -> bool:
+	var erased: bool = true
+	for file: String in [_path, _path + BACKUP_SUFFIX, _path + AtomicStore.TEMP_SUFFIX]:
+		if FileAccess.file_exists(file):
+			erased = DirAccess.remove_absolute(ProjectSettings.globalize_path(file)) == OK and erased
+	_wrote = false
+	return erased

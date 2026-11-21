@@ -16,3 +16,8 @@ func read(_slot: String) -> Dictionary:
 ## 저장을 쓴다. 구현은 쓰기 전의 저장을 backup으로 남긴다. 성공하면 true.
 func write(_data: Dictionary) -> bool:
 	return false
+
+
+## 저장과 백업을 지운다(설정의 데이터 초기화). 지운 뒤 읽으면 저장이 없는 것과 같다. 모두 지웠으면 true.
+func erase() -> bool:
+	return true

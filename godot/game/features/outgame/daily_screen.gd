@@ -13,6 +13,10 @@ const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
 const WEEKDAYS := [["S", "일"], ["M", "월"], ["T", "화"], ["W", "수"], ["T", "목"], ["F", "금"], ["S", "토"]]
 const GAP := 5.0
 const CELL_MAX := 40.0
+## 완료 체크는 칸의 오른쪽 위 모서리에 걸쳐 칸 밖으로 TICK_OVERHANG만큼 나간다. 달력 양옆에 같은 여백을 두어
+## 맨 오른쪽 열(토요일)의 체크가 목록의 가장자리에서 잘리지 않게 한다.
+const TICK_SIZE := Vector2(18, 19)
+const TICK_OVERHANG := 5.0
 const MUTED := Color("8a8db5")
 ## 공유 글의 범주 난도별 네모(난도 1~4).
 const TIER_SQUARES := ["🟨", "🟩", "🟦", "🟪"]
@@ -59,9 +63,19 @@ func rebuild() -> void:
 	box.mouse_filter = Control.MOUSE_FILTER_PASS
 	scroll.add_child(box)
 	box.add_child(_month_header())
-	box.add_child(_weekday_row())
+	var inset := MarginContainer.new()
+	inset.name = "calendar_inset"
+	inset.mouse_filter = Control.MOUSE_FILTER_PASS
+	inset.add_theme_constant_override("margin_left", int(TICK_OVERHANG))
+	inset.add_theme_constant_override("margin_right", int(TICK_OVERHANG))
+	box.add_child(inset)
+	var month := VBoxContainer.new()
+	month.mouse_filter = Control.MOUSE_FILTER_PASS
+	month.add_theme_constant_override("separation", 10)
+	inset.add_child(month)
+	month.add_child(_weekday_row())
 	_calendar = _month_grid()
-	box.add_child(_calendar)
+	month.add_child(_calendar)
 	box.add_child(_streak_row())
 	_detail = _day_card(selected)
 	box.add_child(_detail)
@@ -133,10 +147,10 @@ func _day_cell(date: String) -> Control:
 	label.offset_bottom = -4
 	cell.add_child(label)
 	if done:
-		var tick: TextureRect = Art.picture(Art.play("tick"), Vector2(18, 19))
+		var tick: TextureRect = Art.picture(Art.play("tick"), TICK_SIZE)
 		tick.name = "tick"
 		cell.add_child(tick)
-		cell.resized.connect(func() -> void: tick.position = Vector2(cell.size.x - 13, -6))
+		cell.resized.connect(func() -> void: tick.position = Vector2(cell.size.x - TICK_SIZE.x + TICK_OVERHANG, -6))
 	elif open and date != _today:
 		var ring: TextureRect = Art.picture(Art.outgame("ring"), Vector2(12, 12))
 		ring.name = "ring"

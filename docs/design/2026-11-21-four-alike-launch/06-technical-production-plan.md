@@ -56,15 +56,18 @@ docs/design, docs/qa, docs/game-design
 
 | 질문 | 이벤트 | 주요 매개변수 | 발생 시점 |
 |---|---|---|---|
-| 새 이용자와 재방문 | `app_first_run`, `app_session` | `session_index`, `days_since_install` | 첫 실행, 실행마다 |
+| 새 이용자와 재방문 | `app_first_run`, `app_session` | `session_index`, `days_since_install` | 첫 실행(데이터 초기화 뒤 포함), 실행마다 |
+| 시작 속도 | `title_ready` | `ms` | 타이틀이 준비됐을 때 실행마다 한 번 |
 | 온보딩 완료율 | `tutorial_begin`, `tutorial_complete` | `seconds` | 튜토리얼 시작과 끝 |
 | 어디서 그만두는가 | `level_start`, `level_end` | `mode`(journey, daily), `level`, `tier`, `layout`, `success`, `stars`, `mistakes`, `holds`, `seconds`, `continue_used`, `slot_unlocked` | 판 시작과 끝 |
 | 규칙 이해와 억지 범주 | `mistake`, `group_complete` | `level`, `one_away`, `category`, `order` | 오답, 묶음 완성 |
-| 막힘과 도움 장치 | `stuck_shown`, `dead_end_shown`, `booster_used` | `level`, `booster`, `source`(owned, coins, ad) | 해당 시점 |
+| 막힘과 도움 장치 | `stuck_shown`, `dead_end_shown`, `booster_used`, `hold_move` | `level`, `booster`, `source`(owned, coins, ad) | 해당 시점. `hold_move`는 카드를 임시 칸으로 옮길 때 |
 | 경제 | `earn_virtual_currency`, `spend_virtual_currency` | `virtual_currency_name`, `value`, `source` 또는 `item_name` | 지급과 사용 |
 | 광고 | `ad_requested`, `ad_impression`, `ad_failed`, `rewarded_earned`, `ad_declined` | `placement`, `format`, `reason` | 광고 흐름 |
 | 재방문 장치 | `daily_complete`, `attendance_claim`, `album_unlock`, `share` | `streak`, `day`, `category` | 해당 시점 |
-| 설정 | `settings_change` | `key`, `value` | 언어, 소리, 분석 |
+| 설정 | `settings_change` | `key`, `value` | 언어, 음악, 효과음, 진동, 큰 글자, 움직임 줄이기. 분석 허용을 바꾼 것은 보내지 않는다 |
+
+`app_open`과 `screen_view`는 보내지 않는다. `app_open`은 같은 때의 `app_session`과 겹치고, `screen_view`는 Measurement Protocol의 웹 스트림이 받지 않는 예약 이름이다(DEC-025).
 
 GA4에는 `runtime_platform`, `app_market`, `release_version`을 이벤트 범위 맞춤 측정기준으로 등록했다(속성 565197717, 2026-11-21). 매개변수 이름은 조직의 분석 이벤트 정책(`seorilabs/.github`의 `contracts/analytics-event-policy.yaml`)을 따른다.
 

@@ -117,6 +117,17 @@ func discard_pending() -> void:
 	_files.remove(QUEUE_FILE)
 
 
+## 기기의 식별자 파일과 대기열을 지우고 처음 설치한 것처럼 다시 시작한다(설정의 데이터 초기화).
+## 들고 있던 이벤트와 보내는 중인 요청의 결과도 버린다. 다음에 문이 열리면 새 식별자를 만들고 app_first_run과 app_session을 보낸다.
+func forget_device() -> void:
+	discard_pending()
+	_files.remove(CLIENT_FILE)
+	_client = {}
+	_storage_loaded = false
+	_first_run = false
+	begin_session()
+
+
 ## 새 실행(세션)을 시작한다. 앱을 켰을 때와, 오래 백그라운드에 있다가 돌아왔을 때 부른다.
 func begin_session() -> void:
 	_session_started = _now.call()

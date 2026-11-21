@@ -8,18 +8,23 @@ const Driver := preload("res://tests/common/e2e_driver.gd")
 const Pilot := preload("res://tests/game/play_pilot.gd")
 const State := preload("res://addons/seorilabs_game/flow/state.gd")
 const GameServices := preload("res://game/bootstrap/fa_services.gd")
+const SavePaths := preload("res://game/bootstrap/fa_save_paths.gd")
 const ScriptedAds := preload("res://game/adapters/fa_scripted_ads.gd")
 const MemoryAnalytics := preload("res://game/adapters/fa_memory_analytics.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const Economy := preload("res://game/core/domain/fa_economy.gd")
 const Solver := preload("res://game/core/domain/fa_solver.gd")
 const Daily := preload("res://game/core/domain/fa_daily.gd")
+const Progress := preload("res://game/core/domain/fa_progress.gd")
+const AdPolicy := preload("res://game/core/domain/fa_ad_policy.gd")
 const Look := preload("res://game/features/shared/fa_look.gd")
 const Art := preload("res://game/features/shared/fa_art.gd")
+const Ui := preload("res://game/features/shared/fa_ui.gd")
 const FileStore := preload("res://game/adapters/fa_file_store.gd")
 const AdmobAds := preload("res://game/adapters/fa_admob_ads.gd")
 const AtomicStore := preload("res://addons/seorilabs_platform/core/atomic_json_store.gd")
 const Licenses := preload("res://game/features/outgame/licenses_screen.gd")
+const AlbumScreen := preload("res://game/features/outgame/album_screen.gd")
 
 const SLOW := 1.0
 ## 같은 화면 흐름을 되풀이해 스테이지를 넘길 때만 시간을 빨리 돌린다.
@@ -97,16 +102,45 @@ func fit_step(label: String) -> void:
 	d.step(label + " fits the portrait screen", problem.is_empty(), problem)
 
 
+## 바깥 화면 팝업의 창이 화면 안에 있고, 창 안의 버튼과 글이 창 밖으로 나가지 않고, 버튼끼리 겹치지 않는지 본다.
+func popup_fits() -> String:
+	var screen := Rect2(Vector2.ZERO, Vector2(d.viewport.size))
+	var frame: Rect2 = (main.outgame_popup.get_node("Center/Frame") as Control).get_global_rect()
+	if not screen.encloses(frame):
+		return "the popup leaves the screen: %s" % frame
+	var placed: Array[Control] = []
+	for node: Node in main.outgame_popup.get_node("Center/Frame").find_children("*", "Control", true, false):
+		var control: Control = node as Control
+		if not control.is_visible_in_tree() or not (control is BaseButton or control is Label):
+			continue
+		var rect: Rect2 = control.get_global_rect()
+		if not frame.encloses(rect):
+			return "%s leaves the popup: %s" % [control.name, rect]
+		if control is BaseButton:
+			for other: Control in placed:
+				if other.get_global_rect().intersects(rect):
+					return "%s overlaps %s" % [control.name, other.name]
+			placed.append(control)
+	return ""
+
+
+func popup_fit_step(label: String) -> void:
+	var problem: String = popup_fits()
+	d.step(label + " fits the screen", problem.is_empty(), problem)
+
+
 func play_fit_step(label: String) -> void:
 	var problem: String = pilot.fits()
 	d.step(label + " fits the screen (AC-018)", problem.is_empty(), problem)
 
 
+## 시작 장면을 격리 폴더의 저장 자리(FaSavePaths.under(save_dir, save_name))로 띄운다.
 func mount_game(save_name: String, locale: String, wait_ready: bool = true) -> void:
+	var paths: SavePaths = SavePaths.under(save_dir, save_name)
 	main = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
-	main.state = State.new(save_dir + "/" + save_name + ".json")
+	main.state = State.new(paths.state)
 	main.device_locale = locale
-	var services: GameServices = GameServices.local(save_dir + "/" + save_name + "-progress.json")
+	var services: GameServices = GameServices.local(paths.progress)
 	services.ads = ads
 	services.clock = clock
 	services.analytics = recorder
@@ -179,13 +213,18 @@ func run() -> void:
 	await settings_privacy_licenses()
 	await back_to_exit()
 	await outgame_english()
+	await data_reset()
 	await title_error_retry()
 	await live_services_offline()
 
 	await d.unmount(main)
-	for file_name: String in DirAccess.get_files_at(save_dir):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_dir.path_join(file_name)))
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(save_dir))
+	var services_dir: String = SavePaths.under(save_dir, "").services
+	for folder: String in [services_dir, save_dir]:
+		if not DirAccess.dir_exists_absolute(folder):
+			continue
+		for file_name: String in DirAccess.get_files_at(folder):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(folder.path_join(file_name)))
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(folder))
 	quit(d.finish({"sourceSha": OS.get_environment("GITHUB_SHA")}))
 
 
@@ -768,6 +807,7 @@ func album_screen() -> void:
 	var total: int = main.session.catalog.category_ids().size()
 	d.expect_equal("SCR-009 collected count", b("album_count").text, "모은 범주 %d / %d" % [player().album_count(), total])
 	d.step("SCR-007 the categories the first result named are collected here", first_album.all(func(category: String) -> bool: return b("category_" + category) != null and b("category_" + category).get_meta("collected")))
+	d.step("SCR-009 every collected name fits two lines of its cell, and the cells are at least as wide as the probe assumes", album_names_fit(), album_names_problem)
 	fit_step("album")
 	await d.shot("album")
 	var scroll: ScrollContainer = b("album_scroll")
@@ -814,7 +854,7 @@ func shop_and_decor() -> void:
 
 	# 고정 자료: 저장 파일에 코인을 넣고 다시 띄워 꾸미기를 사고 쓴다.
 	await d.unmount(main)
-	var save_path: String = save_dir + "/play-progress.json"
+	var save_path: String = SavePaths.under(save_dir, "play").progress
 	var saved: Dictionary = AtomicStore.read_dictionary(save_path)["value"]
 	saved["profile"]["coins"] = int(saved["profile"]["coins"]) + 3000
 	d.step("fixture: 3,000 coins added to the save", AtomicStore.write(save_path, saved))
@@ -919,6 +959,23 @@ func outgame_english() -> void:
 	d.step("daily", await d.tap(b("daily")) and main.screen == "daily")
 	fit_step("AC-018 English large-text daily")
 	await d.shot("daily-en")
+	# 오늘(12월 5일)은 토요일이라 달력의 맨 오른쪽 열이다. 풀고 나면 그 칸의 완료 체크가 목록 가장자리에서 잘리지 않아야 한다.
+	d.step("SCR-008 today is a Saturday, the last column", Daily.weekday(clock.date) == 6)
+	d.step("play today's daily", await d.tap(b("play_daily")) and main.screen == "play" and await pilot.settle())
+	Engine.time_scale = FAST
+	d.step("clear it", await pilot.clear_board())
+	await d.wait_for(func() -> bool: return main.play.popup != null or ads.showing() == "interstitial", Pilot.SETTLE_FRAMES)
+	if ads.showing() == "interstitial":
+		ads.finish("dismissed")
+	d.step("the daily result", await pilot.popup_open("result"))
+	Engine.time_scale = SLOW
+	d.step("OK goes home", await pilot.tap_popup("next") and await d.wait_for(func() -> bool: return main.screen == "home" and main.play == null, 600))
+	d.step("daily again", await d.tap(b("daily")) and main.screen == "daily")
+	var saturday: Control = b("day_" + clock.date)
+	var tick: Control = saturday.find_child("tick", true, false) as Control if saturday != null else null
+	d.step("SCR-008 the Saturday tick is inside the list, not cut off", tick != null and (b("daily_scroll") as Control).get_global_rect().encloses(tick.get_global_rect()),
+		"tick %s, list %s" % [tick.get_global_rect() if tick != null else Rect2(), (b("daily_scroll") as Control).get_global_rect()])
+	await d.shot("daily-saturday-en")
 	d.step("back home", await d.tap(b("back")) and main.screen == "home")
 	d.step("album", await d.tap(b("album")) and main.screen == "album")
 	fit_step("AC-018 English large-text album")
@@ -940,6 +997,122 @@ func outgame_english() -> void:
 	await d.shot("inbox-en")
 	d.step("close to home", await d.tap(b("close")) and main.screen == "home")
 	d.end()
+
+## 설정의 데이터 초기화(SCR-014): 두 번 확인해야만 지우고, 지우면 처음 실행한 것처럼 타이틀과 튜토리얼부터 시작한다.
+## 앞 시나리오의 영어와 큰 글자로 두 단계를 본 뒤 둘째 단계를 뒤로 가기로 닫는다. 한국어 보통 글자로 바꿔 첫 확인을 취소하고,
+## 다시 열어 두 번 확인해 지운다. 지운 뒤 공통 상태와 제품 저장 파일이 첫 실행의 기본값인지 파일에서 확인한다.
+func data_reset() -> void:
+	d.begin("data-reset", ["data_reset", "settings_support", "account_save", "run_save", "startup", "tutorial", "ui_analytics_opt_out", "ui_navigation"])
+	var paths: SavePaths = SavePaths.under(save_dir, "play")
+	var kept: Dictionary = player().to_dict()
+	var fresh: Dictionary = Progress.create().to_dict()
+	d.step("there is something to lose in every part of the save", ["profile", "journey", "daily", "album", "attendance"].all(func(key: String) -> bool: return kept[key] != fresh[key]))
+	d.step("analytics is off and its marker file is kept", not main.state.data.settings.analytics and FileAccess.file_exists(paths.state + SavePaths.ANALYTICS_OFF_SUFFIX))
+	d.step("the product save has a backup", FileAccess.file_exists(paths.progress + FileStore.BACKUP_SUFFIX))
+	var common: Dictionary = main.state.data.duplicate(true)
+
+	# 영어와 큰 글자: 설정 줄, 첫 확인, 둘째 확인, 뒤로 가기.
+	d.step("settings", await d.tap(b("settings")) and main.screen == "settings")
+	var row: Button = b("data_reset") as Button
+	d.step("SCR-014 the reset row is the last row", row != null and row.get_index() == row.get_parent().get_child_count() - 2)
+	d.step("SCR-014 it has the red row icon, a chevron and red text", row.icon == Art.outgame("set_data_reset") and row.find_child("chevron", false, false) != null and row.get_theme_color("font_color") == Ui.DANGER_INK)
+	d.step("scroll to the reset row", await d.scroll_into_view(row))
+	await d.shot("settings-reset-en")
+	d.step("open the reset check", await d.tap(row) and await outgame_popup_open())
+	d.expect_equal("SCR-014 the first check names what is erased", erased_items(), ["Stage progress", "Coins", "Boosters", "Album", "Daily & check-in", "Decor", "Settings"])
+	d.expect_equal("SCR-014 first check: Delete and Cancel", [label_of(b("delete")), label_of(b("cancel")), b("delete").get_meta("danger", false)], ["Delete", "Cancel", false])
+	popup_fit_step("SCR-014 first check in English large text")
+	await d.shot("reset-first-en")
+	d.step("Delete moves to the final check", await d.tap(b("delete")) and await d.wait_for(func() -> bool: return main.outgame_popup.get_meta("step") == "final" and b("delete_all") != null and b("delete") == null))
+	await d.frames(3)
+	d.step("SCR-014 the final check says it cannot be undone", b("warning").text.contains("can't be undone"))
+	d.expect_equal("SCR-014 the final check has a red main button", [label_of(b("delete_all")), b("delete_all").get_meta("danger", false), label_of(b("cancel"))], ["Delete all", true, "Cancel"])
+	popup_fit_step("SCR-014 final check in English large text")
+	await d.shot("reset-final-en")
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("the back key closes the final check", await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and main.screen == "settings")
+	d.step("closing the final check erases nothing", player().to_dict() == kept and main.state.data == common and recorder.forgotten == 0)
+
+	# 한국어와 보통 글자로 바꾼다.
+	d.step("language", await d.tap(b("language")))
+	d.step("Korean", await d.tap(b("ko")) and main.language() == "ko")
+	d.step("back to settings", await d.tap(b("back")) and main.screen == "settings")
+	d.step("accessibility", await d.tap(b("accessibility")))
+	d.step("normal text", await d.tap(b("large_text")) and not main.state.data.settings.large_text)
+	d.step("back to settings", await d.tap(b("back")) and main.screen == "settings")
+	common = main.state.data.duplicate(true)
+	d.step("scroll to the reset row", await d.scroll_into_view(b("data_reset")))
+	await d.shot("settings-reset-ko")
+	d.step("open the reset check in Korean", await d.tap(b("data_reset")) and await outgame_popup_open())
+	d.expect_equal("SCR-014 the first check in Korean", [erased_items(), label_of(b("delete")), label_of(b("cancel"))],
+		[["스테이지 진행", "코인", "부스터", "도감", "일일 도전과 출석", "꾸미기", "설정"], "지우기", "취소"])
+	popup_fit_step("SCR-014 first check in Korean")
+	await d.shot("reset-first-ko")
+	d.step("cancel the first check", await d.tap(b("cancel")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and main.screen == "settings")
+	d.step("cancelling the first check erases nothing", player().to_dict() == kept and main.state.data == common and FileAccess.file_exists(paths.state + SavePaths.ANALYTICS_OFF_SUFFIX) and recorder.forgotten == 0)
+
+	# 두 번 확인해 지운다.
+	var settings_events: int = recorder.count("settings_change")
+	d.step("open the reset check again", await d.tap(b("data_reset")) and await outgame_popup_open())
+	d.step("first check: delete", await d.tap(b("delete")) and await d.wait_for(func() -> bool: return b("delete_all") != null))
+	await d.frames(3)
+	d.expect_equal("SCR-014 the final check in Korean", [main.outgame_popup.get_node("Center/Frame/Body/Header/Title").text, label_of(b("delete_all"))], ["정말 지울까요?", "모두 지우기"])
+	popup_fit_step("SCR-014 final check in Korean")
+	await d.shot("reset-final-ko")
+	d.step("final check: delete all", await d.tap(b("delete_all")))
+	d.step("SCR-001 the title comes back as on a first run", await d.wait_for(func() -> bool: return main.start_ready() and main.outgame_popup == null, 600))
+	d.expect_equal("nothing is left behind the title", [main.screen, main.navigation.size(), main.play == null], ["title", 0, true])
+	d.step("the common state is the default and its files are gone",
+		main.state.data == main.state.defaults() and not FileAccess.file_exists(paths.state) and not FileAccess.file_exists(paths.state + SavePaths.ANALYTICS_OFF_SUFFIX))
+	d.expect_equal("settings are back to the defaults and analytics is allowed again",
+		[main.state.data.settings.language, main.language(), main.state.data.settings.large_text, main.state.data.settings.analytics], ["system", "ko", false, true])
+	var expected: Progress = Progress.create()
+	expected.roll_date(clock.today())
+	AdPolicy.begin_session(expected.ads())
+	var stored: Dictionary = AtomicStore.read_dictionary(paths.progress)["value"]
+	d.step("the product save file holds only what a first run writes", stored == JSON.parse_string(JSON.stringify(expected.to_dict())), "stage %s, coins %s" % [stored.get("journey", {}).get("stage"), stored.get("profile", {}).get("coins")])
+	d.step("the old backup is gone", not FileAccess.file_exists(paths.progress + FileStore.BACKUP_SUFFIX))
+	d.expect_equal("stage 1, no coins, boosters, album or decor",
+		[player().stage(), player().coins(), player().booster("hint"), player().booster("undo"), player().booster("slot"), player().album_count(), player().owns_theme("card_back_mint")],
+		[1, 0, 0, 0, 0, 0, false])
+	d.expect_equal("analytics starts over on this device once", recorder.forgotten, 1)
+	d.expect_equal("the reset itself reports no settings change", recorder.count("settings_change"), settings_events)
+	d.expect_equal("SCR-001 Korean title", [b("logo").text, label_of(b("start"))], ["끼리끼리", "시작하기"])
+	fit_step("title after the reset")
+	await d.frames(60)
+	await d.shot("title-after-reset")
+	d.step("start opens the tutorial board", await d.tap(b("start")) and main.screen == "play" and await pilot.settle())
+	d.expect_equal("the tutorial from its first step with nothing in hand", [main.play.mode, main.play.guide_step, player().coins()], ["tutorial", "pick", 0])
+	d.end()
+
+
+## 도감의 모은 칸마다 이름이 맞춰졌는지(AlbumScreen.fit_name), 이름 자리가 프로브가 가정한 가장 좁은 폭 이상인지 본다.
+var album_names_problem: String = ""
+
+
+func album_names_fit() -> bool:
+	album_names_problem = ""
+	for node: Node in main.outgame_view.find_children("category_*", "Button", true, false):
+		var cell: Button = node as Button
+		if not cell.get_meta("collected", false):
+			continue
+		var label: Label = cell.find_child("name", true, false) as Label
+		if label == null or not label.get_meta("fits", false) or label.get_line_count() > AlbumScreen.NAME_LINES:
+			album_names_problem = "%s does not fit" % cell.name
+			return false
+		if label.size.x + 0.5 < AlbumScreen.NAME_MIN_WIDTH:
+			album_names_problem = "%s name room %.1f is below %.1f" % [cell.name, label.size.x, AlbumScreen.NAME_MIN_WIDTH]
+			return false
+	return true
+
+
+## 데이터 초기화 첫 확인의 꼬리표 글.
+func erased_items() -> Array:
+	var items: Array = []
+	for label: Node in main.outgame_popup.find_child("erased", true, false).find_children("*", "Label", true, false):
+		items.append((label as Label).text)
+	return items
+
 
 ## 타이틀의 오류 상태(SCR-001): 공통 저장을 읽지 못하면 막대 대신 문구와 다시 시도가 보이고, 고친 뒤 다시 시도하면 준비된다.
 func title_error_retry() -> void:
@@ -964,12 +1137,13 @@ func title_error_retry() -> void:
 func live_services_offline() -> void:
 	d.begin("live-services-offline", ["startup", "ad_placements", "observability", "tutorial"])
 	await d.unmount(main)
+	var paths: SavePaths = SavePaths.under(save_dir, "live")
 	main = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
-	main.state = State.new(save_dir + "/live.json")
+	main.state = State.new(paths.state)
 	main.device_locale = "en-US"
-	main.game_services.store = FileStore.new(save_dir + "/live-progress.json")
+	main.game_services.store = FileStore.new(paths.progress)
 	main.game_services.clock = clock
-	main.use_live_services(save_dir + "/live-services")
+	main.use_live_services(paths.services)
 	_hook_os(main)
 	pilot.main = main
 	await d.mount(main)

@@ -1,6 +1,6 @@
 extends SceneTree
 ## 분석 어댑터 검사: 이름과 길이 제한, 모든 이벤트에 붙는 값, 25개 묶음, 보내지 않는 조건(설정, 동의, 측정 값),
-## 대기열 상한과 72시간 만료, 전송 실패와 다시 시도, 기기 저장과 다음 실행, 실행 시작 이벤트.
+## 대기열 상한과 72시간 만료, 전송 실패와 다시 시도, 기기 저장과 다음 실행, 실행 시작 이벤트, 데이터 초기화.
 ## 전송과 파일, 시계는 메모리 안의 대역으로 바꿔 끼운다. 네트워크를 쓰지 않는다.
 
 const Events := preload("res://game/adapters/fa_ga4_events.gd")
@@ -102,6 +102,7 @@ func _initialize() -> void:
 	_section("전송 실패와 다시 시도", _failures)
 	_section("기기 저장과 다음 실행", _restart)
 	_section("실행 시작 이벤트", _sessions)
+	_section("데이터 초기화", _forget_device)
 	_section("공통 흐름의 분석 선택", _preference)
 	_section("메모리 기록 대역", _memory_double)
 	_section("실제 파일 저장", _real_files)
@@ -588,6 +589,43 @@ func _sessions() -> bool:
 	return true
 
 
+## 설정의 데이터 초기화: 식별자 파일과 대기열을 지우고, 다음 전송은 새 식별자의 첫 실행으로 시작한다.
+func _forget_device() -> bool:
+	var rig: Rig = _rig()
+	var analytics: Analytics = _started(rig)
+	var old_client: String = rig.files.read(Analytics.CLIENT_FILE)["client_id"]
+	analytics.log_event("level_start", {"level": 4})
+	analytics.flush()
+	var late: Callable = rig.transport.waiting[0]
+	analytics.log_event("level_end", {"level": 4, "success": true})
+	analytics.advance(0.5)
+	_check(rig.stored().size() == 2 and rig.files.read(Analytics.CLIENT_FILE) != null, "초기화 전: 대기열과 식별자가 기기에 있다")
+
+	rig.now = NOON + 600.0
+	analytics.forget_device()
+	_check(rig.files.read(Analytics.CLIENT_FILE) == null and rig.files.read(Analytics.QUEUE_FILE) == null, "식별자 파일과 대기열 파일을 지운다")
+	_check(analytics.pending_count() == 0, "들고 있던 이벤트와 보내는 중인 것을 버린다")
+	late.call({"ok": false, "status": 0, "text": ""})
+	_check(analytics.pending_count() == 0 and rig.stored().is_empty(), "초기화 전에 보낸 요청의 실패가 이벤트를 되살리지 않는다")
+
+	rig.transport.requests.clear()
+	analytics.log_event("tutorial_begin", {})
+	analytics.flush()
+	var body: Dictionary = rig.transport.body(rig.transport.requests.size() - 1)
+	_check(rig.transport.names(rig.transport.requests.size() - 1) == ["app_first_run", "app_session", "tutorial_begin"], "다음 전송은 첫 실행처럼 app_first_run과 app_session부터다")
+	_check(str(body["client_id"]) != old_client and str(body["client_id"]).ends_with("." + str(int(NOON + 600.0))), "새 식별자를 초기화한 때에 만든다")
+	_check(body["events"][1]["params"]["session_index"] == 1.0 and body["events"][1]["params"]["session_id"] == str(int(NOON + 600.0)), "실행 번호는 1이고 새 실행이다")
+	_check(rig.files.read(Analytics.CLIENT_FILE)["client_id"] == body["client_id"], "새 식별자를 기기에 적는다")
+
+	var off: Rig = _rig()
+	var quiet: Analytics = off.build()
+	quiet.begin_session()
+	quiet.set_enabled(false)
+	quiet.forget_device()
+	_check(off.files.texts.is_empty() and off.transport.requests.is_empty(), "꺼진 어댑터도 초기화할 수 있고 아무것도 쓰거나 보내지 않는다")
+	return true
+
+
 func _preference() -> bool:
 	# 공통 흐름은 설정이 바뀔 때마다 port.set_enabled와 port.discard_pending을 부른다.
 	var store: RefCounted = RefCounted.new()
@@ -650,6 +688,8 @@ func _memory_double() -> bool:
 	_check(memory.count("level_start") == 2 and memory.count("share") == 0, "이름별 횟수")
 	_check(memory.last("level_start") == {"level": 4} and memory.last("share") == {}, "마지막으로 받은 값")
 	_check(memory.events[0]["params"] == {"level": 3}, "받은 뒤에 고친 값에 영향받지 않는다")
+	memory.forget_device()
+	_check(memory.forgotten == 1 and memory.events.size() == 3, "초기화 요청을 세고 받은 기록은 그대로 둔다")
 	memory.clear()
 	_check(memory.events.is_empty(), "비운다")
 	return true

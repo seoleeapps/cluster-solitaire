@@ -36,8 +36,8 @@ var config: RemoteConfig
 var _http: Http
 
 
-## storage_dir은 어댑터가 파일을 두는 폴더다. 검수는 실행마다 다른 폴더를 넘긴다.
-func _init(storage_dir: String = JsonFiles.DEFAULT_DIR) -> void:
+## storage_dir은 어댑터가 파일을 두는 폴더다(실제 앱은 FaSavePaths.services). 검수는 실행마다 다른 폴더를 넘긴다.
+func _init(storage_dir: String) -> void:
 	name = "FaLiveServices"
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var values: ServiceValues = ServiceValues.load_packed()

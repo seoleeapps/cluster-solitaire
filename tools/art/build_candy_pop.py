@@ -38,6 +38,9 @@ GOLD = "#FFD54A"
 GOLD_LIP = "#D99A00"
 RED = "#FF4B5C"
 RED_LIP = "#C92F40"
+# the red primary button for an action that cannot be undone (settings data reset) and that row's icon
+DANGER_TOP, DANGER_BOT, DANGER_LIP = "#FF8A8F", "#EE3148", "#B5253A"
+DANGER_INK = "#D6283F"
 HEART = "#F8312F"
 
 
@@ -59,20 +62,21 @@ def circle(cx, cy, r, fill, extra=""):
     return f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}" {extra}/>'
 
 
+def primary(top, mid, bot, lip, band, press=0):
+    """Primary button: body 98x58 (radius 22) with a 3px white outline, a 3px light band inside the top edge and a
+    7px lip below. The lip sits over the outline, so the outline shows on the top and the sides only."""
+    defs = (grad("g", [(0, top), (0.55, mid), (1, bot)])
+            + f'<clipPath id="c"><rect x="3" y="{3 + press}" width="98" height="58" rx="22"/></clipPath>')
+    y = press
+    body = (rect(0, y, 104, 64, 25, WHITE)
+            + rect(3, 10, 98, 58, 22, lip)
+            + rect(3, 3 + y, 98, 58, 22, band)
+            + f'<g clip-path="url(#c)">{rect(3, 6 + y, 98, 58, 22, "url(#g)")}</g>')
+    return svg(104, 68, body, defs)
+
+
 def skin_files():
     f = {}
-
-    # Primary button: body 98x58 (radius 22) with a 3px white outline, a 3px light band inside the top edge and a
-    # 7px lip below. The lip sits over the outline, so the outline shows on the top and the sides only.
-    def primary(top, mid, bot, lip, band, press=0):
-        defs = (grad("g", [(0, top), (0.55, mid), (1, bot)])
-                + f'<clipPath id="c"><rect x="3" y="{3 + press}" width="98" height="58" rx="22"/></clipPath>')
-        y = press
-        body = (rect(0, y, 104, 64, 25, WHITE)
-                + rect(3, 10, 98, 58, 22, lip)
-                + rect(3, 3 + y, 98, 58, 22, band)
-                + f'<g clip-path="url(#c)">{rect(3, 6 + y, 98, 58, 22, "url(#g)")}</g>')
-        return svg(104, 68, body, defs)
     f["ui_button_primary_normal.svg"] = primary(ORANGE_TOP, ORANGE_MID, ORANGE_BOT, ORANGE_LIP, "#FFEDB2")
     f["ui_button_primary_pressed.svg"] = primary(ORANGE_MID, ORANGE_BOT, "#F07C00", ORANGE_LIP, "#FFD08A", press=4)
     f["ui_button_primary_disabled.svg"] = primary("#D9DCEF", "#C5C9E3", "#B4B9D8", "#8F95BC", "#ECEEF8")
@@ -370,9 +374,9 @@ def switch(on, faded=False):
     return svg(52, 33, f'<g {opacity}>{body}</g>' if faded else body)
 
 
-def ink_glyph(body):
-    """A 24x24 settings-row icon: 2.2px round ink strokes (shapes may add their own fill)."""
-    stroke = f'fill="none" stroke="{INK}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"'
+def ink_glyph(body, color=INK):
+    """A 24x24 settings-row icon: 2.2px round strokes in ink or the given color (shapes may add their own fill)."""
+    stroke = f'fill="none" stroke="{color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"'
     return svg(24, 24, f'<g {stroke}>{body}</g>')
 
 
@@ -392,12 +396,21 @@ SETTINGS_GLYPHS = {
     "licenses": '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h5.5M9.5 15.5h5.5"/>',
     "chevron": '<path d="M10 6l6 6-6 6"/>',
 }
+# Rows for an action that cannot be undone draw their icon in red.
+DANGER_GLYPHS = {
+    "data_reset": '<path d="M4.5 7h15M9.5 7V4.5h5V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10.5 11v5.5M13.5 11v5.5"/>',
+}
 
 
 def outgame_files():
     f = {}
     for name, body in SETTINGS_GLYPHS.items():
         f["set_" + name + ".svg"] = ink_glyph(body)
+    for name, body in DANGER_GLYPHS.items():
+        f["set_" + name + ".svg"] = ink_glyph(body, DANGER_INK)
+    # red primary button (the skin's primary shape) for the last step of the data reset
+    f["button_danger_normal.svg"] = primary(DANGER_TOP, RED, DANGER_BOT, DANGER_LIP, "#FFD0D4")
+    f["button_danger_pressed.svg"] = primary(RED, DANGER_BOT, "#DE2A40", DANGER_LIP, "#FFB3BA", press=4)
     # title: coral category ribbon (white 3 ring, 4 lip) and the loading bar
     f["ribbon.svg"] = pill(58, 31, CORAL_TOP, CORAL_BOT, CORAL_LIP, ring=3)
     f["bar_track.svg"] = svg(48, 18, rect(0, 0, 48, 18, 9, NAVY, 'fill-opacity="0.5"') + rect(1, 1, 46, 16, 8, "none", f'stroke="{WHITE}" stroke-opacity="0.5" stroke-width="2"'))

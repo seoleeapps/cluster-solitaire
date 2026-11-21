@@ -5,12 +5,11 @@ extends RefCounted
 
 const Store := preload("res://addons/seorilabs_platform/core/atomic_json_store.gd")
 
-const DEFAULT_DIR := "user://services"
-
 var _dir: String
 
 
-func _init(dir: String = DEFAULT_DIR) -> void:
+## dir은 파일을 두는 폴더다. 실제 앱의 자리는 FaSavePaths.services다.
+func _init(dir: String) -> void:
 	_dir = dir
 
 

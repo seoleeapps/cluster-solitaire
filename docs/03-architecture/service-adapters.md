@@ -78,6 +78,7 @@
 |---|---|
 | `log_event(name, params)` | 포트의 함수 |
 | `set_enabled(enabled) -> bool`, `discard_pending()` | 공통 흐름의 분석 선택(`analytics_preference.gd`)이 부르는 함수. 그 `port` 자리에 그대로 끼운다 |
+| `forget_device()` | 포트의 함수. 데이터 초기화에서 식별자 파일과 대기열을 지우고 처음 설치한 것처럼 다시 시작한다 |
 | `begin_session()`, `advance(seconds)`, `flush()` | `FaLiveServices`가 부른다 |
 | `pending_count()` | 아직 보내지 않은 이벤트 수(검수용) |
 
@@ -96,7 +97,7 @@
 
 ## 기기에 두는 파일
 
-`user://services/` 아래에 둔다. 제품 저장 파일과 공통 흐름의 저장 파일과는 따로다.
+`user://services/`(`FaSavePaths.services`) 아래에 둔다. 제품 저장 파일과 공통 흐름의 저장 파일과는 따로다. 설정의 데이터 초기화는 `FaGa4Analytics.forget_device()`로 분석의 두 파일을 지우고 메모리의 식별자와 대기열도 버린다. 다음에 보낼 수 있게 되면 새 식별자를 만들고 `app_first_run`부터 다시 보낸다. 원격 설정 캐시는 기록이 아니어서 남긴다.
 
 | 파일 | 내용 | 쓰는 때 |
 |---|---|---|
@@ -124,7 +125,7 @@ AdMob 앱 ID와 광고 단위, GA4 측정 값, 원격 설정 주소는 저장소
 
 - 광고 중 소리: 플레이 화면이 광고를 보여 달라고 할 때 음악을 멈추고 결과를 받으면 되돌린다. 광고 어댑터의 `presenting_changed`는 화면 쪽에서 쓰지 않는다(프로브만 순서를 본다). `FaLiveServices`가 넘겨주던 `ad_presenting_changed`, `ad_availability_changed`, `consent_changed`, `session_restarted` 신호는 없앴다. 동의 변화는 광고 포트(`FaAdsPort`)의 `consent_changed`로 받는다.
 - 새 실행 판단: `FaLiveServices`는 더 이상 백그라운드 시간을 재지 않는다. bootstrap 한곳에서 판단하고 `begin_session()`을 부른다.
-- `app_first_run`, `app_session`: 분석 어댑터만 보낸다. 03 문서의 타이틀 분석 `app_open`은 같은 시점의 `app_session`과 겹쳐 보내지 않고, 타이틀이 준비되는 데 걸린 시간은 `title_ready`(`ms`)로 한 번 보낸다. 홈의 `screen_view`는 웹 스트림이 받지 않는 예약 이름이라 보내지 않는다.
+- `app_first_run`, `app_session`: 분석 어댑터만 보낸다. `app_open`은 같은 시점의 `app_session`과 겹쳐 보내지 않고, 타이틀이 준비되는 데 걸린 시간은 `title_ready`(`ms`)로 실행마다 한 번 보낸다. 홈의 `screen_view`는 웹 스트림이 받지 않는 예약 이름이라 보내지 않는다(DEC-025).
 
 개발 PC와 headless에서는 SDK가 없어 `consent_settled()`가 곧바로 참이고 광고는 준비되지 않는다. 여정의 `live-services-offline` 시나리오가 이 기본 구성으로 시작 장면을 띄워 확인한다.
 

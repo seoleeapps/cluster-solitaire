@@ -13,8 +13,10 @@ extends "res://addons/seorilabs_game/flow/outgame_main.gd"
 ##   광고 중 음악 멈춤: 플레이 화면이 광고를 보여 달라고 할 때 멈추고 결과를 받으면 되돌린다(어느 광고 포트에서나 같은 길).
 ##   앱 복귀 때 새 실행: 이 장면의 _notification이 시계 포트로 판단하고 FaSession과 FaLiveServices의 begin_session을 부른다.
 ##   app_first_run과 app_session: 분석 어댑터만 보낸다.
+##   저장 파일의 자리: FaSavePaths. 데이터 초기화(erase_all_data)는 지금 쓰는 저장 객체에서 자리를 읽어 지운다.
 
 const GameServices := preload("res://game/bootstrap/fa_services.gd")
+const SavePaths := preload("res://game/bootstrap/fa_save_paths.gd")
 const Session := preload("res://game/bootstrap/fa_session.gd")
 const LiveServices := preload("res://game/adapters/fa_live_services.gd")
 const PlayScreen := preload("res://game/features/play/play_screen.tscn")
@@ -27,6 +29,7 @@ const ShopScreen := preload("res://game/features/outgame/shop_screen.gd")
 const InboxScreen := preload("res://game/features/outgame/inbox_screen.gd")
 const LicensesScreen := preload("res://game/features/outgame/licenses_screen.gd")
 const AttendancePopup := preload("res://game/features/outgame/attendance_popup.gd")
+const ResetPopup := preload("res://game/features/outgame/reset_popup.gd")
 const Backdrop := preload("res://game/features/shared/fa_backdrop.gd")
 const Art := preload("res://game/features/shared/fa_art.gd")
 const Fonts := preload("res://game/features/shared/fa_fonts.gd")
@@ -62,6 +65,8 @@ const SWITCH_ICONS := [["checked", "switch_on"], ["unchecked", "switch_off"], ["
 const BOOSTER_ART := {Economy.BOOSTER_HINT: "gift_hint", Economy.BOOSTER_UNDO: "gift_undo", Economy.BOOSTER_SLOT: "gift_slot"}
 
 var game_services: GameServices
+## 실제 앱의 저장 자리(user:// 아래). 여정은 격리 폴더의 자리로 state와 game_services를 직접 만들어 끼운다.
+var save_paths: SavePaths
 ## 실제 서비스 어댑터. 여정이 대역만 끼우면 null이다.
 var live: LiveServices
 var session: Session
@@ -100,9 +105,10 @@ func _init() -> void:
 	game_title_ko = product.name
 	home_profile = product.homeProfile
 	config.appId = product.id
-	state = State.new("user://" + str(product.id) + ".json")
+	save_paths = SavePaths.under(SavePaths.DEVICE_ROOT, str(product.id))
+	state = State.new(save_paths.state)
 	skin_dir = SKIN
-	game_services = GameServices.local("user://" + str(product.id) + "-progress.json")
+	game_services = GameServices.local(save_paths.progress)
 	use_live_services()
 	launch_game = _launch_play
 	resource_provider = func() -> int: return session.player.coins() if session != null else 0
@@ -115,12 +121,12 @@ func _init() -> void:
 	open_url = func(url: String) -> void: OS.shell_open(url)
 
 
-## 실제 광고, 분석, 원격 설정 어댑터를 만들어 포트 묶음에 끼운다. storage_dir은 어댑터가 파일을 두는 폴더(비우면 기본)다.
+## 실제 광고, 분석, 원격 설정 어댑터를 만들어 포트 묶음에 끼운다. storage_dir은 어댑터가 파일을 두는 폴더(비우면 save_paths.services)다.
 ## 개발 PC와 headless에서는 광고가 준비되지 않은 것으로, 분석과 원격 설정은 꺼진 것으로 동작하고 네트워크를 쓰지 않는다.
 func use_live_services(storage_dir: String = "") -> void:
 	if live != null:
 		live.free()
-	live = LiveServices.new() if storage_dir.is_empty() else LiveServices.new(storage_dir)
+	live = LiveServices.new(save_paths.services if storage_dir.is_empty() else storage_dir)
 	game_services.ads = live.ads
 	game_services.analytics = live.analytics
 	game_services.config = live.config
@@ -255,7 +261,7 @@ func _on_consent_wait_over() -> void:
 		_title()
 
 
-## 공통 설정 화면에 개인정보처리방침, 개인정보 선택(동의 지역에서만), 오픈소스 고지를 더한다.
+## 공통 설정 화면에 개인정보처리방침, 개인정보 선택(동의 지역에서만), 오픈소스 고지, 데이터 초기화(맨 아래, 빨간 글자)를 더한다.
 func _settings() -> void:
 	super._settings()
 	var language: Control = content.find_child("language", true, false) as Control
@@ -270,8 +276,12 @@ func _settings() -> void:
 	if game_services.ads.privacy_choice_required():
 		_button(tr_text("Privacy choices", "개인정보 선택"), game_services.ads.open_privacy_choice, box).name = "privacy_choice"
 	_button(tr_text("Open-source notices", "오픈소스 고지"), func() -> void: _open("licenses"), box).name = "licenses"
+	var reset: Button = _button(tr_text("Reset game data", "데이터 초기화"), open_data_reset, box)
+	reset.name = "data_reset"
 	box.move_child(version, box.get_child_count() - 1)
 	_list_rows(box)
+	for color: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
+		reset.add_theme_color_override(color, Ui.DANGER_INK)
 
 
 ## 설정 목록을 제품의 목록 줄로 바꾼다: 왼쪽에 그림, 글자는 왼쪽 정렬, 다른 화면으로 가는 줄은 오른쪽에 꺾쇠.
@@ -306,6 +316,50 @@ func _on_state_committed() -> void:
 		if not _settings_seen.is_empty() and settings.has(key) and _settings_seen.get(key) != settings[key]:
 			game_services.analytics.log_event("settings_change", {"key": key, "value": str(settings[key])})
 	_settings_seen = settings.duplicate()
+
+
+# =====================================================================
+# 데이터 초기화
+# =====================================================================
+
+## 설정의 데이터 초기화 줄: 두 번 확인하는 창을 띄운다(ResetPopup).
+func open_data_reset() -> void:
+	show_popup(ResetPopup.build(self))
+
+
+## 이 기기의 기록을 모두 지우고 처음 실행한 것처럼 타이틀부터 다시 시작한다. 확인 창의 마지막 단계가 부른다.
+## 지우는 것: 제품 저장과 백업(저장 포트), 공통 흐름의 상태 저장과 분석 끄기 표식(설정, 튜토리얼, 우편, 동의 버전),
+## 분석 식별자와 대기열(분석 포트). 설정은 기본값으로 돌아가고 분석 허용도 기본(켬)이다.
+## 광고 동의(UMP)는 SDK가 기억하므로 건드리지 않고, 원격 설정 캐시는 기록이 아니므로 둔다.
+func erase_all_data() -> void:
+	var popup: Control = outgame_popup
+	if popup != null and is_instance_valid(popup) and popup.state != "closed":
+		popup.close()
+		await popup.closed
+	_close_play()
+	_close_outgame_popup()
+	session = null
+	var erased: bool = game_services.store.erase()
+	game_services.analytics.forget_device()
+	erased = SavePaths.erase_state(state.path) and erased
+	if not erased:
+		push_error("Four Alike data could not be erased completely")
+	# 공통 흐름의 시작을 처음부터 다시 돈다: 빈 저장을 기본값으로 읽고 설정을 적용한 뒤 타이틀을 그린다.
+	navigation.clear()
+	_focus_stack.clear()
+	transient_notice = ""
+	initialized = false
+	initializing = false
+	progress = 0
+	startup_error = ""
+	_left_at = 0
+	_initialize()
+	_settings_seen = state.data.get("settings", {}).duplicate()
+	await get_tree().process_frame
+	if is_inside_tree():
+		_open_session()
+		if not erased:
+			show_toast(tr_text("Some data could not be deleted.", "일부 기록을 지우지 못했어요."), "red")
 
 
 # =====================================================================

@@ -17,6 +17,12 @@ const BUTTON_LIP := 6.0
 const BUTTON_FONT_SIZES: Array[int] = [20, 18, 16]
 const BUTTON_SECOND_LINE := 14.0
 const PRIMARY_SHADE := Color("b85a00")
+## 되돌릴 수 없는 행동(데이터 초기화): 빨간 주 버튼의 그림자, 경고 글과 설정 줄의 글자.
+const DANGER_SHADE := Color("9e1f30")
+const DANGER_INK := Color("d6283f")
+## 스킨의 주 버튼 판과 같은 9분할 여백과 안쪽 여백(skin.json의 button_primary).
+const PRIMARY_MARGINS := [26, 26, 26, 32]
+const PRIMARY_CONTENT := [20, 9, 20, 13]
 const POPUP_WIDTH := 318.0
 const DIM := Color(0.09, 0.07, 0.3, 0.62)
 const RED := Color("ff4b5c")
@@ -104,6 +110,16 @@ static func set_button_text(node: Button, text: String) -> void:
 	var label: Label = node.find_child("label", true, false) as Label
 	if label != null:
 		label.text = text
+
+
+## 주 버튼을 되돌릴 수 없는 행동의 빨간 판으로 바꾼다(모양과 눌림은 주 버튼과 같다). 누른 뒤 막아 둔 동안에도 눌린 빨간 판이다.
+static func danger(node: Button) -> void:
+	node.set_meta("danger", true)
+	for pair: Array in [["normal", "button_danger_normal"], ["hover", "button_danger_normal"], ["pressed", "button_danger_pressed"], ["disabled", "button_danger_pressed"]]:
+		node.add_theme_stylebox_override(pair[0], Art.box(Art.outgame(pair[1]), PRIMARY_MARGINS, PRIMARY_CONTENT))
+	var label: Label = node.find_child("label", true, false) as Label
+	if label != null:
+		Fonts.shade(label, DANGER_SHADE)
 
 
 ## 보상형 광고 버튼: 무엇을 얻는지와 광고 시청을 함께 적고 초록 재생 꼬리표를 붙인다.

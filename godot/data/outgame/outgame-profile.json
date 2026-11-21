@@ -64,7 +64,9 @@
         "godot/addons/seorilabs_game/flow/popup_queue.gd",
         "godot/addons/seorilabs_platform/platform_client.gd",
         "godot/addons/seorilabs_platform/core/atomic_json_store.gd",
-        "godot/game/features/outgame/licenses_screen.gd"
+        "godot/game/features/outgame/licenses_screen.gd",
+        "godot/game/features/outgame/reset_popup.gd",
+        "godot/game/bootstrap/fa_save_paths.gd"
       ]
     },
     "inbox": {
@@ -282,7 +284,9 @@
       "godot/game/adapters/fa_live_services.gd",
       "godot/game/adapters/fa_admob_ads.gd",
       "godot/game/adapters/fa_ga4_analytics.gd",
-      "godot/game/adapters/fa_remote_config.gd"
+      "godot/game/adapters/fa_remote_config.gd",
+      "godot/game/features/outgame/reset_popup.gd",
+      "godot/game/bootstrap/fa_save_paths.gd"
     ],
     "bundleLock": "common-bundle.lock.json"
   }

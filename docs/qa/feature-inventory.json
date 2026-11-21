@@ -265,6 +265,20 @@
         "godot/game/features/outgame/attendance_popup.gd",
         "godot/game/core/use_cases/fa_attendance.gd"
       ]
+    },
+    {
+      "id": "data_reset",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/outgame/reset_popup.gd",
+        "godot/game/bootstrap/fa_save_paths.gd",
+        "godot/game/bootstrap/main.gd",
+        "godot/game/adapters/fa_file_store.gd",
+        "godot/game/adapters/fa_ga4_analytics.gd",
+        "godot/game/core/ports/fa_store_port.gd",
+        "godot/game/core/ports/fa_analytics_port.gd"
+      ]
     }
   ]
 }

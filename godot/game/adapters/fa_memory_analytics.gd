@@ -4,10 +4,16 @@ extends "res://game/core/ports/fa_analytics_port.gd"
 
 ## 받은 이벤트. 한 항목은 {name, params}다.
 var events: Array[Dictionary] = []
+## forget_device()를 받은 횟수(데이터 초기화). 받은 이벤트 기록은 지우지 않는다.
+var forgotten: int = 0
 
 
 func log_event(name: String, params: Dictionary) -> void:
 	events.append({"name": name, "params": params.duplicate(true)})
+
+
+func forget_device() -> void:
+	forgotten += 1
 
 
 ## 받은 이벤트 이름(받은 순서).

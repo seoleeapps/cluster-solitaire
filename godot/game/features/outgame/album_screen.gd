@@ -2,6 +2,8 @@ extends VBoxContainer
 ## 도감(SCR-009). 위에 모은 범주 수와 전체 수, 다음 달성 보상까지 남은 수. 대분류별 묶음 아래 범주 칸이 4열로 놓인다.
 ## 모은 범주는 대표 아이콘과 이름, 못 모은 범주는 물음표 칸이다. 범주를 누르면 본 카드가 채워진 상세가 열린다(못 본 카드는 윤곽만).
 ## 목록은 칸 위를 밀어도 스크롤된다(칸은 입력을 목록에 넘긴다).
+## 칸의 범주 이름은 두 줄까지다. 한국어는 띄어쓰기에서만 줄을 바꾸고, 세 줄이 되거나 한 낱말이 칸을 넘으면 글자를 줄인다(fit_name).
+## 영어는 그래도 넘치면 서체의 폭을 좁힌다.
 
 const Art := preload("res://game/features/shared/fa_art.gd")
 const Fonts := preload("res://game/features/shared/fa_fonts.gd")
@@ -13,6 +15,15 @@ const COLUMNS := 4
 const GAP := 8
 const CELL_HEIGHT := 92.0
 const ICON := 40.0
+## 칸 안에서 이름 양옆에 남기는 여백.
+const NAME_PAD := 3.0
+## 범주 이름의 글자 크기(앞에서부터 해 본다)와 줄 수.
+const NAME_SIZES: Array[int] = [12, 11, 10]
+const NAME_LINES := 2
+## 영어 이름이 칸에 안 들어가면 Fredoka의 글자 폭(100이 기본)을 이 순서로 좁혀 본다(카드 이름과 같은 단계). 한국어는 기본 폭만 쓴다.
+const NAME_STRETCHES: Array[int] = [100, 90, 80, 75]
+## 가장 좁은 화면(폭 360)의 칸에서 이름이 쓸 수 있는 폭. 프로브가 모든 범주 이름을 이 폭에 넣어 본다.
+const NAME_MIN_WIDTH := 61.0
 const MUTED := Color("8a8db5")
 ## 대분류 이름(콘텐츠의 domain).
 const DOMAINS := {
@@ -169,12 +180,23 @@ func _cell(category: String) -> Control:
 		var icon: TextureRect = Ui.card_icon(_session.catalog.item_icon(face), ICON)
 		icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		column.add_child(icon)
-		var label: Label = Fonts.text(_session.catalog.category_name(category, host.language()), Fonts.label(host.language()), 12, Fonts.INK)
+		var language: String = host.language()
+		var label: Label = Fonts.text("", Fonts.label(language), NAME_SIZES[0], Fonts.INK)
+		label.name = "name"
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.max_lines_visible = 2
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		label.max_lines_visible = NAME_LINES
 		label.add_theme_constant_override("line_spacing", -3)
 		column.add_child(label)
+		var display_name: String = _session.catalog.category_name(category, language)
+		var place: Callable = func() -> void:
+			var fit: Dictionary = fit_name(display_name, language, cell.size.x - NAME_PAD * 2.0)
+			label.text = fit["text"]
+			label.add_theme_font_override("font", Fonts.label(language, fit["stretch"]))
+			label.add_theme_font_size_override("font_size", fit["size"])
+			label.set_meta("fits", fit["fits"])
+		cell.resized.connect(place)
+		place.call()
 		cell.pressed.connect(open_detail.bind(category))
 	else:
 		var mark: Label = Fonts.text("?", Fonts.display(700), 26, Color("b4b9d8"))
@@ -183,6 +205,27 @@ func _cell(category: String) -> Control:
 		cell.pressed.connect(func() -> void: host.show_toast(_t("Solve a board with this category to collect it", "이 범주를 판에서 묶으면 모여요")))
 	cell.button_down.connect(Juice.press_punch.bind(cell, 0.95, 0.1))
 	return cell
+
+
+## 범주 이름을 폭 width에 넣는 방법: {fits, size, stretch, lines, text}. 큰 글자부터 해 보고 두 줄 안에 들어가며 한 줄도 폭을
+## 넘지 않는 첫 크기를 고른다. 영어는 기본 폭에서 안 되면 좁은 폭으로 다시 해 본다. 한국어는 한글 사이에 낱말 이음표를
+## 넣어(FaFonts.keep_words) 띄어쓰기에서만 줄을 바꾼다. 어느 것으로도 안 되면 fits가 false이고 가장 작은 글자, 가장 좁은 폭이다.
+static func fit_name(display_name: String, language: String, width: float) -> Dictionary:
+	var text: String = Fonts.keep_words(display_name) if language == "ko" else display_name
+	var stretches: Array[int] = NAME_STRETCHES.slice(0, 1) if language == "ko" else NAME_STRETCHES
+	for stretch: int in stretches:
+		var font: Font = Fonts.label(language, stretch)
+		for font_size: int in NAME_SIZES:
+			var paragraph := TextParagraph.new()
+			paragraph.width = width
+			paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND
+			paragraph.add_string(text, font, font_size)
+			var widest: float = 0.0
+			for line: int in paragraph.get_line_count():
+				widest = maxf(widest, paragraph.get_line_width(line))
+			if paragraph.get_line_count() <= NAME_LINES and widest <= width + 0.5:
+				return {"fits": true, "size": font_size, "stretch": stretch, "lines": paragraph.get_line_count(), "text": text}
+	return {"fits": false, "size": NAME_SIZES.back(), "stretch": stretches.back(), "lines": NAME_LINES, "text": text}
 
 
 ## 범주 상세 팝업: 그 범주의 카드 가운데 본 카드는 채우고, 못 본 카드는 윤곽만 그린다.
