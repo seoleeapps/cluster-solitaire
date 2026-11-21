@@ -274,13 +274,14 @@ func _clear(title: String) -> void:
 		content.remove_child(child)
 		child.queue_free()
 	backing.visible = screen not in ["title", "home"]
-	if landscape:
-		# 내용은 프레임 그림의 테두리 안쪽(backing 여백 12 + 스킨 content 여백)보다 안에 둔다. 높이 320에서 16px만 띄우면 하단 테두리와 겹친다.
-		var frame: StyleBox = backing.get_theme_stylebox("panel")
-		var sides := {"left": SIDE_LEFT, "right": SIDE_RIGHT, "top": SIDE_TOP, "bottom": SIDE_BOTTOM}
-		for side in sides:
-			var inset := maxf(16 * _ui_scale(), 12 + frame.get_content_margin(sides[side]))
-			_content_margin.add_theme_constant_override("margin_" + side, 0 if screen in ["title", "home"] else roundi(inset))
+	# 모달 화면의 내용은 프레임 그림의 테두리 안쪽(backing 여백 12 + 스킨 content 여백)보다 안에 둔다. 그린 스킨은 테두리 띠가 두껍다.
+	# 타이틀·홈은 프레임이 없으므로 기본 여백(가로 0, 세로 28/12|26)을 쓴다.
+	var frame: StyleBox = backing.get_theme_stylebox("panel")
+	var sides := {"left": SIDE_LEFT, "right": SIDE_RIGHT, "top": SIDE_TOP, "bottom": SIDE_BOTTOM}
+	for side in sides:
+		var base := 0.0 if landscape else (28.0 if side in ["left", "right"] else (12.0 if size.y < 500 else 26.0))
+		var inset := base if screen in ["title", "home"] else maxf(maxf(base, 16 * _ui_scale()), 12 + frame.get_content_margin(sides[side]))
+		_content_margin.add_theme_constant_override("margin_" + side, roundi(inset))
 	background.visible = home_profile == "hero" or screen != "home"
 	if screen in ["title", "home"]:
 		return
@@ -296,14 +297,14 @@ func _clear(title: String) -> void:
 	content.add_child(top)
 	var back := _button("‹", _back, top)
 	back.name = "back"
-	back.custom_minimum_size.x = 56 * _ui_scale() if landscape else 52
+	back.custom_minimum_size.x = 56 * _ui_scale() if landscape else (44 if size.x < 360 else 52)
 	back.size_flags_horizontal = Control.SIZE_FILL
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	top.add_child(header)
 	var close := _button("×", _close, top)
 	close.name = "close"
-	close.custom_minimum_size.x = 56 * _ui_scale() if landscape else 52
+	close.custom_minimum_size.x = 56 * _ui_scale() if landscape else (44 if size.x < 360 else 52)
 	close.size_flags_horizontal = Control.SIZE_FILL
 
 func _label(text: String, size: int = 16) -> Label:
@@ -317,7 +318,9 @@ func _label(text: String, size: int = 16) -> Label:
 func _ui_scale() -> float:
 	# A 1280x720 canvas is reduced to 568x320 on small landscape screens.
 	# Scale modal controls too, so their 56px targets and 16px text survive that reduction.
-	return maxf(1.0, self.size.y / 320.0) if landscape else 1.0
+	# 너비 기준(568)도 함께 본다. 가로 전용 게임이 세로·4:3 창(웹 세로 화면)에 뜨면 높이만으로는 2.6배가 되어
+	# 제목이 1425px 높이로 부풀고 버튼이 화면 밖으로 밀렸다. 16:9 이상 가로 화면에서는 값이 같다.
+	return maxf(1.0, minf(self.size.x / 568.0, self.size.y / 320.0)) if landscape else 1.0
 
 func _ui_font_size(value: int) -> int:
 	var larger: bool = not state.data.is_empty() and state.data.get("settings", {}).get("large_text", false)
@@ -341,6 +344,7 @@ func _button(text: String, action: Callable, parent: Node = null, primary: bool 
 	return button
 
 ## 홈 재화 칩. resource_provider가 정수를 주면 카운트업 값으로, 문자열을 주면 그대로 표시하고, 없으면 코인 수를 쓴다.
+## 문자열에 재화가 여럿이면 재화 사이를 두 칸 이상의 공백으로 나눈다("★ 10    🎟 2"). 좁은 가로 캠프 홈은 재화 단위로 줄을 바꾼다.
 func _currency_chip(parent: Node) -> Control:
 	var chip := CurrencyChip.instantiate()
 	chip.name = "coins"
@@ -526,7 +530,7 @@ func _home() -> void:
 		return
 	var hud := HBoxContainer.new()
 	content.add_child(hud)
-	_currency_chip(hud)
+	Juice.float_loop(_currency_chip(hud))
 	var hud_space := Control.new()
 	hud_space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hud_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -557,9 +561,18 @@ func _home() -> void:
 		content.add_child(hero)
 	var target := _label(tr_text(home_text.destination[0], home_text.destination[1]), 16)
 	var goal := PanelContainer.new()
+	# 한 줄 띠라 두꺼운 패널 테두리 대신 칩 판(얇은 알약)을 쓴다.
+	goal.theme_type_variation = &"ChipPanel"
+	# 칩 판은 어두운 가죽이라 목적지 글자는 밝은 색에 외곽선을 둔다.
+	target.add_theme_color_override("font_color", Color("fff7df"))
+	target.add_theme_color_override("font_outline_color", Color("3a2a16"))
+	target.add_theme_constant_override("outline_size", 3)
 	content.add_child(goal)
 	goal.add_child(target)
-	_button(tr_text(home_text.action[0], home_text.action[1]), func() -> void: _open("play"), null, true).name = "play"
+	var play_full := _button(tr_text(home_text.action[0], home_text.action[1]), func() -> void: _open("play"), null, true)
+	play_full.name = "play"
+	Juice.idle_pulse(play_full)
+	Juice.shine(play_full)
 	var nav := HBoxContainer.new()
 	content.add_child(nav)
 	if commerce.available():
@@ -571,7 +584,7 @@ func _compact_home() -> void:
 	background.visible = false
 	var hud := HBoxContainer.new()
 	content.add_child(hud)
-	_currency_chip(hud)
+	Juice.float_loop(_currency_chip(hud))
 	var hud_space := Control.new()
 	hud_space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hud_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -600,7 +613,11 @@ func _compact_home() -> void:
 	actions.add_theme_constant_override("separation", 6)
 	split.add_child(actions)
 	actions.add_child(_label(tr_text(home_text.destination[0], home_text.destination[1]), 18))
-	_button(tr_text(home_text.action[0], home_text.action[1]), func() -> void: _open("play"), actions, true).name = "play"
+	var play := _button(tr_text(home_text.action[0], home_text.action[1]), func() -> void: _open("play"), actions, true)
+	play.name = "play"
+	# 상시 모션: 주 행동이 숨 쉬고 하이라이트가 지나간다(정지 화면이 앱처럼 보이는 것을 막는다).
+	Juice.idle_pulse(play)
+	Juice.shine(play)
 	if home_actions.is_valid(): home_actions.call(actions)
 	var nav := HBoxContainer.new()
 	actions.add_child(nav)
@@ -740,9 +757,7 @@ func _draw_support() -> void:
 	value.text = support.code if not support.code.is_empty() else tr_text("Checking…", "확인 중…") if support.status == "checking" else "—"
 	value.add_theme_font_override("font", _variable_font("res://addons/seorilabs_game/fonts/NotoSansMono.ttf", 500))
 	value.add_theme_font_size_override("font_size", _ui_font_size(21))
-	value.add_theme_color_override("font_uneditable_color", Color(palette.text))
-	value.add_theme_color_override("font_color", Color(palette.text))
-	value.add_theme_stylebox_override("read_only", _skin(Color("fffdf3"), Color("7e9b91")))
+	# 입력란 판과 글자색은 스킨 테마(LineEdit read_only = panel 텍스처, font_uneditable_color = skin.text)가 정한다. 고정 색을 칠하지 않는다.
 	value.custom_minimum_size.y = 56 * _ui_scale() if landscape else 54
 	box.add_child(value)
 	var description := tr_text("An identifier for customer support, not a password.", "고객지원에서 사용하는 식별코드입니다. 비밀번호가 아닙니다.")
@@ -908,7 +923,8 @@ func _rank_row(row: Dictionary, self_row: bool = false) -> PanelContainer:
 	var card := PanelContainer.new()
 	card.mouse_filter = Control.MOUSE_FILTER_PASS
 	card.custom_minimum_size.y = 48
-	card.add_theme_stylebox_override("panel", _skin(Color("e5ebd2") if self_row or row.get("isSelf", false) else Color(palette.panel), Color("b4c4a0") if self_row else Color("e1e3d1"), 8))
+	# 내 줄은 칩 판, 나머지는 기본 판으로 스킨 테마가 그린다.
+	card.theme_type_variation = &"ChipPanel" if self_row or row.get("isSelf", false) else &"RowPanel"
 	var line := HBoxContainer.new()
 	line.mouse_filter = Control.MOUSE_FILTER_PASS
 	line.add_theme_constant_override("separation", 7)
@@ -923,6 +939,13 @@ func _rank_row(row: Dictionary, self_row: bool = false) -> PanelContainer:
 	points.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	points.custom_minimum_size.x = 80
 	line.add_child(points)
+	# 내 줄(어두운 가죽 칩 판)의 글자는 밝은 색에 외곽선을 둔다.
+	if self_row or row.get("isSelf", false):
+		for node in line.get_children():
+			if node is Label:
+				node.add_theme_color_override("font_color", Color("fff7df"))
+				node.add_theme_color_override("font_outline_color", Color("3a2a16"))
+				node.add_theme_constant_override("outline_size", 3)
 	return card
 
 func _show_error(code: String) -> void:
