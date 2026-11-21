@@ -141,13 +141,21 @@ func _violations(content: Content, level: Dictionary, tier: int) -> Array:
 				if categories.has(owner):
 					also_inside = true
 				else:
-					outside[owner] = outside.get(owner, 0) + 1
+					if not outside.has(owner):
+						outside[owner] = {}
+					outside[owner][group["cat"]] = outside[owner].get(group["cat"], 0) + 1
 			if also_inside:
 				confusable += 1
 	if confusable > rule["confusable_max"]:
 		broken.append("confusable")
-	if not outside.is_empty() and outside.values().max() > rule["outside_max"]:
-		broken.append("outside")
+	for owner: String in outside:
+		var per_group: Array = outside[owner].values()
+		var counted: int = 0
+		if per_group.size() >= 2:
+			for in_group: int in per_group:
+				counted += in_group
+		if counted > Difficulty.outside_limit(tier, content.category_domain(owner)) and not broken.has("outside"):
+			broken.append("outside")
 	if Generator.count_groupings(content, categories, cards, 2) != 1:
 		broken.append("uniqueness")
 
@@ -194,14 +202,20 @@ func _recent() -> bool:
 	for group: Dictionary in second["level"]["groups"]:
 		_check(not used.has(group["cat"]), "최근 쓴 범주 %s는 다시 쓰지 않는다" % group["cat"])
 
+	# 일일 도전처럼 범주 84개(21일분)를 뺀 채로도 범주를 몇 번 고르지 않고 만들어야 한다.
+	# 범주 넷을 한꺼번에 뽑고 맞지 않으면 통째로 버리는 방식은 이 조건에서 평균 수십 번을 다시 뽑는다.
 	var recent: Array = Array(_content.category_ids()).slice(0, 84)
-	for seed_value: int in range(1, 11):
-		var result: Dictionary = Generator.generate(_content, seed_value, 3, recent)
-		var clean: bool = result["ok"]
+	var most_attempts: int = 0
+	for seed_value: int in range(1, 61):
+		var tier: int = 3 if seed_value % 3 != 0 else 4
+		var result: Dictionary = Generator.generate(_content, seed_value, tier, recent)
+		var clean: bool = result["ok"] and _violations(_content, result["level"], tier).is_empty()
 		if clean:
+			most_attempts = maxi(most_attempts, result["attempts"])
 			for group: Dictionary in result["level"]["groups"]:
 				clean = clean and not recent.has(group["cat"])
-		_check(clean, "범주 84개를 빼도 만든다(시드 %d)" % seed_value)
+		_check(clean, "범주 84개를 빼도 등급 조건대로 만든다(시드 %d)" % seed_value)
+	_check(most_attempts <= 5, "범주 84개를 뺀 채로도 범주를 다섯 번 넘게 고르지 않는다(가장 많이 %d번)" % most_attempts)
 	_check(Generator.generate(_content, 1, 3, Array(_content.category_ids())) == {"ok": false, "error": "no_categories"}, "남은 범주가 없으면 오류")
 	return true
 
@@ -216,7 +230,8 @@ func _small_items() -> Dictionary:
 
 
 ## 범주마다 소속이 4장뿐인 작은 콘텐츠. also에 범주별로 더할 카드를 준다.
-func _small_content(also: Dictionary, with_extra: bool = false) -> Content:
+## extra_domain을 주면 난도 4라서 T1~T3 판에는 고를 수 없는 범주 X를 그 대분류로 더한다.
+func _small_content(also: Dictionary, extra_domain: String = "") -> Content:
 	var categories: Array = []
 	for prefix: String in ["a", "b", "c", "d"]:
 		categories.append({
@@ -224,9 +239,9 @@ func _small_content(also: Dictionary, with_extra: bool = false) -> Content:
 			"members": ["%s1" % prefix, "%s2" % prefix, "%s3" % prefix, "%s4" % prefix],
 			"also": also.get(prefix.to_upper(), []),
 		})
-	if with_extra:
+	if not extra_domain.is_empty():
 		categories.append({
-			"id": "X", "tier": 4, "domain": "domain_x", "en": "x", "ko": "x",
+			"id": "X", "tier": 4, "domain": extra_domain, "en": "x", "ko": "x",
 			"members": ["x1", "x2", "x3", "x4"], "also": also.get("X", []),
 		})
 	return Content.new(_small_items(), {"version": 1, "categories": categories})
@@ -264,17 +279,28 @@ func _confusable_limits() -> bool:
 	return true
 
 
+## 범주 X를 판 밖에 둔 채(recent로 뺀다) 만들어 본다. 만들어졌고 등급 조건을 지키면 "ok", 아니면 오류 이름이다.
+func _with_outside(also: Array, domain: String, tier: int) -> String:
+	var content: Content = _small_content({"X": also}, domain)
+	var result: Dictionary = Generator.generate(content, 9, tier, ["X"])
+	if not result["ok"]:
+		return result["error"]
+	var broken: Array = _violations(content, result["level"], tier)
+	return "ok" if broken.is_empty() else ",".join(broken)
+
+
+## 판 밖 범주의 후보는 두 묶음 이상에 걸쳐 있을 때만 센다. 한 묶음 안에만 있으면 정답 묶음과 같은 4장이라 헷갈리지 않는다.
 func _outside_limit() -> bool:
-	var three: Content = _small_content({"X": ["a1", "a2", "a3"]}, true)
-	_check(Generator.generate(three, 9, 1, [])["error"] == "exhausted", "T1은 판 밖 범주의 후보가 3장이면 만들지 않는다")
-	_check(Generator.generate(three, 9, 2, [])["error"] == "exhausted", "T2도 같다")
-	var result: Dictionary = Generator.generate(three, 9, 3, [])
-	_check(result["ok"] and _violations(three, result["level"], 3).is_empty(), "T3은 3장까지 허용한다")
-	var four: Content = _small_content({"X": ["a1", "a2", "a3", "a4"]}, true)
-	_check(Generator.generate(four, 9, 3, [])["error"] == "exhausted", "T3도 4장이면 만들지 않는다")
-	var two: Content = _small_content({"X": ["a1", "a2"]}, true)
-	result = Generator.generate(two, 9, 1, [])
-	_check(result["ok"] and _violations(two, result["level"], 1).is_empty(), "T1은 2장까지 허용한다")
+	for tier: int in [1, 2, 3, 4, 5]:
+		_check(_with_outside(["a1", "a2", "a3", "a4"], "object", tier) == "ok", "T%d: 판 밖 범주의 후보 4장이 한 묶음 안에만 있으면 만든다" % tier)
+		_check(_with_outside(["a1", "a2", "a3", "b1"], "object", tier) == "exhausted", "T%d: 두 묶음에 걸친 4장이면 만들지 않는다" % tier)
+		_check(_with_outside(["a1", "a2", "a3", "b1"], "color", tier) == "exhausted", "T%d: 색 범주라도 두 묶음에 걸친 4장이면 만들지 않는다" % tier)
+		_check(_with_outside(["a1", "b1"], "object", tier) == "ok", "T%d: 두 묶음에 걸친 2장은 만든다" % tier)
+		_check(_with_outside(["a1", "a2", "b1"], "color", tier) == "ok", "T%d: 색 범주는 두 묶음에 걸친 3장까지 만든다" % tier)
+		_check(_with_outside(["a1", "b1", "c1"], "object", tier) == ("exhausted" if tier <= 2 else "ok"), "T%d: 색이 아닌 범주가 세 묶음에 걸친 3장" % tier)
+		_check(_with_outside(["a1", "b1", "c1", "d1"], "color", tier) == "exhausted", "T%d: 네 묶음에 한 장씩 걸친 4장도 만들지 않는다" % tier)
+	_check(_with_outside(["a1", "a2", "a3"], "object", 1) == "ok", "T1: 한 묶음 안의 3장은 세지 않는다")
+	_check(_with_outside(["a1", "a2", "b1"], "object", 2) == "exhausted", "T2: 색이 아닌 범주가 두 묶음에 걸친 3장이면 만들지 않는다")
 	return true
 
 

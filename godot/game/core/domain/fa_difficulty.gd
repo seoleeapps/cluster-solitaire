@@ -20,7 +20,7 @@ const LAYOUTS := {
 ##   layouts: 쓸 수 있는 배치. f_min~f_max: 관대함 범위(양 끝 포함).
 ##   category_tier_max: 쓸 수 있는 범주 난도의 상한. domain_max: 같은 대분류에서 고를 수 있는 범주 수.
 ##   confusable_max: 판의 다른 범주로도 보일 수 있는 카드의 최대 장수.
-##   outside_max: 판에 없는 한 범주의 후보가 될 수 있는 카드의 최대 장수.
+##   outside_max: 판에 없는, 색이 아닌 한 범주의 후보가 두 묶음 이상에 걸칠 때의 최대 장수. 색 범주는 OUTSIDE_LIMIT를 쓴다.
 const TIERS := {
 	1: {"layouts": ["open"], "f_min": 0.90, "f_max": 1.0, "category_tier_max": 1,
 		"domain_max": 1, "confusable_max": 0, "outside_max": 2},
@@ -46,6 +46,12 @@ const JOURNEY_BANDS: Array[Dictionary] = [
 const DAILY_WEEKDAY_TIER := 3
 const DAILY_WEEKEND_TIER := 4
 
+## 판에 없는 범주 하나의 후보가 여러 묶음에 걸쳐 4장 모이면 그 범주로 읽히는 가짜 묶음이 생기므로, 어느 등급에서도 3장을 넘기지 않는다.
+## 후보가 한 묶음 안에만 있으면 정답 묶음과 같은 카드라 헷갈리지 않으므로 세지 않는다.
+const OUTSIDE_LIMIT := 3
+## 색 범주는 그림의 색으로 정해져 후보가 전체 카드의 9~18%다. 쉬운 등급의 더 좁은 한도를 색 범주에는 적용하지 않는다.
+const COLOR_DOMAIN := "color"
+
 
 static func layout_ids() -> Array[String]:
 	var ids: Array[String] = []
@@ -61,6 +67,12 @@ static func layout(id: String) -> Dictionary:
 ## 등급 조건. 없는 등급이면 빈 값.
 static func tier_rule(tier: int) -> Dictionary:
 	return TIERS.get(tier, {}).duplicate(true)
+
+
+## 판에 없는 범주 하나의 후보가 두 묶음 이상에 걸쳐 그 등급의 판에 들어갈 수 있는 최대 장수. domain은 그 범주의 대분류다.
+## 색 범주는 모든 등급에서 3장, 그 밖의 범주는 T1~T2에서 2장이고 T3부터 3장이다.
+static func outside_limit(tier: int, domain: String) -> int:
+	return OUTSIDE_LIMIT if domain == COLOR_DOMAIN else TIERS.get(tier, {}).get("outside_max", OUTSIDE_LIMIT)
 
 
 ## 여정 스테이지 번호(1부터)의 등급.

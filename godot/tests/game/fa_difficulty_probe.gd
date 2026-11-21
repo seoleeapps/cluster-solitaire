@@ -77,6 +77,9 @@ func _tiers() -> bool:
 	for tier: int in range(Difficulty.TIER_MIN, Difficulty.TIER_MAX + 1):
 		for id: String in Difficulty.tier_rule(tier)["layouts"]:
 			_check(Difficulty.layout(id)["groups"] == 4, "T%d의 배치 %s는 범주 4개" % [tier, id])
+		_check(Difficulty.outside_limit(tier, "color") == 3, "T%d: 판 밖 색 범주의 후보는 3장까지" % tier)
+		_check(Difficulty.outside_limit(tier, "food") == (2 if tier <= 2 else 3), "T%d: 색이 아닌 판 밖 범주의 후보 한도" % tier)
+	_check(Difficulty.OUTSIDE_LIMIT == 3 and Difficulty.COLOR_DOMAIN == "color", "판 밖 범주의 후보는 어느 등급에서도 3장을 넘지 않는다")
 	return true
 
 

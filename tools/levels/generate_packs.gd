@@ -52,10 +52,22 @@ func _run() -> bool:
 			file.store_string(text)
 			file.close()
 			print("%s: wrote %d levels (%.1f s)" % [pack["file"], pack["count"], seconds])
-		print("  category picks: %d levels took the first pick, %d needed more, most for one level %d of %d allowed" % [
-			pack["count"] - pack["retried"], pack["retried"], pack["most_attempts"], Generator.CATEGORY_ATTEMPTS,
-		])
+		_print_attempts(pack["attempts"])
 	return true
+
+
+## 범주를 고른 횟수를 등급별로 알린다. 1이면 처음 고른 범주로 만든 판이고, 상한은 Generator.CATEGORY_ATTEMPTS다.
+func _print_attempts(by_tier: Dictionary) -> void:
+	var tiers: Array = by_tier.keys()
+	tiers.sort()
+	for tier: int in tiers:
+		var counts: Array = by_tier[tier]
+		var total: int = 0
+		for count: int in counts:
+			total += count
+		print("  T%d: %d levels, category picks mean %.1f, max %d of %d allowed, first pick worked for %d" % [
+			tier, counts.size(), float(total) / counts.size(), counts.max(), Generator.CATEGORY_ATTEMPTS, counts.count(1),
+		])
 
 
 func _read_json(path: String) -> Dictionary:
@@ -64,12 +76,11 @@ func _read_json(path: String) -> Dictionary:
 
 
 ## 팩 파일의 글자. 판마다 한 줄이라 바뀐 판만 차이로 보인다. 생성에 실패하면 빈 문자열.
-## 범주를 다시 골라야 했던 판 수(retried)와 한 판에 가장 많이 고른 횟수(most_attempts)를 pack에 적는다.
+## 판마다 범주를 고른 횟수를 pack의 attempts에 등급별로 모은다.
 func _pack_text(content: Content, pack: Dictionary) -> String:
 	var lines: PackedStringArray = []
 	var history: Array[Array] = []
-	pack["retried"] = 0
-	pack["most_attempts"] = 0
+	pack["attempts"] = {}
 	for number: int in range(1, pack["count"] + 1):
 		var recent: Array = []
 		for categories: Array in history:
@@ -78,8 +89,10 @@ func _pack_text(content: Content, pack: Dictionary) -> String:
 		if not result["ok"]:
 			print("%s level %d: %s" % [pack["file"], number, result["error"]])
 			return ""
-		pack["retried"] += 1 if result["attempts"] > 1 else 0
-		pack["most_attempts"] = maxi(pack["most_attempts"], result["attempts"])
+		var tier: int = result["level"]["tier"]
+		if not pack["attempts"].has(tier):
+			pack["attempts"][tier] = []
+		pack["attempts"][tier].append(result["attempts"])
 		var used: Array = []
 		for group: Dictionary in result["level"]["groups"]:
 			used.append(group["cat"])
