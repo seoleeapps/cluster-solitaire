@@ -1,10 +1,7 @@
-# Markets
+# 마켓
 
-시장별 원장은 이 폴더에서 관리한다.
+출시 마켓은 Google Play 하나다. 등록 정보와 배포 설정은 [Google Play](google-play.md)에 적는다.
 
-## 원칙
-
-- 콘솔 값은 문서와 repo-local config에 반영한다.
-- 모르는 값은 `확정 필요`로 유지한다.
-- 제출, production promotion, AppsInToss production release는 deployment approval 이후만 수행한다.
-
+- 콘솔에서 정한 값은 이 문서와 `play-store/google-play.config.json`에 반영한다.
+- 정해지지 않은 값은 `확정 필요`로 적는다.
+- 승인된 끝 지점은 공개 출시다(결정 로그 DEC-014). 그 밖의 마켓을 더하려면 새 설계 승인이 필요하다.

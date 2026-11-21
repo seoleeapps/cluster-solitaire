@@ -11,7 +11,7 @@
 
 - 제품별 실행 원장은 `docs/`로 둔다.
 - Obsidian은 재사용 가능한 지식, 운영 노하우, 다른 프로젝트에도 적용되는 학습 내용을 보조로 기록한다.
-- 마켓/릴리스/정책/콘솔 값은 `docs/05-markets/`와 repo-local config example을 우선 갱신한다.
+- 마켓/릴리스/정책/콘솔 값은 `docs/05-markets/`와 repo-local config를 우선 갱신한다.
 
 ## Consequences
 

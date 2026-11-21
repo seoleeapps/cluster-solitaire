@@ -1,4 +1,3 @@
-# Ops
+# 운영
 
-GitHub Actions, dependency, runner 운영 문서를 관리한다.
-
+도구와 의존성 버전은 [의존성](dependencies.md)에 적는다. GitHub Actions workflow는 [workflow 문서](../06-release/ci-cd-workflows.md)에 있다.
