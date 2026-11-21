@@ -17,11 +17,11 @@
 
 ## 현재 상태
 
-광고와 동의, 분석, 원격 설정의 어댑터가 `godot/game/adapters`에 있고 시작 장면에 연결되어 있으며, 원격 설정은 GitHub Pages(`https://seoleeapps.github.io/cluster-solitaire/config.json`)에 배포되어 HTTP 200을 반환한다. Android 서명 AAB(`build/android/four-alike.aab`, versionCode 1, 1.0.0)를 빌드해 `check_aab.py`를 통과시켰고, Android Publisher API로 `en-US`·`ko-KR` 등록정보·자산과 `internal` 트랙 릴리스 `1.0.0 (1)`(`status: completed`)을 올려 재조회까지 마쳤다. 남은 관문은 실기기 확인(AND-01~08), 프로덕션 제출 및 심사·공개, 공개 후 AdMob 스토어 연결 확인이다. 출시별 상태와 근거는 [출시 원장](../../release/market-launch-state.json)에 남긴다.
+광고와 동의, 분석, 원격 설정의 어댑터가 `godot/game/adapters`에 있고 시작 장면에 연결되어 있으며, 원격 설정은 GitHub Pages(`https://seoleeapps.github.io/cluster-solitaire/config.json`)에 배포되어 HTTP 200을 반환한다. Android 서명 AAB(`build/android/four-alike.aab`, `1.0.0`, versionCode 3)를 빌드해 `check_aab.py`를 통과시켰고, Google Play 내부 테스트 설치 기준 실기기 검수(AND-01~08, [실기기 검수 기록](../07-qa/device-and01-08.md))를 마친 뒤 프로덕션 트랙 `1.0.0 (3)`을 178개 전체 국가 대상으로 제출해 `검토 중` 상태를 재조회로 확인했다. 남은 관문은 Google Play 심사 승인·자동 공개(`관리형 게시 사용 중지됨`), 스토어 공개 라이브 스모크 확인, 공개 후 AdMob 스토어 연결이다. 출시별 상태와 근거는 [출시 원장](../../release/market-launch-state.json)에 남긴다.
 
-## Play Console 등록 상태 (2026-11-21 기준)
+## Play Console 등록 상태 (2026-11-22 기준)
 
-앱은 Play Console(`Seori Apps`, 계정 ID `5547060480954653351`, 앱 ID `4975800442388222513`)에 만들어져 있고, 앱 설정 12/12와 내부 테스트 3/3(`1.0.0 (1)` 활성, `Seorilabs Testers`·`내부테스트 그룹` 선택, 참여 URL `https://play.google.com/apps/internaltest/4700231235037871892`)을 마쳤다. 프로덕션 트랙은 178개 전체 국가/지역을 타겟팅했다.
+앱은 Play Console(`Seori Apps`, 계정 ID `5547060480954653351`, 앱 ID `4975800442388222513`)에 만들어져 있고, 앱 설정 12/12와 내부 테스트 3/3(`1.0.0 (3)` 활성, `Seorilabs Testers`·`내부테스트 그룹` 선택, 참여 URL `https://play.google.com/apps/internaltest/4700231235037871892`)을 마쳤다. 프로덕션 트랙은 178개 전체 국가/지역에 `1.0.0 (3)` 전체 출시를 제출해 현재 `검토 중`이며 관리형 게시가 꺼져 있어 승인 시 자동 공개된다.
 
 | 항목 | 저장한 값 |
 |---|---|
@@ -37,7 +37,7 @@
 | 앱 카테고리와 연락처 | 게임 > 퍼즐, 위 문의 값 |
 | 스토어 등록정보 | `en-US`, `ko-KR` 제목·설명, 아이콘, 한/영 대표 이미지, 한/영 휴대전화 스크린숏 각 6장(API 재조회 완료) |
 
-비공개 테스트 12명 14일 요건은 이 계정의 Console에 나오지 않는다. 실기기 확인(AND-01~08) 통과 뒤 프로덕션 버전을 생성해 제출한다.
+비공개 테스트 12명 14일 요건은 이 계정의 Console에 나오지 않는다. 실기기 검수(AND-01~08) 통과 후 프로덕션 `1.0.0 (3)`을 검토 제출했다.
 
 ## 스토어 등록정보
 

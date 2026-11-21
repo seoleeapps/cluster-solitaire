@@ -3,7 +3,7 @@
   "app": {
     "name": "Four Alike",
     "repo": "seoleeapps/cluster-solitaire",
-    "sourceRevision": "48c506743f6914465e1b9db76cec540a4dc75388"
+    "sourceRevision": "d3cda8b5c87770395a123cdbfb17959e85c16681"
   },
   "release": {
     "version": "1.0.0",
@@ -30,21 +30,21 @@
     "candidate": {
       "status": "pass",
       "evidence": [
-        "main SHA 48c506743f6914465e1b9db76cec540a4dc75388",
-        "package com.seoleeapps.fouralike, versionName 1.0.0, versionCode 1, targetSdk 36",
+        "main SHA d3cda8b5c87770395a123cdbfb17959e85c16681",
+        "package com.seoleeapps.fouralike, versionName 1.0.0, versionCode 3, targetSdk 36",
         "Play Console app ID 4975800442388222513 on developer account 5547060480954653351"
       ],
-      "checkedAt": "2026-11-21T21:14:00+09:00",
+      "checkedAt": "2026-11-22T00:42:30+09:00",
       "blocker": null
     },
     "quality": {
       "status": "pass",
       "evidence": [
-        "npm test, check:architecture, bundle.py verify, check_monetization.sh pass on candidate",
+        "npm test (74 unit tests, 22 E2E scenarios), check:architecture, bundle.py verify, check_monetization.sh pass on d3cda8b",
         "docs/07-qa/review-rounds/round-1.md, round-2.md, round-3.md (3회 독립 검수 최종 통과)",
-        "GitHub Actions Godot Checks run on 48c506743f6914465e1b9db76cec540a4dc75388 passed"
+        "GitHub Actions Godot Checks run 44918687961 on d3cda8b5c87770395a123cdbfb17959e85c16681 passed (https://github.com/seoleeapps/cluster-solitaire/actions/runs/44918687961)"
       ],
-      "checkedAt": "2026-11-21T21:04:21+09:00",
+      "checkedAt": "2026-11-22T00:42:30+09:00",
       "blocker": null
     },
     "production_dependencies": {
@@ -70,53 +70,54 @@
   "markets": {
     "google_play": {
       "objective": "public_live",
-      "state": "processing",
+      "state": "submission",
       "identity": {
         "applicationId": "com.seoleeapps.fouralike",
         "version": "1.0.0",
-        "build": "1"
+        "build": "3"
       },
       "gates": {
         "candidate": {
           "status": "pass",
           "evidence": [
-            "com.seoleeapps.fouralike, 1.0.0 (1), SHA 48c506743f6914465e1b9db76cec540a4dc75388"
+            "com.seoleeapps.fouralike, 1.0.0 (3), SHA d3cda8b5c87770395a123cdbfb17959e85c16681"
           ],
-          "checkedAt": "2026-11-21T21:14:00+09:00",
+          "checkedAt": "2026-11-22T00:42:30+09:00",
           "blocker": null
         },
         "artifact": {
           "status": "pass",
           "evidence": [
-            "build/android/four-alike.aab sha256=9400a8db9a3f80f380e784851575eea18486d3facfc51b4abe8a2fd2631dbfde (53729944 bytes)",
-            "tools/check_aab.py ok=true, signedByUploadKey=true, targetSdk=36, minSdk=26, admobAppId=app-specific, serviceValues=present"
+            "build/android/four-alike.aab sha256=e35ea943f273a738e8ab645d6826fa0173cbc1a715c05c33951c67ced3b8a584 (53730966 bytes)",
+            "tools/check_aab.py ok=true, versionCode=3, signedByUploadKey=true, targetSdk=36, minSdk=26, admobAppId=app-specific, serviceValues=present"
           ],
-          "checkedAt": "2026-11-21T20:55:19+09:00",
+          "checkedAt": "2026-11-22T00:21:40+09:00",
           "blocker": null
         },
         "upload": {
           "status": "pass",
           "evidence": [
-            "Android Publisher API committedEditId=00253691184440934537 track=internal versionCodes=[1] status=completed",
-            "Play Console internal track readback: 1.0.0 (1) 활성, opt-in https://play.google.com/apps/internaltest/4700231235037871892"
+            "Android Publisher API committedEditId=14524307905682604647 track=internal versionCodes=[3] status=completed",
+            "Play internal track readback: 1.0.0 (3) status=completed, opt-in https://play.google.com/apps/internaltest/4700231235037871892"
           ],
-          "checkedAt": "2026-11-21T21:11:12+09:00",
+          "checkedAt": "2026-11-22T00:22:07+09:00",
           "blocker": null
         },
         "processing": {
           "status": "pass",
           "evidence": [
-            "Play Console latest bundles: versionCode 1, 1.0.0, 활성, 내부 테스터에게 제공됨"
+            "Google Play Internal Testing delivered versionCode 3 (1.0.0) cleanly to Seeker real device (2026-11-22 00:35:22)"
           ],
-          "checkedAt": "2026-11-21T21:09:39+09:00",
+          "checkedAt": "2026-11-22T00:35:22+09:00",
           "blocker": null
         },
         "qa": {
-          "status": "pending",
+          "status": "pass",
           "evidence": [
-            "Dev/rendering L3 & 3 independent review rounds passed; awaiting approved Android device checks AND-01~08 on internal test install"
+            "docs/07-qa/device-and01-08.md: Seeker (Android 16, 1200x2670), Play install com.android.vending, versionCode 3 (1.0.0), V3.0 cert SHA-256 830b571840de0fad18ac705094eea60493268a57d91c2d5c82011cd25c653b87",
+            "AND-01~04, AND-07, AND-08 PASS; AND-05 CONDITIONAL (KR IP non-EEA UMP initialized & non-EEA behavior verified); AND-06 CONDITIONAL (all 3 rewarded placements loaded/granted; 5s non-skippable Test Ad blocks early close UI); 0 crashes/errors"
           ],
-          "checkedAt": "2026-11-21T21:14:00+09:00",
+          "checkedAt": "2026-11-22T00:42:03+09:00",
           "blocker": null
         },
         "metadata": {
@@ -138,9 +139,13 @@
           "blocker": null
         },
         "submission": {
-          "status": "pending",
-          "evidence": [],
-          "checkedAt": null,
+          "status": "pass",
+          "evidence": [
+            "Play Console Publishing Overview submitted 14 changes (1.0.0 (3) full rollout, 178 countries/regions, en-US & ko-KR listings, app content & category); managed publishing disabled",
+            "Play Console tracks/production UI readback: 활성, 출시 버전 1.0.0 (3) 검토 중, 국가/지역 178개",
+            "Android Publisher API production track readback: name=1.0.0 (3), versionCodes=[3], status=completed"
+          ],
+          "checkedAt": "2026-11-22T00:54:44+09:00",
           "blocker": null
         },
         "approval": {
