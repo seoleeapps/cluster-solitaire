@@ -7,9 +7,9 @@
     "node": ">=24 <25"
   },
   "scripts": {
-    "test": "npm run -s check:generated && python3 -m unittest discover -s tools -p 'test_*.py' -v && python3 tools/check_native.py && python3 tools/check.py",
+    "test": "npm run -s check:generated && npm run -s check:levels && python3 -m unittest discover -s tools -p 'test_*.py' -v && python3 tools/check_native.py && python3 tools/check.py",
     "test:e2e": "python3 tools/check.py",
-    "test:core": "godot --headless --path godot --script res://tests/game/core_probe.gd",
+    "test:core": "python3 tools/run_probes.py",
     "test:godot": "python3 tools/check.py",
     "check:architecture": "python3 tools/check_architecture.py",
     "check:bundle": "python3 tools/bundle.py verify",
@@ -20,6 +20,8 @@
     "start": "python3 tools/run.py",
     "check:native": "python3 tools/check_native.py",
     "build:android": "python3 tools/export_native.py",
-    "check:generated": "python3 tools/content/build_content.py --check && python3 tools/art/build_candy_pop.py --check && python3 tools/audio/build_sfx.py --check && python3 tools/art/build_store_art.py --check"
+    "check:generated": "python3 tools/content/build_content.py --check && python3 tools/art/build_candy_pop.py --check && python3 tools/audio/build_sfx.py --check && python3 tools/art/build_store_art.py --check",
+    "check:levels": "python3 tools/levels/verify_packs.py",
+    "build:levels": "godot --headless --path godot --script res://../tools/levels/generate_packs.gd && python3 tools/levels/verify_packs.py"
   }
 }

@@ -52,6 +52,9 @@ func _run() -> bool:
 			file.store_string(text)
 			file.close()
 			print("%s: wrote %d levels (%.1f s)" % [pack["file"], pack["count"], seconds])
+		print("  category picks: %d levels took the first pick, %d needed more, most for one level %d of %d allowed" % [
+			pack["count"] - pack["retried"], pack["retried"], pack["most_attempts"], Generator.CATEGORY_ATTEMPTS,
+		])
 	return true
 
 
@@ -61,9 +64,12 @@ func _read_json(path: String) -> Dictionary:
 
 
 ## 팩 파일의 글자. 판마다 한 줄이라 바뀐 판만 차이로 보인다. 생성에 실패하면 빈 문자열.
+## 범주를 다시 골라야 했던 판 수(retried)와 한 판에 가장 많이 고른 횟수(most_attempts)를 pack에 적는다.
 func _pack_text(content: Content, pack: Dictionary) -> String:
 	var lines: PackedStringArray = []
 	var history: Array[Array] = []
+	pack["retried"] = 0
+	pack["most_attempts"] = 0
 	for number: int in range(1, pack["count"] + 1):
 		var recent: Array = []
 		for categories: Array in history:
@@ -72,6 +78,8 @@ func _pack_text(content: Content, pack: Dictionary) -> String:
 		if not result["ok"]:
 			print("%s level %d: %s" % [pack["file"], number, result["error"]])
 			return ""
+		pack["retried"] += 1 if result["attempts"] > 1 else 0
+		pack["most_attempts"] = maxi(pack["most_attempts"], result["attempts"])
 		var used: Array = []
 		for group: Dictionary in result["level"]["groups"]:
 			used.append(group["cat"])

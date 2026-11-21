@@ -222,9 +222,27 @@ def blocker(content, key):
     return worst
 
 
+def reuse_gaps(records):
+    """같은 범주가 다시 나오기까지 몇 판이 지났는지의 목록."""
+    last_seen = {}
+    gaps = []
+    for index, record in enumerate(records):
+        for key in record['categories']:
+            if key in last_seen:
+                gaps.append(index - last_seen[key])
+            last_seen[key] = index
+    return gaps
+
+
 def print_stats(content, records_by_pack):
+    tiers = collections.Counter(category['tier'] for category in content.categories.values())
+    print('\n콘텐츠: 카드 %d장, 범주 %d개(난도별 %s)' % (
+        len(content.items), len(content.categories), ', '.join('%d: %d' % pair for pair in sorted(tiers.items()))))
     for name, records in records_by_pack.items():
+        gaps = reuse_gaps(records)
         print('\n### %s (%d판)\n' % (name, len(records)))
+        print('같은 범주를 다시 쓰기까지의 간격: 최소 %d판, 중앙값 %d판(재사용 금지 구간은 직전 %d판)\n' % (
+            min(gaps), statistics.median(gaps), PACKS[name]['recent']))
         print('| 등급 | 판 수 | 배치 | 관대함 최소 | 중앙값 | 최대 | 다른 범주로도 보이는 카드가 든 판 |')
         print('|---|---|---|---|---|---|---|')
         for tier in sorted(TIERS):

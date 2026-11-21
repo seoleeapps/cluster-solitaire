@@ -19,7 +19,24 @@
 
 1. 표를 고친다. 새 카드는 `tools/content/rasterize_icons.py`로 아이콘을 만든다.
 2. `python3 tools/content/build_content.py`로 `godot/data/content/*.json`을 다시 만든다. `--check`는 표와 JSON이 맞는지만 본다.
-3. 표가 바뀌면 레벨 팩도 다시 만들어 검증한다. 이미 공개한 버전의 일일 도전 날짜는 바꾸지 않는다.
+3. 표가 바뀌면 레벨 팩도 다시 만들어 검증한다. 저장소 루트에서 실행한다.
+
+   ```bash
+   # 여정 600판과 일일 도전 1,100판을 다시 만들고, 참고용 Python 탐색기로 모든 판을 검사한다
+   npm run build:levels
+
+   # 위 명령을 풀어 쓰면 다음 둘이다
+   godot --headless --path godot --script res://../tools/levels/generate_packs.gd
+   python3 tools/levels/verify_packs.py
+
+   # 통계를 다시 뽑아 docs/design/2026-11-21-four-alike-launch/core-notes.md의 생성 통계에 옮긴다
+   python3 tools/levels/verify_packs.py --stats
+   ```
+
+   - `generate_packs.gd`는 `godot/data/levels/journey.json`과 `daily.json`을 다시 쓴다. 판을 만들지 못하면 몇 번째 판에서 멈췄는지 알리고 종료 코드 1로 끝난다.
+   - `verify_packs.py`는 모든 판의 풀이 가능 여부, 관대함, 묶는 방법의 유일성, 등급의 범주 조건을 다시 본다. 불일치가 있으면 종료 코드 1이다.
+   - `npm test`는 이 Python 검증(`npm run check:levels`)과, 실린 팩이 지금 콘텐츠로 다시 만든 결과와 글자까지 같은지(`fa_packs_probe.gd`)를 함께 본다. 표만 고치고 팩을 다시 만들지 않으면 `npm test`가 실패한다.
+   - 이미 공개한 버전의 일일 도전 날짜는 바꾸지 않는다. 지금 도구는 1번부터 전부 다시 만들므로, 출시 뒤에 이 규칙을 지키려면 뒤에 이어 붙이는 방식을 도구에 먼저 더해야 한다.
 
 ## 만든 과정
 
