@@ -949,7 +949,9 @@ func back_to_exit() -> void:
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
 	d.step("the first back after return does not quit", quits == 0 and is_instance_valid(main._toast))
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
-	d.step("a second back exits", quits == 1)
+	d.step("a second back exits", quits == 1 and not is_instance_valid(main._toast))
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("subsequent back after resume arms instead of quitting immediately", quits == 1 and is_instance_valid(main._toast))
 	d.end()
 
 

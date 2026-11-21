@@ -118,8 +118,21 @@ func _init() -> void:
 	feature_routes.shop = _route_shop
 	feature_routes.inbox = _route_inbox
 	feature_routes.licenses = _route_licenses
-	quit_app = func() -> void: get_tree().quit()
+	quit_app = _default_quit
 	open_url = func(url: String) -> void: OS.shell_open(url)
+
+
+## 홈 두 번 뒤로 가기의 기본 종료 동작. Android에서는 강제 종료 시 GLThread가 파괴된 mutex를
+## 잠그는 엔진 크래시를 피하기 위해 태스크를 백그라운드로 내린다.
+func _default_quit() -> void:
+	if OS.get_name() == "Android" and Engine.has_singleton("AndroidRuntime"):
+		var android_runtime: Object = Engine.get_singleton("AndroidRuntime")
+		if android_runtime != null:
+			var activity: Variant = android_runtime.call("getActivity")
+			if activity is Object and activity != null:
+				(activity as Object).call("moveTaskToBack", true)
+				return
+	get_tree().quit()
 
 
 ## 실제 광고, 분석, 원격 설정 어댑터를 만들어 포트 묶음에 끼운다. storage_dir은 어댑터가 파일을 두는 폴더(비우면 save_paths.services)다.
@@ -546,6 +559,8 @@ func _restore_focus(previous: Dictionary) -> void:
 func _confirm_exit() -> void:
 	var now: int = Time.get_ticks_msec()
 	if now < _exit_armed_until:
+		_exit_armed_until = 0
+		_dismiss_toast()
 		quit_app.call()
 		return
 	_exit_armed_until = now + EXIT_WINDOW_MSEC
