@@ -1,0 +1,3 @@
+{"version":1,"content_version":1,"guide":{"order":["fruits","instruments","weather"],"hold":"sun"},"levels":[
+{"n":0,"layout":"intro","tier":0,"f":0.44,"groups":[{"cat":"fruits","items":["banana","strawberry","grapes","kiwi_fruit"]},{"cat":"instruments","items":["guitar","violin","drum","musical_keyboard"]},{"cat":"weather","items":["sun","cloud","rainbow","snowflake"]}],"cols":[["musical_keyboard","sun"],["cloud","guitar"],["rainbow","violin"],["snowflake","drum"]],"reserve":["banana","strawberry","grapes","kiwi_fruit"]}
+]}

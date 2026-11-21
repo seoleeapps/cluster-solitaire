@@ -7,6 +7,7 @@
 판마다 보는 것: 카드와 범주 id 존재, 배치 모양, 등급의 범주 조건(난도, 대분류, 다른 범주로도 보이는 카드,
 판 밖 범주의 후보 한도), 최근 범주 재사용, 묶는 방법의 유일성, 임시 칸 2개 해법 존재,
 관대함이 등급 범위 안이고 팩의 f와 반올림 오차 안에서 같은지.
+손으로 만든 튜토리얼 판(tutorial.json)은 형식과 범주 조건, 해법, 안내 순서대로 풀리는지를 본다.
 등급표와 배치는 GDD(docs/design/2026-11-21-four-alike-launch/02-gdd.md)에서 따로 옮겨 적어
 GDScript 구현(FaDifficulty, FaGenerator)과 독립으로 대조한다.
 """
@@ -216,6 +217,129 @@ def check_pack(content, name, path):
     return problems, records
 
 
+TUTORIAL_LAYOUT = {'name': 'intro', 'columns': [2, 2, 2, 2], 'reserve': 4, 'groups': 3}
+# 튜토리얼 판은 가장 쉬운 조건으로 본다: 난도 1 범주, 서로 다른 대분류, 다른 범주로도 보이는 카드 없음,
+# 판 밖 범주의 후보는 T1과 같은 한도.
+TUTORIAL_OUTSIDE = TIERS[1]['outside']
+
+
+def check_tutorial(content, path):
+    """손으로 만든 튜토리얼 판(tutorial.json)의 문제 목록을 돌려준다.
+
+    형식과 배치, 범주 조건, 묶는 방법의 유일성, 임시 칸 2개 해법과 f, 그리고 안내 순서(guide)대로 풀리는지를 본다.
+    안내 순서: 예비 카드 네 장이 첫 묶음, guide.hold 카드를 임시 칸으로 옮기면 둘째 묶음이 모두 열리고,
+    둘째 묶음을 걷어 내면 남은 네 장이 모두 열린다.
+    """
+    try:
+        pack = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, ValueError) as error:
+        return ['tutorial: cannot read (%s)' % error]
+    problems = []
+    if (pack.get('version'), pack.get('content_version')) != (PACK_VERSION, content.version):
+        problems.append('tutorial: header %r' % ((pack.get('version'), pack.get('content_version')),))
+    levels = pack.get('levels', [])
+    if len(levels) != 1:
+        return problems + ['tutorial: %d levels, expected 1' % len(levels)]
+    try:
+        problems.extend('tutorial: ' + problem for problem in check_tutorial_level(content, levels[0], pack.get('guide')))
+    except (KeyError, TypeError, IndexError, AttributeError) as error:
+        problems.append('tutorial: malformed level (%r)' % error)
+    return problems
+
+
+def check_tutorial_level(content, level, guide):
+    problems = []
+    if level.get('layout') != TUTORIAL_LAYOUT['name']:
+        return ['layout %r, expected %s' % (level.get('layout'), TUTORIAL_LAYOUT['name'])]
+    cols, reserve, groups = level['cols'], level['reserve'], level['groups']
+    if [len(column) for column in cols] != TUTORIAL_LAYOUT['columns'] or len(reserve) != TUTORIAL_LAYOUT['reserve']:
+        problems.append('layout shape')
+    categories = [group['cat'] for group in groups]
+    if len(groups) != TUTORIAL_LAYOUT['groups'] or len(set(categories)) != len(categories):
+        problems.append('group count or duplicate category')
+    unknown = [key for key in categories if key not in content.categories]
+    if unknown:
+        return problems + ['unknown category %s' % unknown]
+    group_of = {}
+    for index, group in enumerate(groups):
+        if len(group['items']) != GROUP_SIZE:
+            problems.append('%s does not have %d cards' % (group['cat'], GROUP_SIZE))
+        for card in group['items']:
+            if card not in content.items:
+                problems.append('unknown card %s' % card)
+            elif card not in content.categories[group['cat']]['members']:
+                problems.append('%s is not a member of %s' % (card, group['cat']))
+            if card in group_of:
+                problems.append('card %s appears twice' % card)
+            group_of[card] = index
+    if sorted(itertools.chain(*cols, reserve)) != sorted(group_of):
+        return problems + ['placed cards differ from group cards']
+
+    if any(content.categories[key]['tier'] != 1 for key in categories):
+        problems.append('category tier above 1')
+    if len({content.categories[key]['domain'] for key in categories}) != len(categories):
+        problems.append('categories share a domain')
+    outside = collections.defaultdict(list)
+    for card, index in group_of.items():
+        others = content.owners[card] - {categories[index]}
+        if others & set(categories):
+            problems.append('%s also reads as %s' % (card, sorted(others & set(categories))))
+        for key in others - set(categories):
+            outside[key].append(index)
+    for key, groups_hit in outside.items():
+        limit = OUTSIDE_LIMIT if content.categories[key]['domain'] == COLOR_DOMAIN else TUTORIAL_OUTSIDE
+        if len(set(groups_hit)) >= 2 and len(groups_hit) > limit:
+            problems.append('outside category %s matches %d cards across %d groups (limit %d)' % (
+                key, len(groups_hit), len(set(groups_hit)), limit))
+    if count_groupings(content, categories, list(group_of)) != 1:
+        problems.append('grouping is not unique')
+
+    count, chance, _ = solve([[group_of[card] for card in column] for column in cols],
+                             [group_of[card] for card in reserve], (), HOLD_SLOTS)
+    if count is None:
+        problems.append('not solvable with %d slots' % HOLD_SLOTS)
+    elif not isinstance(level.get('f'), (int, float)) or abs(level['f'] - chance) > ROUNDING:
+        problems.append('f %r differs from reference %.4f' % (level.get('f'), chance))
+    return problems + check_tutorial_guide(guide, cols, reserve, categories, group_of)
+
+
+def check_tutorial_guide(guide, cols, reserve, categories, group_of):
+    """안내 순서를 그대로 따라 두어 본다. 열은 뒤에서 앞 순서이고 마지막 원소가 열린 카드다."""
+    if not isinstance(guide, dict) or sorted(guide.get('order', [])) != sorted(categories) or guide.get('hold') not in group_of:
+        return ['guide must name every category in order and one card to hold']
+    first, second, third = (categories.index(key) for key in guide['order'])
+    columns = [list(column) for column in cols]
+    held = []
+
+    def open_cards():
+        return [column[-1] for column in columns if column] + held
+
+    def remove(group):
+        for column in columns:
+            if column and group_of[column[-1]] == group:
+                column.pop()
+        held[:] = [card for card in held if group_of[card] != group]
+
+    if sorted(group_of[card] for card in reserve) != [first] * GROUP_SIZE:
+        return ['guide step 1: the reserve cards are not the first group']
+    fronts = [column[-1] for column in columns]
+    if guide['hold'] not in fronts or group_of[guide['hold']] != third:
+        return ['guide step 2: the card to hold is not a front card of the last group']
+    if sum(1 for card in open_cards() if group_of[card] == second) == GROUP_SIZE:
+        return ['guide step 2: the second group is already open, so nothing teaches the holding slot']
+    columns[fronts.index(guide['hold'])].pop()
+    held.append(guide['hold'])
+    if sum(1 for card in open_cards() if group_of[card] == second) != GROUP_SIZE:
+        return ['guide step 2: holding %s does not open the second group' % guide['hold']]
+    remove(second)
+    if sum(1 for card in open_cards() if group_of[card] == third) != GROUP_SIZE:
+        return ['guide step 3: the last group is not fully open']
+    remove(third)
+    if any(columns) or held:
+        return ['guide: cards remain after the last group']
+    return []
+
+
 def closest(content, key):
     """소속 카드를 가장 많이 후보로 품는 다른 범주와 그 장수. 안 쓰인 범주의 원인을 볼 때 쓴다."""
     members = set(content.categories[key]['members'])
@@ -318,6 +442,9 @@ def main():
         problems.extend(found)
         records_by_pack[name] = records
         print('%s: %d levels checked, %d problems' % (name, len(records), len(found)))
+    found = check_tutorial(content, args.levels / 'tutorial.json')
+    problems.extend(found)
+    print('tutorial: 1 level and its guide checked, %d problems' % len(found))
     for problem in problems[:50]:
         print('  ' + problem)
     if len(problems) > 50:
