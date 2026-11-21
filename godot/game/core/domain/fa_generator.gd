@@ -23,8 +23,8 @@ const CATEGORY_ATTEMPTS := 200
 const PLACEMENT_ATTEMPTS := 80
 ## 일일 도전 시드는 여정 스테이지 번호와 겹치지 않게 띄운다.
 const DAILY_SEED_BASE := 1 << 24
-## 여정은 최근 3판, 일일 도전은 최근 21일의 범주를 다시 쓰지 않는다. recent를 꾸리는 쪽이 이 길이를 쓴다.
-const JOURNEY_RECENT_LEVELS := 3
+## 여정은 최근 8판(범주 32개), 일일 도전은 최근 21일(범주 84개)의 범주를 다시 쓰지 않는다. recent를 꾸리는 쪽이 이 길이를 쓴다.
+const JOURNEY_RECENT_LEVELS := 8
 const DAILY_RECENT_LEVELS := 21
 
 var _content: Content
