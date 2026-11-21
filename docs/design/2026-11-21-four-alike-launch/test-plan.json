@@ -1,0 +1,61 @@
+{
+  "$comment": "seoleeapps 저장소라 Seorilabs 중앙 검증기 대상이 아니다. 형식은 중앙 test-plan 스키마를 따르고 보조 필드(deviceChecks, devRuns, reviewRounds)는 princess-tycoon 선례를 따른다. 첫 출시라 개발 환경 전체 회귀(L3)와 새 화면 3회 독립 검수를 하고, 개발 환경으로 확인할 수 없는 Android 항목만 사용자가 2026-11-21 승인한 실기기 1대에서 다른 에이전트가 확인한다.",
+  "schemaVersion": 1,
+  "level": "L3",
+  "baseline": null,
+  "changedFeatures": [
+    "startup",
+    "tutorial",
+    "account_save",
+    "settings_support",
+    "inbox",
+    "observability",
+    "core_play",
+    "level_content",
+    "boosters",
+    "result_rewards",
+    "journey_home",
+    "daily_challenge",
+    "album",
+    "shop_themes",
+    "attendance",
+    "ads_rewarded",
+    "ads_interstitial",
+    "ads_consent",
+    "remote_config",
+    "locale",
+    "ui_kit"
+  ],
+  "environments": [
+    "dev",
+    "android"
+  ],
+  "redesign": true,
+  "foundationRerun": true,
+  "floorOverrides": [],
+  "deviceChecks": [
+    "AND-01 설치본 첫 실행과 렌더링, 시작 시간",
+    "AND-02 실제 터치로 선택, 끌어서 옮기기, 목록 스크롤",
+    "AND-03 강제 종료 뒤 판과 저장 복원",
+    "AND-04 뒤로 가기, 노치와 시스템 표시줄",
+    "AND-05 동의 창 표시와 선택 저장",
+    "AND-06 보상형 광고 불러오기, 시청 완료 보상, 중도 닫기 무보상",
+    "AND-07 전면 광고 표시와 닫은 뒤 소리·입력 복귀, 광고 중 앱 전환",
+    "AND-08 효과음, 배경음악, 진동"
+  ],
+  "devRuns": [
+    "npm test",
+    "python3 tools/check.py --capture --size 390x844",
+    "python3 tools/check.py --capture --size 360x640",
+    "python3 tools/check.py --capture --size 412x915",
+    "python3 tools/content/verify_packs.py",
+    "tools/check_monetization.sh"
+  ],
+  "reviewRounds": 3,
+  "release": {
+    "markets": [
+      "google-play"
+    ],
+    "until": "public"
+  }
+}
