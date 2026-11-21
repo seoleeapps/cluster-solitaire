@@ -13,15 +13,15 @@
       "disabled": "ui_button_primary_disabled.svg",
       "margins": [
         26,
-        24,
         26,
-        30
+        26,
+        32
       ],
       "content": [
-        22,
-        10,
-        22,
-        18
+        20,
+        9,
+        20,
+        13
       ],
       "minimum": [
         72,

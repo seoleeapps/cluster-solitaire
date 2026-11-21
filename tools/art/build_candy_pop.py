@@ -1,8 +1,12 @@
 """Write the Candy Pop skin and play-screen textures as SVG.
 
 Usage: python3 tools/art/build_candy_pop.py [--check]
-Writes godot/game/skins/candy_pop and godot/game/features/play/assets. Every file is derived from the constants below, so the art can be regenerated and
-compared byte for byte (--check exits 1 when a file on disk differs).
+Writes godot/game/skins/candy_pop, godot/game/features/play/assets and the SVG source pack
+godot/game/features/shared/svg_sources.json. Every file is derived from the constants below, so the art can be
+regenerated and compared byte for byte (--check exits 1 when a file on disk differs).
+
+The pack holds the text of every SVG keyed by its res:// path. The game builds its textures from that text
+(DPITexture) so they stay sharp on 2.5x-3x phone screens; an exported build has no raw .svg files, only the pack.
 """
 import json
 import pathlib
@@ -11,6 +15,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SKIN_DIR = ROOT / "godot/game/skins/candy_pop"
 PLAY_DIR = ROOT / "godot/game/features/play/assets"
+PACK = ROOT / "godot/game/features/shared/svg_sources.json"
+RES_ROOT = ROOT / "godot"
 
 # ---- palette (from the approved direction B mockup) ----
 WHITE = "#FFFFFF"
@@ -29,6 +35,8 @@ NAVY = "#221C6E"
 GOLD = "#FFD54A"
 GOLD_LIP = "#D99A00"
 RED = "#FF4B5C"
+RED_LIP = "#C92F40"
+HEART = "#F8312F"
 
 
 def svg(w, h, body, defs=""):
@@ -45,20 +53,27 @@ def rect(x, y, w, h, r, fill, extra=""):
     return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill}" {extra}/>'
 
 
+def circle(cx, cy, r, fill, extra=""):
+    return f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}" {extra}/>'
+
+
 def skin_files():
     f = {}
-    # primary button: white outline 3, body 0..54, lip 7
-    def primary(top, mid, bot, lip, press=0):
-        defs = grad("g", [(0, top), (0.55, mid), (1, bot)])
+
+    # Primary button: body 98x58 (radius 22) with a 3px white outline, a 3px light band inside the top edge and a
+    # 7px lip below. The lip sits over the outline, so the outline shows on the top and the sides only.
+    def primary(top, mid, bot, lip, band, press=0):
+        defs = (grad("g", [(0, top), (0.55, mid), (1, bot)])
+                + f'<clipPath id="c"><rect x="3" y="{3 + press}" width="98" height="58" rx="22"/></clipPath>')
         y = press
-        body = (rect(0, y, 104, 64 - press + 6, 24, WHITE)
-                + rect(3, 10, 98, 57, 21, lip)
-                + rect(3, 3 + y, 98, 57, 21, "url(#g)")
-                + rect(11, 8 + y, 82, 13, 6.5, WHITE, 'fill-opacity="0.45"'))
-        return svg(104, 70, body, defs)
-    f["ui_button_primary_normal.svg"] = primary(ORANGE_TOP, ORANGE_MID, ORANGE_BOT, ORANGE_LIP)
-    f["ui_button_primary_pressed.svg"] = primary(ORANGE_MID, ORANGE_BOT, "#F07C00", ORANGE_LIP, press=4)
-    f["ui_button_primary_disabled.svg"] = primary("#D9DCEF", "#C5C9E3", "#B4B9D8", "#8F95BC")
+        body = (rect(0, y, 104, 64, 25, WHITE)
+                + rect(3, 10, 98, 58, 22, lip)
+                + rect(3, 3 + y, 98, 58, 22, band)
+                + f'<g clip-path="url(#c)">{rect(3, 6 + y, 98, 58, 22, "url(#g)")}</g>')
+        return svg(104, 68, body, defs)
+    f["ui_button_primary_normal.svg"] = primary(ORANGE_TOP, ORANGE_MID, ORANGE_BOT, ORANGE_LIP, "#FFEDB2")
+    f["ui_button_primary_pressed.svg"] = primary(ORANGE_MID, ORANGE_BOT, "#F07C00", ORANGE_LIP, "#FFD08A", press=4)
+    f["ui_button_primary_disabled.svg"] = primary("#D9DCEF", "#C5C9E3", "#B4B9D8", "#8F95BC", "#ECEEF8")
 
     def secondary(press=0, face=WHITE, lip=LIP):
         y = press
@@ -97,7 +112,7 @@ def skin_files():
         "primary": ORANGE_MID,
         "focus": "#FFE27A",
         "textures": {
-            "button_primary": {"normal": "ui_button_primary_normal.svg", "pressed": "ui_button_primary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [26, 24, 26, 30], "content": [22, 10, 22, 18], "minimum": [72, 56]},
+            "button_primary": {"normal": "ui_button_primary_normal.svg", "pressed": "ui_button_primary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [26, 26, 26, 32], "content": [20, 9, 20, 13], "minimum": [72, 56]},
             "button_secondary": {"normal": "ui_button_secondary_normal.svg", "pressed": "ui_button_secondary_pressed.svg", "disabled": "ui_button_secondary_disabled.svg", "margins": [22, 20, 22, 26], "content": [16, 8, 16, 14], "minimum": [56, 48]},
             "panel": {"normal": "ui_panel.svg", "margins": [24, 24, 24, 30], "content": [16, 12, 16, 18], "minimum": [56, 56]},
             "popup_frame": {"normal": "ui_popup_frame.svg", "margins": [38, 38, 38, 46], "content": [22, 20, 22, 30], "minimum": [96, 96]},
@@ -116,68 +131,166 @@ def skin_files():
     return f
 
 
+def framed_card(ring, lip):
+    """Card plate with a 4px coloured ring and a 6px lip: the white body is the 64x64 square at (4, 4)."""
+    return svg(72, 78, rect(0, 6, 72, 72, 20, lip) + rect(0, 0, 72, 72, 20, ring) + rect(4, 4, 64, 64, 16, WHITE))
+
+
+def back_dots(w, h):
+    """Polka dots of the card back, laid out from the card's top-left corner: one dot every 8px where column + row is even."""
+    return "".join(
+        circle(col * 8, row * 8, 2.4, WHITE, 'fill-opacity="0.9"')
+        for row in range(h // 8 + 1) for col in range(w // 8 + 1) if (col + row) % 2 == 0)
+
+
+def soft_shadow():
+    """A blurred shadow built from stacked translucent rounded squares (the engine's SVG reader has no blur filter).
+    The 64x64 core sits 14px inside the 92x92 canvas; nine-slice margins of 34 keep every rounded corner fixed."""
+    layers = "".join(rect(i * 2, i * 2, 92 - i * 4, 92 - i * 4, 30 - i * 2, DEPTH, 'fill-opacity="0.03"') for i in range(14))
+    return svg(92, 92, layers)
+
+
+def dashed_cell():
+    """Drop target: green fill, solid white corner brackets and two 8px dashes per edge. The 28px edge strip between the
+    22px corners holds exactly two dash periods (8 on, 6 off), so the strip can be tiled along any edge length."""
+    stroke = f'fill="none" stroke="{WHITE}" stroke-width="3" stroke-linecap="butt"'
+    corners = ('M1.5 22V16A14.5 14.5 0 0 1 16 1.5H22', 'M50 1.5H56A14.5 14.5 0 0 1 70.5 16V22',
+               'M70.5 50V56A14.5 14.5 0 0 1 56 70.5H50', 'M22 70.5H16A14.5 14.5 0 0 1 1.5 56V50')
+    dashes = []
+    for start in (25, 39):
+        dashes += [f'M{start} 1.5H{start + 8}', f'M{start} 70.5H{start + 8}', f'M1.5 {start}V{start + 8}', f'M70.5 {start}V{start + 8}']
+    return svg(72, 72, rect(0, 0, 72, 72, 16, GREEN, 'fill-opacity="0.28"') + f'<path d="{" ".join(corners + tuple(dashes))}" {stroke}/>')
+
+
+HINT_GLYPH = ('M14 4a7.5 7.5 0 0 0-4.6 13.4c.9.8 1.4 1.6 1.4 2.6h6.4c0-1 .5-1.8 1.4-2.6A7.5 7.5 0 0 0 14 4z', 'M11.2 23.5h5.6')
+UNDO_GLYPH = ('M8 11h9.5a5.5 5.5 0 0 1 0 11H11', 'M12 6.5L7.5 11l4.5 4.5')
+LOCK_BODY = (f'<path d="M8 12V9a5 5 0 0 1 10 0v3" fill="none" stroke="#C8CCE8" stroke-width="3"/><rect x="5" y="11" width="16" height="13" rx="3.5" fill="{GOLD}"/>'
+             '<circle cx="13" cy="16.5" r="2" fill="#433B6B"/><rect x="12" y="17" width="2" height="4" rx="1" fill="#433B6B"/>')
+
+
+def line_glyph(paths):
+    """White line icon, 3px round strokes, drawn in a 28x28 box."""
+    stroke = f'fill="none" stroke="{WHITE}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"'
+    return "".join(f'<path d="{d}" {stroke}/>' for d in paths)
+
+
+def round_button(top, bot, lip, glyph=()):
+    """Booster button: a 52px disc with a 3px white outline, a 3px light band inside the top edge and a 5px lip.
+    With a glyph the icon is drawn in the middle (the reward picture of that booster)."""
+    defs = grad("g", [(0, top), (1, bot)]) + '<clipPath id="c"><circle cx="29" cy="29" r="26"/></clipPath>'
+    body = (circle(29, 29, 29, WHITE) + circle(29, 34, 26, lip) + circle(29, 29, 26, "#FFFFFF")
+            + circle(29, 29, 26, top, 'fill-opacity="0.45"')
+            + f'<g clip-path="url(#c)">{circle(29, 32, 26, "url(#g)")}</g>')
+    if glyph:
+        body += f'<g transform="translate(15 15)">{line_glyph(glyph)}</g>'
+    return svg(58, 60, body, defs)
+
+
+def heart(fill, opacity, shade="", shine=""):
+    """Heart for the mistake counter. A full heart has a darker left flank, a highlight on the upper right and a 2px
+    drop shadow; a lost heart is one flat translucent shape."""
+    path = "M16 27S3 19.5 3 10.5A6.8 6.8 0 0 1 16 7a6.8 6.8 0 0 1 13 3.5C29 19.5 16 27 16 27z"
+    body = ""
+    if shade:
+        body += f'<path d="{path}" transform="translate(0 2)" fill="#281E78" fill-opacity="0.35"/>'
+    body += f'<path d="{path}" fill="{fill}" fill-opacity="{opacity}"/>'
+    if shade:
+        body += (f'<path d="M16 27S3 19.5 3 10.5A6.8 6.8 0 0 1 8 4.2 8.6 8.6 0 0 0 5.6 10.5c0 7.4 7.6 13.6 10.4 16.5z" fill="{shade}"/>'
+                 f'<ellipse cx="22.6" cy="9.6" rx="3.2" ry="2.1" transform="rotate(38 22.6 9.6)" fill="{shine}"/>')
+    return svg(32, 32, body)
+
+
+def pointing_hand():
+    """Tutorial pointer: a gloved hand with the index finger up. The shapes are drawn once as a thick dark outline
+    and once more in white on top, so they read as one silhouette. The fingertip is at (25, 3)."""
+    shapes = ('<rect x="19" y="3" width="12" height="30" rx="6"/>'
+              '<rect x="30" y="20" width="10" height="20" rx="5"/>'
+              '<rect x="38" y="24" width="9" height="18" rx="4.5"/>'
+              '<rect x="6" y="24" width="12" height="20" rx="6" transform="rotate(-28 12 34)"/>'
+              '<rect x="14" y="24" width="33" height="28" rx="12"/>')
+    outline = f'<g fill="{INK}" stroke="{INK}" stroke-width="5" stroke-linejoin="round">{shapes}</g>'
+    fill = f'<g fill="{WHITE}">{shapes}</g>'
+    creases = f'<path d="M30.5 27v8M38.5 29v7" fill="none" stroke="{LIP}" stroke-width="2" stroke-linecap="round"/>'
+    return svg(52, 58, outline + fill + creases)
+
+
 def play_files():
     f = {}
-    shadow = f'fill="{DEPTH}" fill-opacity="0.28"'
     # card face: body 64x64, lip 6, depth shadow 3 (9-slice margins 20/20/20/29)
     f["card_face.svg"] = svg(64, 73, rect(0, 9, 64, 64, 16, DEPTH, 'fill-opacity="0.28"') + rect(0, 6, 64, 64, 16, LIP) + rect(0, 0, 64, 64, 16, WHITE))
-    f["card_selected.svg"] = svg(
-        72, 82,
-        rect(0, 10, 72, 72, 20, YELLOW_DEEP) + rect(0, 0, 72, 72, 20, YELLOW) + rect(4, 4, 64, 64, 16, WHITE))
-    f["card_hint.svg"] = svg(
-        72, 82,
-        rect(0, 10, 72, 72, 20, SKY_LIP) + rect(0, 0, 72, 72, 20, SKY_BOT) + rect(4, 4, 64, 64, 16, WHITE))
-    dots = "".join(
-        f'<circle cx="{x}" cy="{y}" r="2.6" fill="{WHITE}" fill-opacity="0.9"/>'
-        for row in range(11) for col in range(8)
-        for x, y in [(10 + col * 16 + (8 if row % 2 else 0), 10 + row * 12)] if 6 < x < 122 and 6 < y < 132)
+    # selected and hinted cards: ring 4, lip 6 (9-slice margins 24/24/24/30, drawn 4px outside the card on every side)
+    f["card_selected.svg"] = framed_card(YELLOW, YELLOW_DEEP)
+    f["card_hint.svg"] = framed_card(SKY_BOT, SKY_LIP)
+    # card back: white edge 4, purple panel, lip 6, depth shadow 3 (9-slice margins 20/20/20/29); dots are a separate layer
     f["card_back.svg"] = svg(
-        128, 147,
-        rect(0, 9, 128, 138, 24, DEPTH, 'fill-opacity="0.28"') + rect(0, 6, 128, 138, 24, PURPLE_LIP)
-        + rect(0, 0, 128, 138, 24, WHITE) + rect(6, 6, 116, 126, 18, "url(#g)")
-        + f'<g clip-path="url(#c)">{dots}</g>',
-        grad("g", [(0, PURPLE_TOP), (1, PURPLE_BOT)]) + '<clipPath id="c"><rect x="6" y="6" width="116" height="126" rx="18"/></clipPath>')
+        64, 73,
+        rect(0, 9, 64, 64, 16, DEPTH, 'fill-opacity="0.28"') + rect(0, 6, 64, 64, 16, PURPLE_LIP)
+        + rect(0, 0, 64, 64, 16, WHITE) + rect(4, 4, 56, 56, 12, "url(#g)"),
+        grad("g", [(0, PURPLE_TOP), (1, PURPLE_BOT)]))
+    f["card_back_dots.svg"] = svg(96, 136, back_dots(96, 136))
+    f["soft_shadow.svg"] = soft_shadow()
     f["cell_empty.svg"] = svg(64, 64, rect(0, 0, 64, 64, 16, "#281E82", 'fill-opacity="0.22"') + '<path d="M16 0h32a16 16 0 0 1 16 16v4a16 16 0 0 0-16-16H16A16 16 0 0 0 0 20v-4A16 16 0 0 1 16 0z" fill="#1E146E" fill-opacity="0.25"/>')
-    f["cell_target.svg"] = svg(64, 64, rect(0, 0, 64, 64, 16, GREEN, 'fill-opacity="0.28"') + rect(1.5, 1.5, 61, 61, 14.5, "none", f'stroke="{WHITE}" stroke-width="3" stroke-dasharray="7 6"'))
+    f["cell_target.svg"] = dashed_cell()
     f["cell_locked.svg"] = svg(64, 64, rect(0, 0, 64, 64, 16, GOLD, 'fill-opacity="0.30"') + rect(1.5, 1.5, 61, 61, 14.5, "none", f'stroke="{GOLD}" stroke-width="3"'))
     f["tray.svg"] = svg(64, 64, rect(0, 0, 64, 64, 22, WHITE, 'fill-opacity="0.20"') + rect(1, 1, 62, 62, 21, "none", f'stroke="{WHITE}" stroke-opacity="0.40" stroke-width="2"'))
-    f["medal_empty.svg"] = svg(64, 64, f'<circle cx="32" cy="32" r="29" fill="{WHITE}" fill-opacity="0.20"/><circle cx="32" cy="32" r="28" fill="none" stroke="{WHITE}" stroke-opacity="0.45" stroke-width="2.5"/>')
-    f["medal_done.svg"] = svg(72, 78, f'<circle cx="36" cy="41" r="35" fill="{CORAL_LIP}"/><circle cx="36" cy="36" r="35" fill="{CORAL_BOT}"/><circle cx="36" cy="36" r="30" fill="{WHITE}"/>')
-    f["name_tag.svg"] = svg(48, 26, rect(0, 2, 48, 24, 12, CORAL_LIP) + rect(0, 0, 48, 24, 12, CORAL_BOT))
-    f["stage_ribbon.svg"] = svg(64, 40, rect(0, 4, 64, 36, 18, GOLD_LIP) + rect(0, 0, 64, 36, 18, GOLD) + rect(8, 3, 48, 8, 4, WHITE, 'fill-opacity="0.5"'))
+    f["medal_empty.svg"] = svg(58, 58, circle(29, 29, 29, WHITE, 'fill-opacity="0.20"') + circle(29, 29, 27.75, "none", f'stroke="{WHITE}" stroke-opacity="0.45" stroke-width="2.5"'))
+    # finished medal: white disc 58 with a 4px coral ring and a 5px lip, drawn 4px outside the disc
+    f["medal_done.svg"] = svg(66, 71, circle(33, 38, 33, CORAL_LIP) + circle(33, 33, 33, CORAL_BOT) + circle(33, 33, 29, WHITE))
+    f["name_tag.svg"] = svg(40, 20, rect(0, 2, 40, 18, 9, CORAL_LIP) + rect(0, 0, 40, 18, 9, CORAL_BOT))
+    f["stage_ribbon.svg"] = svg(
+        64, 35,
+        rect(0, 4, 64, 31, 15.5, GOLD_LIP) + rect(0, 0, 64, 31, 15.5, "#FFEEB6")
+        + f'<g clip-path="url(#c)">{rect(0, 2, 64, 31, 15.5, GOLD)}</g>',
+        '<clipPath id="c"><rect x="0" y="0" width="64" height="31" rx="15.5"/></clipPath>')
     f["hud_button.svg"] = svg(48, 52, rect(0, 4, 48, 48, 14, "#4E54C8") + rect(0, 0, 48, 48, 14, WHITE))
-
-    def round_button(top, bot, lip):
-        return svg(64, 70,
-                   f'<circle cx="32" cy="37" r="32" fill="{WHITE}"/><circle cx="32" cy="32" r="32" fill="{WHITE}"/>'
-                   f'<circle cx="32" cy="37" r="29" fill="{lip}"/><circle cx="32" cy="32" r="29" fill="url(#g)"/>'
-                   f'<path d="M10 26a22 22 0 0 1 44 0 22 14 0 0 0-44 0z" fill="{WHITE}" fill-opacity="0.45"/>',
-                   grad("g", [(0, top), (1, bot)]))
     f["booster_hint.svg"] = round_button(SKY_TOP, SKY_BOT, SKY_LIP)
     f["booster_undo.svg"] = round_button(VIOLET_TOP, VIOLET_BOT, VIOLET_LIP)
     f["booster_disabled.svg"] = round_button("#D9DCEF", "#B4B9D8", "#8F95BC")
-    stroke = f'fill="none" stroke="{WHITE}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"'
-    f["icon_hint.svg"] = svg(28, 28, f'<path d="M14 4a7.5 7.5 0 0 0-4.6 13.4c.9.8 1.4 1.6 1.4 2.6h6.4c0-1 .5-1.8 1.4-2.6A7.5 7.5 0 0 0 14 4z" {stroke}/><path d="M11.2 23.5h5.6" {stroke}/>')
-    f["icon_undo.svg"] = svg(28, 28, f'<path d="M8 11h9.5a5.5 5.5 0 0 1 0 11H11" {stroke}/><path d="M12 6.5L7.5 11l4.5 4.5" {stroke}/>')
+    f["icon_hint.svg"] = svg(28, 28, line_glyph(HINT_GLYPH))
+    f["icon_undo.svg"] = svg(28, 28, line_glyph(UNDO_GLYPH))
+    # reward pictures: the booster disc with its glyph, and the locked slot with its padlock
+    f["gift_hint.svg"] = round_button(SKY_TOP, SKY_BOT, SKY_LIP, HINT_GLYPH)
+    f["gift_undo.svg"] = round_button(VIOLET_TOP, VIOLET_BOT, VIOLET_LIP, UNDO_GLYPH)
+    f["gift_slot.svg"] = svg(58, 60, rect(7, 4, 44, 52, 14, WHITE, 'fill-opacity="0.35"') + rect(7, 4, 44, 52, 14, GOLD, 'fill-opacity="0.45"')
+                             + rect(8.5, 5.5, 41, 49, 12.5, "none", f'stroke="{GOLD}" stroke-width="3"') + f'<g transform="translate(16 17)">{LOCK_BODY}</g>')
     f["icon_pause.svg"] = svg(18, 18, '<rect x="3.5" y="2.5" width="4" height="13" rx="1.4" fill="#5B5FE0"/><rect x="10.5" y="2.5" width="4" height="13" rx="1.4" fill="#5B5FE0"/>')
     f["icon_play_ad.svg"] = svg(10, 10, f'<path d="M2 1l7 4-7 4z" fill="{WHITE}"/>')
-    f["icon_lock.svg"] = svg(26, 26, f'<path d="M8 12V9a5 5 0 0 1 10 0v3" fill="none" stroke="#C8CCE8" stroke-width="3"/><rect x="5" y="11" width="16" height="13" rx="3.5" fill="{GOLD}"/><circle cx="13" cy="16.5" r="2" fill="#7A5200"/><rect x="12" y="17" width="2" height="4" rx="1" fill="#7A5200"/>')
+    f["icon_lock.svg"] = svg(26, 26, LOCK_BODY)
+    # rewarded-ad mark on buttons: green pill with a play triangle
+    f["icon_ad.svg"] = svg(26, 20, rect(0, 2, 26, 18, 9, GREEN_LIP) + rect(0, 0, 26, 18, 9, GREEN) + f'<path d="M10 4.5l8 4.5-8 4.5z" fill="{WHITE}"/>')
     f["badge.svg"] = svg(24, 24, f'<circle cx="12" cy="12" r="12" fill="{WHITE}"/><circle cx="12" cy="12" r="9.5" fill="{RED}"/>')
-    f["tick.svg"] = svg(28, 30, f'<circle cx="14" cy="16" r="13" fill="{DEPTH}" fill-opacity="0.30"/><circle cx="14" cy="14" r="14" fill="{WHITE}"/><circle cx="14" cy="14" r="11" fill="{GREEN}"/><path d="M8.6 14.4l3.7 3.7 7.3-8.2" fill="none" stroke="{WHITE}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>')
-    f["ad_tag.svg"] = svg(40, 22, rect(0, 2, 40, 20, 10, GREEN_LIP) + rect(0, 0, 40, 20, 10, GREEN))
-    f["plus_button.svg"] = svg(24, 26, f'<circle cx="12" cy="14" r="12" fill="{GREEN_LIP}"/><circle cx="12" cy="12" r="12" fill="{GREEN}"/><path d="M12 6.5v11M6.5 12h11" stroke="{WHITE}" stroke-width="3" stroke-linecap="round"/>')
+    f["tick.svg"] = svg(28, 30, f'<circle cx="14" cy="16" r="13" fill="{DEPTH}" fill-opacity="0.30"/><circle cx="14" cy="14" r="14" fill="{WHITE}"/><circle cx="14" cy="14" r="11" fill="{GREEN}"/><path d="M9.7 14.5l2.9 2.9 5.8-6.5" fill="none" stroke="{WHITE}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>')
+    f["ad_tag.svg"] = svg(40, 21, rect(0, 2, 40, 19, 9.5, GREEN_LIP) + rect(0, 0, 40, 19, 9.5, GREEN))
+    f["count_pill.svg"] = svg(32, 22, rect(0, 0, 32, 22, 11, "#8C3C00", 'fill-opacity="0.40"'))
+    f["toast_info.svg"] = svg(48, 40, rect(0, 4, 48, 36, 18, "#150F52", 'fill-opacity="0.55"') + rect(0, 0, 48, 36, 18, NAVY, 'fill-opacity="0.92"')
+                              + rect(1, 1, 46, 34, 17, "none", f'stroke="{WHITE}" stroke-opacity="0.38" stroke-width="2"'))
+    f["toast_yellow.svg"] = svg(48, 40, rect(0, 4, 48, 36, 18, YELLOW_DEEP) + rect(0, 0, 48, 36, 18, YELLOW) + rect(1.5, 1.5, 45, 33, 16.5, "none", f'stroke="{WHITE}" stroke-opacity="0.55" stroke-width="2"'))
+    f["toast_red.svg"] = svg(48, 40, rect(0, 4, 48, 36, 18, RED_LIP) + rect(0, 0, 48, 36, 18, RED) + rect(1.5, 1.5, 45, 33, 16.5, "none", f'stroke="{WHITE}" stroke-opacity="0.45" stroke-width="2"'))
+    f["plus_button.svg"] = svg(24, 26, f'<circle cx="12" cy="14" r="12" fill="{GREEN_LIP}"/><circle cx="12" cy="12" r="12" fill="{GREEN}"/><path d="M12 7.2v9.6M7.2 12h9.6" stroke="{WHITE}" stroke-width="2.6" stroke-linecap="round"/>')
     f["bubble.svg"] = svg(128, 128, f'<circle cx="64" cy="64" r="64" fill="{WHITE}"/>')
-    f["heart_empty.svg"] = svg(32, 32, '<path d="M16 28S3 20.5 3 11.5A6.8 6.8 0 0 1 16 8a6.8 6.8 0 0 1 13 3.5C29 20.5 16 28 16 28z" fill="#B9C3F5" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.5"/>')
-    f["heart_full.svg"] = svg(32, 32, '<path d="M16 28S3 20.5 3 11.5A6.8 6.8 0 0 1 16 8a6.8 6.8 0 0 1 13 3.5C29 20.5 16 28 16 28z" fill="#F92F60"/><path d="M8 9.5c2-1.6 4.6-1.2 6 .8" fill="none" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round"/>')
+    f["finger.svg"] = pointing_hand()
+    f["heart_empty.svg"] = heart("#7F8C96", 0.62)
+    f["heart_full.svg"] = heart(HEART, 1, "#CA0B4A", "#F37366")
     f["star_full.svg"] = svg(48, 48, '<path d="M24 4l6.2 12.6 13.9 2-10 9.8 2.4 13.8L24 35.7l-12.5 6.5 2.4-13.8-10-9.8 13.9-2z" fill="#FFC61A" stroke="#E19A00" stroke-width="2.5" stroke-linejoin="round"/>')
     f["star_empty.svg"] = svg(48, 48, '<path d="M24 4l6.2 12.6 13.9 2-10 9.8 2.4 13.8L24 35.7l-12.5 6.5 2.4-13.8-10-9.8 13.9-2z" fill="#281E82" fill-opacity="0.25" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="2.5" stroke-linejoin="round"/>')
     return f
 
 
+def source_pack(folders):
+    """The text of every generated SVG keyed by its res:// path, in one JSON file the exported game can read."""
+    sources = {}
+    for directory, files in folders:
+        for name, text in sorted(files.items()):
+            if name.endswith(".svg"):
+                sources["res://" + (directory / name).relative_to(RES_ROOT).as_posix()] = text
+    return json.dumps({"version": 1, "sources": sources}, ensure_ascii=False, indent=1) + "\n"
+
+
 def main():
     check = "--check" in sys.argv
     bad = []
-    for d, files in ((SKIN_DIR, skin_files()), (PLAY_DIR, play_files())):
+    folders = ((SKIN_DIR, skin_files()), (PLAY_DIR, play_files()))
+    for d, files in folders:
         d.mkdir(parents=True, exist_ok=True)
         for name, text in sorted(files.items()):
             p = d / name
@@ -192,10 +305,17 @@ def main():
                 bad.append(f"{stray.relative_to(ROOT)} (not generated)")
             else:
                 stray.unlink()
+    pack = source_pack(folders)
+    if check:
+        if not PACK.exists() or PACK.read_text() != pack:
+            bad.append(str(PACK.relative_to(ROOT)))
+    else:
+        PACK.parent.mkdir(parents=True, exist_ok=True)
+        PACK.write_text(pack)
     if check and bad:
         print("out of date:", *bad, sep="\n  ")
         return 1
-    print("ok", len(skin_files()), "skin files,", len(play_files()), "play files")
+    print("ok", len(skin_files()), "skin files,", len(play_files()), "play files, 1 source pack")
     return 0
 
 
