@@ -84,3 +84,6 @@ native/android/seori_account_link/build/
 native/android/seori_account_link/local.properties
 godot/addons/admob/android/bin/
 godot/addons/admob/ios/bin/
+
+# Local code-analysis cache
+.serena/
