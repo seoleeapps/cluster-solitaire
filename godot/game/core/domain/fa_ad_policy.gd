@@ -69,15 +69,6 @@ static func remote_keys() -> Array[String]:
 	return keys
 
 
-## 숫자 열쇠가 받을 수 있는 [최소, 최대]. 숫자 열쇠가 아니면 빈 배열.
-static func remote_range(key: String) -> Array[int]:
-	for placement: String in DEFAULTS:
-		for field: String in REMOTE_NUMBERS:
-			if key == _remote_key(placement, field):
-				return _field_range(field, DEFAULTS[placement][field])
-	return []
-
-
 ## 원격 설정 값({열쇠: 값})으로 기본 설정을 덮어쓴다. 형식이 틀리거나 범위를 벗어난 값은 기본값을 쓴다.
 static func config_from(values: Dictionary) -> Dictionary:
 	var config: Dictionary = default_config()
@@ -87,8 +78,7 @@ static func config_from(values: Dictionary) -> Dictionary:
 			config[placement][REMOTE_SWITCH] = enabled
 		for field: String in REMOTE_NUMBERS:
 			var value: Variant = values.get(_remote_key(placement, field))
-			var allowed: Array[int] = _field_range(field, DEFAULTS[placement][field])
-			if _is_count(value) and value >= allowed[0] and value <= allowed[1]:
+			if _is_count(value) and value <= _field_max(field, DEFAULTS[placement][field]):
 				config[placement][field] = int(value)
 	return config
 
@@ -209,10 +199,11 @@ static func _remote_key(placement: String, field: String) -> String:
 	return placement + "_" + field
 
 
-static func _field_range(field: String, default_value: int) -> Array[int]:
+## 원격 설정으로 줄 수 있는 가장 큰 값. 가장 작은 값은 0이다.
+static func _field_max(field: String, default_value: int) -> int:
 	if field == "cooldown_s":
-		return [0, maxi(default_value * COOLDOWN_RANGE_FACTOR, COOLDOWN_RANGE_FLOOR)]
-	return [0, default_value * CAP_RANGE_FACTOR]
+		return maxi(default_value * COOLDOWN_RANGE_FACTOR, COOLDOWN_RANGE_FLOOR)
+	return default_value * CAP_RANGE_FACTOR
 
 
 static func _is_count(value: Variant) -> bool:

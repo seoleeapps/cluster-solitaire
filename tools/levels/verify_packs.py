@@ -106,7 +106,10 @@ def count_groupings(content, categories, cards, limit=2):
 
 
 def check_level(content, level, number, tier, recent):
-    """한 판의 문제 목록과 참고 탐색기가 구한 관대함을 돌려준다."""
+    """한 판의 문제 목록과 측정값 {f: 참고 탐색기의 관대함, confusable: 다른 범주로도 보이는 카드 수}를 돌려준다.
+
+    형식이 틀려 끝까지 보지 못한 판은 측정값이 None이다.
+    """
     if level.get('n') != number or level.get('tier') != tier:
         return ['n or tier (expected n %d, tier %d)' % (number, tier)], None
     rule = TIERS[tier]
@@ -168,7 +171,7 @@ def check_level(content, level, number, tier, recent):
         problems.append('forgiveness %.4f outside tier range' % chance)
     elif not isinstance(level.get('f'), (int, float)) or abs(level['f'] - chance) > ROUNDING:
         problems.append('f %r differs from reference %.4f' % (level.get('f'), chance))
-    return problems, chance
+    return problems, {'f': chance, 'confusable': confusable}
 
 
 def check_pack(content, name, path):
@@ -190,14 +193,14 @@ def check_pack(content, name, path):
     for number, level in enumerate(levels, start=1):
         tier = spec['tier'](number)
         try:
-            found, chance = check_level(content, level, number, tier, set(itertools.chain(*history)))
+            found, measured = check_level(content, level, number, tier, set(itertools.chain(*history)))
         except (KeyError, TypeError, IndexError) as error:
-            found, chance = ['malformed level (%r)' % error], None
+            found, measured = ['malformed level (%r)' % error], None
         problems.extend('%s %d: %s' % (name, number, problem) for problem in found)
-        if chance is not None:
+        if measured is not None:
             categories = [group['cat'] for group in level['groups']]
             history.append(categories)
-            records.append({'tier': tier, 'layout': level['layout'], 'f': chance, 'categories': categories})
+            records.append(dict(measured, tier=tier, layout=level['layout'], categories=categories))
     return problems, records
 
 
@@ -220,17 +223,17 @@ def blocker(content, key):
 def print_stats(content, records_by_pack):
     for name, records in records_by_pack.items():
         print('\n### %s (%d판)\n' % (name, len(records)))
-        print('| 등급 | 판 수 | 배치 | 관대함 최소 | 중앙값 | 최대 |')
-        print('|---|---|---|---|---|---|')
+        print('| 등급 | 판 수 | 배치 | 관대함 최소 | 중앙값 | 최대 | 다른 범주로도 보이는 카드가 든 판 |')
+        print('|---|---|---|---|---|---|---|')
         for tier in sorted(TIERS):
             rows = [record for record in records if record['tier'] == tier]
             if not rows:
                 continue
             layouts = collections.Counter(record['layout'] for record in rows)
             values = [record['f'] for record in rows]
-            print('| T%d | %d | %s | %.3f | %.3f | %.3f |' % (
+            print('| T%d | %d | %s | %.3f | %.3f | %.3f | %d |' % (
                 tier, len(rows), ', '.join('%s %d' % pair for pair in sorted(layouts.items())),
-                min(values), statistics.median(values), max(values)))
+                min(values), statistics.median(values), max(values), sum(1 for record in rows if record['confusable'])))
     usage = collections.Counter()
     for records in records_by_pack.values():
         for record in records:

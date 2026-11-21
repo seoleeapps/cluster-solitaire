@@ -230,10 +230,18 @@ func _overrides() -> bool:
 		"rewarded_result_bonus_enabled", "rewarded_result_bonus_cooldown_s", "rewarded_result_bonus_session_cap", "rewarded_result_bonus_daily_cap",
 		"interstitial_level_end_enabled", "interstitial_level_end_cooldown_s", "interstitial_level_end_session_cap", "interstitial_level_end_daily_cap",
 	], "원격 설정 열쇠는 배치마다 켜짐, 간격, 실행 상한, 하루 상한")
-	_check(Policy.remote_range("interstitial_level_end_cooldown_s") == [0, 600], "간격 범위는 0부터 기본값의 4배와 600 중 큰 값까지")
-	_check(Policy.remote_range("interstitial_level_end_session_cap") == [0, 6] and Policy.remote_range("interstitial_level_end_daily_cap") == [0, 16], "상한 범위는 0부터 기본값의 2배까지")
-	_check(Policy.remote_range("rewarded_booster_cooldown_s") == [0, 600] and Policy.remote_range("rewarded_booster_daily_cap") == [0, 10], "보상형 범위")
-	_check(Policy.remote_range("rewarded_booster_enabled").is_empty() and Policy.remote_range("banner_home_cooldown_s").is_empty(), "범위가 없는 열쇠")
+	var edge: Dictionary = Policy.config_from({
+		"interstitial_level_end_cooldown_s": 600, "interstitial_level_end_session_cap": 6, "interstitial_level_end_daily_cap": 16,
+		"rewarded_booster_cooldown_s": 600, "rewarded_booster_session_cap": 4, "rewarded_booster_daily_cap": 10,
+	})
+	_check(edge["interstitial_level_end"]["cooldown_s"] == 600 and edge["rewarded_booster"]["cooldown_s"] == 600, "간격은 기본값의 4배와 600초 중 큰 값까지 받는다")
+	_check(edge["interstitial_level_end"]["session_cap"] == 6 and edge["interstitial_level_end"]["daily_cap"] == 16, "상한은 기본값의 2배까지 받는다")
+	_check(edge["rewarded_booster"]["session_cap"] == 4 and edge["rewarded_booster"]["daily_cap"] == 10, "보상형 상한도 기본값의 2배까지 받는다")
+	edge = Policy.config_from({
+		"interstitial_level_end_cooldown_s": 601, "interstitial_level_end_session_cap": 7, "interstitial_level_end_daily_cap": 17,
+		"rewarded_booster_cooldown_s": 601, "rewarded_booster_session_cap": 5, "rewarded_booster_daily_cap": 11,
+	})
+	_check(edge == Policy.default_config(), "범위를 하나라도 넘는 값은 기본값을 쓴다")
 
 	var config: Dictionary = Policy.config_from({
 		"rewarded_booster_enabled": false, "rewarded_booster_cooldown_s": 45,
