@@ -7,7 +7,7 @@
     "node": ">=24 <25"
   },
   "scripts": {
-    "test": "npm run -s check:generated && npm run -s check:levels && python3 -m unittest discover -s tools -p 'test_*.py' -v && python3 tools/check_native.py && python3 tools/check.py",
+    "test": "npm run -s check:generated && npm run -s check:levels && npm run -s check:remote-config && python3 -m unittest discover -s tools -p 'test_*.py' -v && python3 tools/check_native.py && python3 tools/check.py",
     "test:e2e": "python3 tools/check.py",
     "test:core": "python3 tools/run_probes.py",
     "test:godot": "python3 tools/check.py",
@@ -19,6 +19,8 @@
     "build:godot:web": "bash tools/ensure_godot.sh --with-export-templates && bash scripts/export_godot_web.sh",
     "start": "python3 tools/run.py",
     "check:native": "python3 tools/check_native.py",
+    "check:remote-config": "python3 tools/check_remote_config.py",
+    "check:aab": "python3 tools/check_aab.py",
     "build:android": "python3 tools/export_native.py",
     "check:generated": "python3 tools/content/build_content.py --check && python3 tools/art/build_candy_pop.py --check && python3 tools/audio/build_sfx.py --check && python3 tools/art/build_store_art.py --check",
     "check:levels": "python3 tools/levels/verify_packs.py",
