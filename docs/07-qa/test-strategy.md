@@ -6,13 +6,16 @@
 
 | 명령 | 확인하는 것 |
 |---|---|
-| `npm test` | 생성물 대조(`check:generated`), 레벨 팩 검증(`check:levels`), 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체 |
+| `npm test` | 생성물 대조(`check:generated`), 레벨 팩 검증(`check:levels`), 원격 설정 대조(`check:remote-config`), 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체 |
 | `python3 tools/check.py` | 구조 검사, 공통 묶음 해시, import, 공통 계약 프로브, 제품 여정, `tests/game`의 프로브, 기능 목록 누락, 추적 파일 불변 |
 | `python3 tools/check.py --capture --size 390x844 --out build/render-390` | 같은 여정을 렌더링해 장면별 PNG를 남긴다. `--size 360x640`으로 작은 화면도 찍는다 |
 | `npm run test:core` | `godot/game/core`의 규칙 프로브만. `python3 tools/run_probes.py board solver`처럼 이름 일부를 주면 그 프로브만 돈다 |
 | `npm run check:levels` | 실린 레벨 팩의 모든 판을 참고용 Python 탐색기로 다시 검사한다(풀이 가능, 관대함, 묶음 유일성, 등급의 범주 조건) |
 | `npm run build:levels` | 여정과 일일 도전 팩을 다시 만들고 바로 검사한다. 콘텐츠 표나 생성 규칙을 고친 뒤에 쓴다 |
 | `npm run check:architecture`, `npm run check:bundle`, `npm run check:local-mode` | core 경계, 공통 묶음 해시, 로컬 전용 구성 |
+| `npm run check:remote-config` | `remote/config.json`의 열쇠, 형, 범위를 수익화 프로필과 대조한다 |
+| `npm run check:aab` | 만든 릴리스 AAB를 다시 읽어 패키지, 버전, 서명, 권한, 주입 값을 검사한다. `npm run build:android`가 끝에 실행한다 |
+| `python3 tools/check_ga4_payload.py` | 분석 어댑터가 만든 요청 본문을 GA4의 검증 주소에 대어 본다. 기록되지 않는 주소이고 네트워크와 측정 값이 필요해 `npm test`에는 없다 |
 
 `tools/check.py`는 Godot 로그에 `SCRIPT ERROR`나 `ERROR:`로 시작하는 줄이 있으면 실패한다. `--out`은 `build/` 아래의 새 폴더나 빈 폴더여야 한다. Linux에서 `--capture`는 `xvfb-run -a`로 감싼다.
 
@@ -31,6 +34,8 @@
 | `skip-guide-home-replay` | 안내 건너뛰기, 재실행 뒤 안내를 강제하지 않음, 홈의 두 플레이 버튼 |
 
 타이틀, 샘플 라운드, 결과, 홈에서는 버튼이 세로 화면 밖으로 나가거나 서로 겹치지 않는지도 검사한다. 함수 직접 호출로 화면을 건너뛰지 않는다. 캡처한 PNG는 직접 열어 글자 잘림과 겹침을 본다. PNG를 저장한 것만으로 화면 검수가 끝나지 않는다.
+
+서비스 어댑터(광고와 동의, 분석, 원격 설정)의 프로브는 SDK, HTTP, 파일, 시계를 메모리 안의 대역으로 바꿔 끼우고 네트워크 없이 돈다. `fa_admob_sdk_probe.gd`는 AdMob 플러그인의 GDScript 층까지 실제 그대로 쓰고 Android에만 있는 네이티브 싱글턴만 대역으로 바꾼다. 이 프로브는 플러그인의 클래스 이름을 풀어 줄 가져오기 캐시가 있어야 돈다. 새 복제본에서 `npm run test:core`로 바로 돌리면 실행하지 못했다고 알리고 실패하므로 `godot --headless --path godot --import`를 먼저 실행한다. `npm test`는 가져오기를 먼저 한다. 무엇을 확인하는지는 [서비스 어댑터](../03-architecture/service-adapters.md)의 "검수"에 있다.
 
 `core`의 규칙, 해법 탐색, 생성기, 경제, 광고 정책은 요구사항 때문에 실패하는 프로브를 먼저 쓰고 구현한다. `godot/tests/game`에 `*_probe.gd`로 두면 `tools/check.py`가 자동으로 실행한다.
 

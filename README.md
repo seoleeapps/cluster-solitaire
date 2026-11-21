@@ -29,7 +29,7 @@ python3 tools/check.py --capture --size 360x640 --out build/render-360
 |---|---|
 | `godot/game` | 제품 코드. 규칙은 `core`, 화면은 `features`, 저장과 SDK 연결은 `adapters`, 공통 흐름과의 연결은 `bootstrap` |
 | `godot/addons/seorilabs_game`, `godot/addons/seorilabs_platform`, `godot/tests/common` | 공통 묶음. [game-foundation](https://github.com/seorilabs/game-foundation)의 검수본이며 `common-bundle.lock.json`으로 고정한다. 직접 고치지 않는다 |
-| `godot/addons/admob` | AdMob 플러그인. 광고 어댑터를 붙일 때 켠다 |
+| `godot/addons/admob` | AdMob 플러그인. 편집기 플러그인으로 켜져 있고 제품의 광고 어댑터(`godot/game/adapters`)가 쓴다 |
 | `godot/tests/game` | 제품 여정과 프로브 |
 | `tools`, `scripts` | 검사와 빌드 도구 |
 | `docs` | 설계, 구조, 마켓, 출시, 검수 문서 |

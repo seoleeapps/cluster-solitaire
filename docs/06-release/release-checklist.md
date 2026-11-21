@@ -6,8 +6,8 @@
 |---|---|
 | 1 개발 환경 전체 회귀 | `npm test`와 테스트 계획의 크기별 `python3 tools/check.py --capture`. 팩 검증과 수익화 프로필 검사는 해당 도구가 들어온 뒤 실행한다 |
 | 2 UI | 필수 재료 게이트 결과를 `docs/game-design/ui/gate-report.json`에 남기고, 기준 그림 비교와 독립 검수 3회를 기록한다 |
-| 3 자원 | 저장소에 넣는 것은 공개 식별자뿐이다. 비밀값은 넣지 않는다 |
-| 4 빌드 | `npm run check:release`, `npm run build:android`. AAB의 패키지, 버전, 서명 인증서, 권한을 다시 읽는다 |
+| 3 자원 | AdMob과 GA4의 값은 저장소에 넣지 않고 빌드할 때 로컬 자격증명에서 주입한다. 원격 설정은 `remote/config.json`을 고쳐 `npm run check:remote-config`를 통과시킨 뒤 main에 올린다 |
+| 4 빌드 | `npm run check:release`, `npm run build:android`. 빌드가 끝나면 `tools/check_aab.py`가 AAB의 패키지, 버전, 서명 인증서, 권한, 대상 SDK, AdMob 앱 ID, 주입 값, 아이콘을 다시 읽는다. 그 출력을 기록한다. 분석 이벤트나 어댑터를 고쳤으면 `python3 tools/check_ga4_payload.py`로 요청 본문을 GA4의 검증 주소에 대어 본다 |
 | 5 내부 테스트 | 업로드 뒤 트랙의 versionCode와 처리 상태를 API로 다시 읽는다 |
 | 6 실기기 | 승인된 AND-01~08만 확인한다 |
 | 7~9 등록정보, 심사, 공개 | 상태를 단계별로 따로 기록한다 |

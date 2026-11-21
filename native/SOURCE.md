@@ -13,4 +13,6 @@
 
 AdMob Editor의 Noto Sans CJK SC는 Adobe의 2014–2021 저작권과 SIL OFL 1.1을 보존한다. 같은 폴더의 `OFL.txt`와 잠금 파일에 원본 해시와 라이선스 출처를 기록한다. Editor 전용 그림, 음악, 이 글꼴, 테스트 대역과 C# 예제는 출시 내보내기에서 제외한다.
 
-AdMob 편집기 플러그인은 지금 꺼져 있고 앱 ID도 설정돼 있지 않다. 광고 어댑터를 붙이는 작업에서 제품의 AdMob 앱 ID와 함께 켠다. 그때 Google UMP 동의 처리와 광고 단위 연결을 제품 어댑터에 둔다.
+AdMob 편집기 플러그인은 `godot/project.godot`에서 켜져 있다. 제품의 AdMob 앱 ID는 저장소에 두지 않고 릴리스 빌드가 `tools/prepare_services.py`로 `[admob]` 절에 넣었다가 지운다. 값이 없는 내보내기에는 플러그인의 기본값인 Google의 테스트 앱 ID가 들어가고, `tools/check_aab.py`가 그런 AAB를 거부한다. UMP 동의 처리와 광고 단위 연결은 제품 어댑터(`godot/game/adapters/fa_admob_ads.gd`, `fa_admob_sdk.gd`)에 있다.
+
+플러그인의 Android 라이브러리는 GMA Next-Gen SDK(`ads-mobile-sdk` 1.4.0)를 쓴다. 플러그인은 UMP의 `canRequestAds`를 내보내지 않아 어댑터가 동의 상태로 같은 조건을 판정한다. 플러그인의 불러오기 객체(`RewardedAdLoader`, `InterstitialAdLoader`)는 답을 받은 뒤 스스로를 놓을 때 다른 참조가 없으면 지워지지 않고 남는다. 벤더 소스는 고치지 않고, 어댑터가 다음 불러오기까지 그 객체를 붙들어 제대로 지워지게 한다.

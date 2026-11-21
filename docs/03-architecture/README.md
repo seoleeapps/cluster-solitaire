@@ -7,12 +7,13 @@ Godot 프로젝트는 `godot/`에 있다. 제품 코드는 `godot/game`에만 �
 | `godot/game/bootstrap` | 시작 장면. 공통 흐름을 상속하고 제품 화면과 서비스를 주입한다 |
 | `godot/game/core` | 엔진 장면에 기대지 않는 규칙. `domain`, `use_cases`, `ports` |
 | `godot/game/features` | 화면과 그 화면 전용 그림 |
-| `godot/game/adapters` | core의 포트를 구현하는 저장, 광고, 분석 같은 바깥 연결 |
+| `godot/game/adapters` | core의 포트를 구현하는 저장, 광고, 분석, 원격 설정 같은 바깥 연결. 광고와 동의, 분석, 원격 설정은 [서비스 어댑터](service-adapters.md)에 적었다 |
 | `godot/addons/seorilabs_game`, `godot/addons/seorilabs_platform`, `godot/tests/common` | [공통 묶음](common-bundle.md). 해시로 고정돼 있다 |
-| `godot/addons/admob` | AdMob 플러그인 5.1.0. 지금은 편집기 플러그인으로 켜져 있지 않다 |
+| `godot/addons/admob` | AdMob 플러그인 5.1.0. 편집기 플러그인으로 켜져 있고 내보낼 때 Android 라이브러리와 앱 ID를 넣는다. 제품 코드에서는 `game/adapters/fa_admob_sdk.gd`만 이 플러그인을 부른다 |
 | `godot/tests/game` | 제품 여정(`outgame_journey.gd`)과 프로브(`*_probe.gd`) |
 | `godot/config/product.json` | 제품 이름, 식별자, 홈 형식 |
 | `godot/data/outgame/outgame-profile.json` | 필수 기능, 선택 기능, 서비스 상태 선언 |
+| `remote/config.json` | 원격 설정 파일. GitHub Pages로 배포하고 앱이 시작할 때 받는다 |
 
 의존 방향은 [의존 규칙](clean-architecture.md)을 따른다. `npm run check:architecture`는 `godot/game/core`의 스크립트에 `Node`, `Control`, `SceneTree`, `JavaScriptBridge`, `HTTPRequest`, `FileAccess`라는 단어나 `res://addons`, `res://game/adapters` 경로가 있으면 실패한다. 주석에 써도 실패한다.
 
@@ -43,4 +44,4 @@ Godot 프로젝트는 `godot/`에 있다. 제품 코드는 `godot/game`에만 �
 
 ## 로컬 모드
 
-이 제품은 로그인, 결제, 서버 연결이 없다. 프로필의 `mode`는 `local`이고 제품 코드는 플랫폼 클라이언트를 연결하지 않는다. `npm run check:local-mode`와 `npm test`의 `test_local_mode.py`가 이를 확인한다.
+이 제품은 로그인, 결제, 서버 연결이 없다. 프로필의 `mode`는 `local`이고 제품 코드는 플랫폼 클라이언트를 연결하지 않는다. 분석(GA4)과 원격 설정(정적 JSON)은 플랫폼 클라이언트를 거치지 않는 제품의 어댑터이고, 주입 값이 없는 실행에서는 꺼져 있다. `npm run check:local-mode`와 `npm test`의 `test_local_mode.py`가 이를 확인한다.

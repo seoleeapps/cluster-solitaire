@@ -16,11 +16,11 @@
 
 ## 현재 상태
 
-저장소에는 광고 어댑터가 없고 AdMob 편집기 플러그인도 꺼져 있다. 지금 빌드에는 광고가 들어가지 않는다. Play Console 등록, 내부 테스트 업로드, 심사와 공개의 기록은 아직 없다. 진행하면 출시별 상태와 근거 위치를 `release/` 아래에 남긴다.
+광고와 동의, 분석, 원격 설정의 어댑터가 `godot/game/adapters`에 있고 AdMob 편집기 플러그인이 켜져 있다. 릴리스 빌드에는 AdMob SDK와 UMP, 제품의 AdMob 앱 ID가 들어간다. 시작 장면에 어댑터를 연결하는 일은 남아 있고, 연결 전의 빌드는 광고를 요청하지 않는다. 연결 방법은 [서비스 어댑터](../03-architecture/service-adapters.md)에 있다. Play Console 등록, 내부 테스트 업로드, 심사와 공개의 기록은 아직 없다. 진행하면 출시별 상태와 근거 위치를 `release/` 아래에 남긴다.
 
 ## 저장소 설정
 
-Android 16(API 36)을 대상으로 하고 최소 API는 26, 아키텍처는 arm64-v8a, 산출물은 Gradle AAB다. 식별자와 산출물 경로는 `godot/config/product.json`, `godot/export_presets.cfg`의 Android preset, `play-store/google-play.config.json`에 있고, 세 곳이 어긋나면 `npm run check:native`가 실패한다. 서명 값은 환경 변수로만 받는다. 저장소의 버전 `1.0.0`과 versionCode `1`은 기본값이다.
+Android 16(API 36)을 대상으로 하고 최소 API는 26, 아키텍처는 arm64-v8a, 산출물은 Gradle AAB다. 식별자와 산출물 경로는 `godot/config/product.json`, `godot/export_presets.cfg`의 Android preset, `play-store/google-play.config.json`에 있고, 세 곳이 어긋나면 `npm run check:native`가 실패한다. 서명 값과 AdMob, GA4의 값은 환경 변수나 로컬 자격증명 파일에서 읽고 저장소에 넣지 않는다. 저장소의 버전 `1.0.0`과 versionCode `1`은 기본값이다.
 
 빌드, 업로드, 심사 제출, 승인, 공개는 서로 다른 상태다. 빌드 성공이나 업로드 응답을 공개 출시로 적지 않고, 트랙의 실제 versionCode와 상태를 콘솔이나 API에서 다시 읽어 기록한다.
 
