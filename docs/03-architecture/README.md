@@ -1,6 +1,6 @@
 # 구조
 
-Godot 프로젝트는 `godot/`에 있다. 제품 코드는 `godot/game`에만 두고, 공통 묶음은 고치지 않고 연결해서 쓴다. 승인된 책임 분담은 [첫 출시 설계](../design/2026-11-21-four-alike-launch/design.md)의 "구조·책임·의존성" 절에 있다.
+Godot 프로젝트는 `godot/`에 있다. 제품 코드는 `godot/game`에만 두고, 공통 묶음은 고치지 않고 연결해서 쓴다. 승인된 책임 분담은 [첫 출시 설계](../design/2026-11-21-four-alike-launch/design.md)의 "구조·책임·의존성" 절에, 앞으로 채울 폴더와 데이터 계약은 [기술 제작 계획](../design/2026-11-21-four-alike-launch/06-technical-production-plan.md)에 있다. 이 문서는 지금 저장소에 있는 것을 적는다.
 
 | 위치 | 책임 |
 |---|---|

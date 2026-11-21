@@ -14,6 +14,10 @@
 
 `tools/check.py`는 Godot 로그에 `SCRIPT ERROR`나 `ERROR:`로 시작하는 줄이 있으면 실패한다. `--out`은 `build/` 아래의 새 폴더나 빈 폴더여야 한다. Linux에서 `--capture`는 `xvfb-run -a`로 감싼다.
 
+`--size`는 기기 픽셀이 아니라 논리 화면 크기다. 폭 기준으로 늘리므로 360×640 기기의 논리 화면은 390×693, 412×915 기기는 390×866이다. 검수 범위와 크기의 정본은 [QA 론칭 계획](../design/2026-11-21-four-alike-launch/07-qa-launch-plan.md)과 [테스트 계획](../design/2026-11-21-four-alike-launch/test-plan.json)이다.
+
+렌더링 여정은 실제 창을 띄운다. 같은 데스크톱에서 다른 창이 초점을 가져가는 동안에는 탭 입력 하나가 빠져 실패한 적이 있다. 같은 명령을 다시 실행해 확인하고, 반복해서 같은 단계에서 실패하면 결함으로 본다. headless 실행과 CI의 `xvfb-run`에서는 이 현상을 보지 못했다.
+
 ## 여정
 
 `godot/tests/game/outgame_journey.gd`는 실제 시작 장면을 띄우고 화면 좌표 입력으로만 진행한다. 저장은 실행마다 새로 만든 임시 경로를 주입한다.

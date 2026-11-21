@@ -39,6 +39,6 @@ Android preset의 `runnable=false`는 Godot이 연결된 기기를 자동으로 
 - AdMob 플러그인에서 고친 두 파일의 해시
 - Android와 Web 밖의 export preset이 없는지
 
-## CI 빌드와 배포
+## 업로드
 
-`Deploy Google Play` workflow가 같은 준비 스크립트(`tools/prepare_android.sh`)로 AAB를 만든다. 태그와 설정은 [workflow 문서](ci-cd-workflows.md)를 따른다.
+[기술 제작 계획](../design/2026-11-21-four-alike-launch/06-technical-production-plan.md)은 마켓 업로드를 로컬에서 실행하고 결과를 `release/`에 기록하는 것으로 정했다. 저장소에는 같은 준비 스크립트(`tools/prepare_android.sh`)로 AAB를 만드는 `Deploy Google Play` workflow도 남아 있다. 그 경로의 설정과 확인되지 않은 점은 [workflow 문서](ci-cd-workflows.md)에 있다.
