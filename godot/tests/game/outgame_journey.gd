@@ -939,17 +939,31 @@ func settings_privacy_licenses() -> void:
 	d.end()
 
 
-## 홈에서 뒤로 가기: 처음에는 안내만 하고, 곧바로 한 번 더 누르면 끝낸다.
+## 홈에서 뒤로 가기: 처음에는 안내만 하고, 디바운스 간격 뒤 한 번 더 누르면 끝낸다. 2단 시트에서 중복 알림이 와도 한 단계만 닫는다.
 func back_to_exit() -> void:
 	d.begin("back-to-exit", ["ui_navigation"])
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
 	d.step("the first back only tells you", quits == 0 and main.toasts.back() == "한 번 더 누르면 게임을 끝내요" and main.screen == "home")
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("immediate duplicate back on home does not quit", quits == 0 and main.screen == "home")
 	d.step("visiting settings clears toast and exit arming", await d.tap(b("settings")) and main.screen == "settings" and not is_instance_valid(main._toast))
-	d.step("returning home still requires two backs", await d.tap(b("close")) and main.screen == "home")
+	d.step("open language subsheet", await d.tap(b("language")) and main.screen == "language")
+	await main.get_tree().create_timer(main.BACK_DEBOUNCE_SECONDS + 0.02).timeout
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("duplicate back closes only one sheet (language -> settings)", main.screen == "settings")
+	await main.get_tree().create_timer(main.BACK_DEBOUNCE_SECONDS + 0.02).timeout
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("next back returns from settings to home", main.screen == "home")
+	await main.get_tree().create_timer(main.BACK_DEBOUNCE_SECONDS + 0.02).timeout
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
 	d.step("the first back after return does not quit", quits == 0 and is_instance_valid(main._toast))
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
-	d.step("a second back exits", quits == 1 and not is_instance_valid(main._toast))
+	d.step("immediate duplicate back still does not quit", quits == 0 and is_instance_valid(main._toast))
+	await main.get_tree().create_timer(main.BACK_DEBOUNCE_SECONDS + 0.02).timeout
+	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	d.step("a second intentional back exits", quits == 1 and not is_instance_valid(main._toast))
+	await main.get_tree().create_timer(main.BACK_DEBOUNCE_SECONDS + 0.02).timeout
 	main.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
 	d.step("subsequent back after resume arms instead of quitting immediately", quits == 1 and is_instance_valid(main._toast))
 	d.end()

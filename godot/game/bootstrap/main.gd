@@ -48,6 +48,8 @@ const PRIVACY_URL := "https://www.seorilabs.com/en/apps/four-alike/privacy/"
 const CONSENT_WAIT_SECONDS := 5.0
 ## 홈에서 뒤로 가기를 한 번 더 누르면 끝내는 시간(밀리초).
 const EXIT_WINDOW_MSEC := 2000
+## Android 16 등에서 단일 KEYCODE_BACK 입력이 두 번 전달되는 중복 알림을 걸러내는 최소 간격(초).
+const BACK_DEBOUNCE_SECONDS := 0.18
 const TOAST_SECONDS := 2.0
 const TOAST_MARGINS := [18, 18, 18, 22]
 ## 안내의 위쪽 끝이 화면 아래(안전 영역 위)에서 떨어진 거리. 홈의 둥근 버튼 줄 바로 위다.
@@ -95,6 +97,7 @@ var _consent_wait_over: bool = false
 var _started_msec: int = 0
 var _title_reported: bool = false
 var _exit_armed_until: int = 0
+var _back_cooldown_sec: float = 0.0
 var _last_language: String = ""
 var _settings_seen: Dictionary = {}
 var _toast: Control
@@ -200,6 +203,11 @@ func apply_look() -> void:
 	Look.select(session.player.selected_theme(Economy.THEME_CARD_BACK), session.player.selected_theme(Economy.THEME_BACKGROUND))
 	if backdrop != null:
 		backdrop.refresh()
+
+
+func _process(delta: float) -> void:
+	if _back_cooldown_sec > 0.0:
+		_back_cooldown_sec = maxf(0.0, _back_cooldown_sec - delta)
 
 
 func _notification(what: int) -> void:
@@ -507,6 +515,9 @@ func _clear(title: String) -> void:
 	if screen in ["title", "home"]:
 		return
 	var back: Button = content.find_child("back", true, false) as Button
+	if back != null and back.pressed.is_connected(_back):
+		back.pressed.disconnect(_back)
+		back.pressed.connect(_perform_back)
 	var close: Button = content.find_child("close", true, false) as Button
 	for pair: Array in [[back, "icon_back", tr_text("Back", "뒤로")], [close, "icon_close", tr_text("Close", "닫기")]]:
 		var button: Button = pair[0]
@@ -527,6 +538,13 @@ func _clear(title: String) -> void:
 
 
 func _back() -> void:
+	if _back_cooldown_sec > 0.0:
+		return
+	_back_cooldown_sec = BACK_DEBOUNCE_SECONDS
+	_perform_back()
+
+
+func _perform_back() -> void:
 	if screen == "play" and play != null:
 		play.back_pressed()
 		return
