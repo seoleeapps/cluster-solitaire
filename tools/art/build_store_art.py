@@ -3,13 +3,17 @@
 Usage: python3 tools/art/build_store_art.py [--check]
 Writes the launcher icon layers under godot/game/assets and play-store/assets/icon-512.png.
 The icon uses only original shapes: a chunky white card with four alike dots in front of
-a face-down card. No emoji artwork is used. --check exits 1 when an SVG on disk differs
-or the PNG is missing or has the wrong size.
+a face-down card. No emoji artwork is used. The PNG carries the SHA-256 of the SVG it was
+rendered from, so --check exits 1 when an SVG on disk differs or the PNG is missing, has the
+wrong size or was rendered from an older SVG.
 """
+import hashlib
 import pathlib
+import shutil
 import struct
 import subprocess
 import sys
+import zlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "godot/game/assets"
@@ -93,12 +97,56 @@ def files():
     }
 
 
-def png_size(path):
-    with open(path, "rb") as handle:
-        head = handle.read(24)
-    if head[:8] != b"\x89PNG\r\n\x1a\n":
+PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
+STAMP_KEY = b"Source-SHA256"
+
+
+def png_chunks(data):
+    """Yield (type, body) for each chunk of a PNG file's bytes."""
+    at = len(PNG_MAGIC)
+    while at + 8 <= len(data):
+        size, kind = struct.unpack(">I4s", data[at:at + 8])
+        yield kind, data[at + 8:at + 8 + size]
+        at += 12 + size
+
+
+def png_info(path):
+    """(width, height, stamp) of a PNG, or None when the file is not a readable PNG."""
+    if not path.is_file():
         return None
-    return struct.unpack(">II", head[16:24])
+    data = path.read_bytes()
+    if not data.startswith(PNG_MAGIC):
+        return None
+    size, stamp = None, ""
+    for kind, body in png_chunks(data):
+        if kind == b"IHDR":
+            size = struct.unpack(">II", body[:8])
+        elif kind == b"tEXt" and body.startswith(STAMP_KEY + b"\x00"):
+            stamp = body[len(STAMP_KEY) + 1:].decode("ascii", "replace")
+    return None if size is None else (size[0], size[1], stamp)
+
+
+def stamp_png(path, digest):
+    """Record which SVG the PNG came from as a text chunk right after the header chunk."""
+    data = path.read_bytes()
+    body = STAMP_KEY + b"\x00" + digest.encode("ascii")
+    chunk = struct.pack(">I", len(body)) + b"tEXt" + body + struct.pack(">I", zlib.crc32(b"tEXt" + body))
+    header_end = len(PNG_MAGIC) + 12 + struct.unpack(">I", data[len(PNG_MAGIC):len(PNG_MAGIC) + 4])[0]
+    path.write_bytes(data[:header_end] + chunk + data[header_end:])
+
+
+def render_store_icon(source, png, digest):
+    """Rasterise the store icon with the engine. Returns an error message, or "" on success."""
+    if shutil.which("godot") is None:
+        return "godot is not on PATH, so play-store/assets/icon-512.png was not rendered"
+    png.unlink(missing_ok=True)
+    done = subprocess.run(["godot", "--headless", "--path", str(ROOT / "godot"), "--script", str(RENDER), "--",
+                           str(source), str(png)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    info = png_info(png)
+    if done.returncode != 0 or info is None or info[:2] != (512, 512):
+        return f"rendering play-store/assets/icon-512.png failed (exit {done.returncode}): {done.stderr.strip()[-400:]}"
+    stamp_png(png, digest)
+    return ""
 
 
 def main():
@@ -111,15 +159,15 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
-    png = STORE / "icon-512.png"
-    if check:
-        if not png.is_file() or png_size(png) != (512, 512):
-            bad.append(str(png.relative_to(ROOT)))
-    else:
-        subprocess.run(["godot", "--headless", "--path", str(ROOT / "godot"), "--script", str(RENDER), "--",
-                        str(STORE / "icon-512.svg"), str(png)], check=True, stdout=subprocess.DEVNULL)
-        if png_size(png) != (512, 512):
-            bad.append(str(png.relative_to(ROOT)))
+    source, png = STORE / "icon-512.svg", STORE / "icon-512.png"
+    digest = hashlib.sha256(files()[source].encode()).hexdigest()
+    if not check:
+        error = render_store_icon(source, png, digest)
+        if error:
+            print(error, file=sys.stderr)
+            return 1
+    if png_info(png) != (512, 512, digest):
+        bad.append(f"{png.relative_to(ROOT)} (missing, wrong size, or rendered from another SVG)")
     if bad:
         print("out of date:", *bad, sep="\n  ")
         return 1
