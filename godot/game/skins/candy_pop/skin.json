@@ -31,7 +31,7 @@
     "button_secondary": {
       "normal": "ui_button_secondary_normal.svg",
       "pressed": "ui_button_secondary_pressed.svg",
-      "disabled": "ui_button_primary_disabled.svg",
+      "disabled": "ui_button_secondary_disabled.svg",
       "margins": [
         22,
         20,

@@ -5,6 +5,7 @@
 Needs Playwright with Chromium. The emoji checkout is not part of this repository;
 the artwork comes from microsoft/fluentui-emoji (MIT), commit 1ffb34c.
 """
+import argparse
 import asyncio
 import base64
 import csv
@@ -24,10 +25,16 @@ def flat_svg(assets: pathlib.Path, name: str):
 
 
 async def main() -> int:
-    items_tsv, assets, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), pathlib.Path(sys.argv[3])
-    size = int(sys.argv[4]) if len(sys.argv) > 4 else 192
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("items_tsv", type=pathlib.Path)
+    parser.add_argument("assets", type=pathlib.Path, help="assets folder of a fluentui-emoji checkout")
+    parser.add_argument("out", type=pathlib.Path)
+    parser.add_argument("size", type=int, nargs="?", default=192)
+    args = parser.parse_args()
+    assets, out, size = args.assets, args.out, args.size
     out.mkdir(parents=True, exist_ok=True)
-    rows = list(csv.DictReader(open(items_tsv), delimiter="\t"))
+    with open(args.items_tsv, newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
     missing = []
     async with async_playwright() as p:
         browser = await p.chromium.launch()

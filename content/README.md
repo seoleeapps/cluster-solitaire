@@ -18,7 +18,7 @@
 
 1. 표를 고친다. 새 카드는 `tools/content/rasterize_icons.py`로 아이콘을 만든다.
 2. `python3 tools/content/build_content.py`로 `godot/data/content/*.json`을 다시 만든다. `--check`는 표와 JSON이 맞는지만 본다.
-3. 레벨 팩을 다시 만들고 `python3 tools/levels/verify_packs.py`로 검증한다. 이미 공개한 버전의 일일 도전 날짜는 바꾸지 않는다.
+3. 표가 바뀌면 레벨 팩도 다시 만들어 검증한다. 이미 공개한 버전의 일일 도전 날짜는 바꾸지 않는다.
 
 ## 만든 과정
 

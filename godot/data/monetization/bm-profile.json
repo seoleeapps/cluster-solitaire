@@ -191,6 +191,7 @@
       "agentPurpose": "임시 칸을 이번 판에 하나 더 열거나, 0개가 된 힌트·되돌리기를 1개 충전하는 보상형이다. 플레이어가 버튼을 눌러 시작하고 광고가 없거나 상한에 닿으면 코인 구매 길이 남는다. 일일 도전에서는 끈다.",
       "reward": {
         "currency_id": "coin",
+        "effect": "임시 칸 1개를 이번 판에 열거나 힌트 또는 되돌리기 1개를 준다",
         "amount": 0,
         "affects_competitive_outcome": false
       },
@@ -278,6 +279,7 @@
       "agentPurpose": "실수 4회로 끝난 판에서 실수 2회를 지우고 이어 하는 보상형이다. 판당 한 번이고 일일 도전에서는 끈다. 거절하면 다시 하기와 나가기가 그대로 남는다.",
       "reward": {
         "currency_id": "coin",
+        "effect": "진행 중인 판의 실수 2회를 지운다",
         "amount": 0,
         "affects_competitive_outcome": false
       },
@@ -365,6 +367,7 @@
       "agentPurpose": "결과 창에서 그 판의 코인을 2배로 받는 보상형이다. 그냥 받기 버튼을 같은 크기로 둔다.",
       "reward": {
         "currency_id": "coin",
+        "effect": "그 판에서 받은 코인만큼 한 번 더 준다. amount는 수익 모의 계산에 쓰는 판당 평균값이고 지급액이 아니다",
         "amount": 13,
         "affects_competitive_outcome": false
       },
@@ -743,9 +746,9 @@
       "ecpm_source": "benchmarks"
     },
     "last_result": {
-      "computed_at": "2026-11-21T00:29:37Z",
+      "computed_at": "2026-11-21T01:32:45Z",
       "computed_with_framework_version": "1.1.0",
-      "inputs_hash": "372e39569e298cde2fdf68298571c33ecc07542caeb31870ba859b617dd9ba6d",
+      "inputs_hash": "c4a438df1ac7f2bf4ad81681f4f06c26454a5d826fcd99944666a663fa711aef",
       "retention_fit": {
         "a": 0.286,
         "b": 0.4988,

@@ -60,13 +60,14 @@ def skin_files():
     f["ui_button_primary_pressed.svg"] = primary(ORANGE_MID, ORANGE_BOT, "#F07C00", ORANGE_LIP, press=4)
     f["ui_button_primary_disabled.svg"] = primary("#D9DCEF", "#C5C9E3", "#B4B9D8", "#8F95BC")
 
-    def secondary(press=0):
+    def secondary(press=0, face=WHITE, lip=LIP):
         y = press
-        body = (rect(2, 8, 92, 50, 18, LIP)
-                + rect(2, 2 + y, 92, 50, 18, WHITE, f'stroke="{LIP}" stroke-width="1.5"'))
+        body = (rect(2, 8, 92, 50, 18, lip)
+                + rect(2, 2 + y, 92, 50, 18, face, f'stroke="{lip}" stroke-width="1.5"'))
         return svg(96, 60, body)
     f["ui_button_secondary_normal.svg"] = secondary()
     f["ui_button_secondary_pressed.svg"] = secondary(press=4)
+    f["ui_button_secondary_disabled.svg"] = secondary(face="#E3E5F2", lip="#B4B9D8")
 
     f["ui_panel.svg"] = svg(72, 72, rect(1, 7, 70, 64, 20, LIP) + rect(1, 1, 70, 64, 20, WHITE, f'stroke="{LIP}" stroke-width="1.5"'))
     f["ui_popup_frame.svg"] = svg(
@@ -97,7 +98,7 @@ def skin_files():
         "focus": "#FFE27A",
         "textures": {
             "button_primary": {"normal": "ui_button_primary_normal.svg", "pressed": "ui_button_primary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [26, 24, 26, 30], "content": [22, 10, 22, 18], "minimum": [72, 56]},
-            "button_secondary": {"normal": "ui_button_secondary_normal.svg", "pressed": "ui_button_secondary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [22, 20, 22, 26], "content": [16, 8, 16, 14], "minimum": [56, 48]},
+            "button_secondary": {"normal": "ui_button_secondary_normal.svg", "pressed": "ui_button_secondary_pressed.svg", "disabled": "ui_button_secondary_disabled.svg", "margins": [22, 20, 22, 26], "content": [16, 8, 16, 14], "minimum": [56, 48]},
             "panel": {"normal": "ui_panel.svg", "margins": [24, 24, 24, 30], "content": [16, 12, 16, 18], "minimum": [56, 56]},
             "popup_frame": {"normal": "ui_popup_frame.svg", "margins": [38, 38, 38, 46], "content": [22, 20, 22, 30], "minimum": [96, 96]},
             "chip": {"normal": "ui_chip.svg", "margins": [22, 14, 22, 14], "content": [10, 4, 10, 4], "minimum": [56, 36]},
@@ -185,6 +186,12 @@ def main():
                     bad.append(str(p.relative_to(ROOT)))
             else:
                 p.write_text(text)
+        # A file the generator no longer writes must not linger next to the generated ones.
+        for stray in sorted(q for q in d.iterdir() if q.suffix in (".svg", ".json") and q.name not in files):
+            if check:
+                bad.append(f"{stray.relative_to(ROOT)} (not generated)")
+            else:
+                stray.unlink()
     if check and bad:
         print("out of date:", *bad, sep="\n  ")
         return 1

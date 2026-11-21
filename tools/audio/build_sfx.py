@@ -142,6 +142,11 @@ def main():
         else:
             path.write_bytes(data)
             print(f"{name:16s} {len(data) / 2 / RATE:5.2f}s")
+    for stray in sorted(q for q in OUT.glob("*.wav") if q.stem not in SOUNDS):
+        if check:
+            stale.append(f"{stray.name} (not generated)")
+        else:
+            stray.unlink()
     if stale:
         print("out of date:", stale)
         return 1
