@@ -1,27 +1,23 @@
-# Docs Source Of Truth
+# 문서
 
-이 폴더는 Seorilabs 게임 프로젝트의 실행 원장이다.
+Four Alike의 설계, 구조, 마켓, 출시, 검수 기록을 둔다. 승인 범위는 설계 문서가 정본이고, 나머지 문서는 그 범위 안에서 저장소의 현재 상태를 적는다.
 
-Obsidian은 지식베이스와 재사용 가능한 운영 노하우를 보조로 관리한다. 제품별 기획, 의사결정, 작업, 마켓 등록, 릴리스 상태는 이 `docs/`를 우선한다.
-
-## 폴더
-
-```text
-01-planning/      # 제품 기획, 요구사항, 승인 상태
-02-decisions/     # ADR, 장기 의사결정
-03-architecture/  # Clean Architecture, dependency rule
-04-work/          # 작업 로그, backlog
-05-markets/       # Google Play, App Store, AppsInToss, Firebase 원장
-06-release/       # 릴리스 후보, 배포 체크리스트
-07-qa/            # 테스트 전략, QA 시나리오
-08-ops/           # GitHub Actions, dependency, runner 운영
-09-knowledge/     # Obsidian으로 승격하거나 가져온 일반 지식
-```
+| 위치 | 내용 |
+|---|---|
+| [design/](design/README.md) | 승인된 설계와 테스트 계획 |
+| [game-design/ui/direction/](game-design/ui/direction/README.md) | 고른 시각 방향의 기준 그림 |
+| [02-decisions/](02-decisions/README.md) | 저장소 운영에 관한 장기 결정(ADR) |
+| [03-architecture/](03-architecture/README.md) | 코드 구조, 공통 묶음, 제품 화면을 넣는 방법 |
+| [05-markets/](05-markets/README.md) | Google Play 정보 |
+| [06-release/](06-release/README.md) | Android 빌드, workflow, 출시 체크리스트 |
+| [07-qa/](07-qa/README.md) | 검수 방법과 기능 목록을 고치는 방법 |
+| `qa/feature-inventory.json` | 기능 목록(v2). 검사 도구가 읽는다 |
+| [08-ops/](08-ops/README.md) | 도구와 의존성 버전 |
+| [09-knowledge/](09-knowledge/README.md) | 저장소에 남길 프로젝트 지식 |
 
 ## 문서 규칙
 
-- 확인된 사실과 추정은 분리한다.
-- 모르는 값은 `확정 필요`로 남긴다.
-- 콘솔에서 변경한 값은 관련 문서와 config example에 반영한다.
-- `npm run check:release`는 네이티브 빌드 입력을 확인한다. 승인 범위와 실행 근거는 중앙 검증기로 검사하고, 마켓 처리와 테스터 연결은 provider에서 별도로 확인한다.
-
+- 확인한 사실과 추정을 구분한다.
+- 정해지지 않은 값은 `확정 필요`로 적는다.
+- 콘솔에서 바꾼 값은 관련 문서와 저장소 설정에 반영한다.
+- `npm run check:docs`는 필수 문서가 있는지만 확인한다. 내용의 정확성은 사람이 읽고 확인한다.

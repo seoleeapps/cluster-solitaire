@@ -35,7 +35,8 @@ jobs:
     uses: seorilabs/.github/.github/workflows/godot-deploy-google-play.yml@main
     with:
       release_tag: ${{ inputs.release_tag }}
-      package_name: com.seorilabs.startergame
+      package_name: com.seoleeapps.fouralike
+      aab_name: four-alike
       upload: ${{ inputs.upload }}
       track: internal
       release_status: completed

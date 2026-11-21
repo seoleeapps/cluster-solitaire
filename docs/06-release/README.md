@@ -1,17 +1,19 @@
-# Release
+# 출시
 
-릴리스 후보와 배포 체크리스트를 관리한다.
+Android 빌드와 Google Play 배포 절차를 둔다.
 
-## Gate
+- [Android 빌드](android-build.md): 로컬과 CI에서 서명 AAB를 만드는 방법
+- [workflow](ci-cd-workflows.md): 저장소의 GitHub Actions와 필요한 설정
+- [체크리스트](release-checklist.md): 출시 전에 확인할 항목
 
 ```mermaid
 flowchart LR
-  Build["build"] --> QA["QA"]
-  QA --> Assets["release assets"]
-  Assets --> Inventory["release inventory"]
-  Inventory --> Approval["deployment approval"]
-  Approval --> Submit["store submission"]
+  Check["검사와 여정"] --> Build["서명 AAB"]
+  Build --> Internal["internal 트랙"]
+  Internal --> Device["승인된 기기 항목"]
+  Device --> Listing["등록 자료와 문구"]
+  Listing --> Review["심사 제출"]
+  Review --> Public["공개"]
 ```
 
-Deployment approval 전에는 production 제출/승격을 하지 않는다.
-
+승인된 끝 지점은 Google Play 공개 출시다(결정 로그 DEC-014). 관문과 통과 기준은 [QA 론칭 계획](../design/2026-11-21-four-alike-launch/07-qa-launch-plan.md)의 "론칭 게이트"가 정본이고, 정지 조건은 [첫 출시 설계](../design/2026-11-21-four-alike-launch/design.md)의 "승인·추적" 절을 따른다. 각 단계는 실제로 실행한 근거가 있을 때만 다음으로 넘어간다.

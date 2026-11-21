@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "gameId": "com.seorilabs.startergame",
+  "gameId": "com.seoleeapps.fouralike",
   "mode": "local",
   "newGame": true,
   "features": {
@@ -121,47 +121,47 @@
   "optional": {
     "attendance": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "출석 보상은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
     },
     "missions": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "achievements": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "events": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "일일 도전은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
     },
     "shop": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "코인 상점(결제 없음)은 첫 출시 범위다. 화면을 구현하는 변경에서 기능 목록, 여정과 함께 켠다"
     },
     "pass": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "ranking": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "서버와 계정이 없어 첫 출시에서 뺀다. 다음 버전 후보다"
     },
     "friends": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "guild": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "push": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "첫 출시 범위 밖"
     },
     "review": {
       "enabled": false,
-      "reason": "핵심 체험에 필요하지 않아 기본 미채택"
+      "reason": "인앱 리뷰 플러그인이 첫 출시 범위 밖이다"
     }
   },
   "services": {
@@ -210,12 +210,11 @@
     "runner": "tools/check.py"
   },
   "adoptedMarkets": [
-    "google_play",
-    "app_store"
+    "google_play"
   ],
   "uiStandard": {
     "version": "1.1.0",
-    "homeProfile": "hero",
+    "homeProfile": "map",
     "skin": "soft-adventure",
     "locales": [
       "en",
@@ -248,7 +247,6 @@
       "godot/game/features/sample_round/sample_round.gd",
       "godot/game/features/sample_round/sample_round.tscn",
       "godot/config/product.json",
-      "godot/config/runtime.json",
       "godot/project.godot"
     ],
     "bundleLock": "common-bundle.lock.json"

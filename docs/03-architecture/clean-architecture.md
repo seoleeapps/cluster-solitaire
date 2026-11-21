@@ -1,3 +1,22 @@
-# 구조
+# 의존 규칙
 
-공통 코드는 godot/addons/seorilabs_game 원본을 game-foundation에서 갱신한다. 제품은 game/bootstrap에서 이를 연결한다. game/core의 domain과 use_cases는 RefCounted 기반 순수 규칙이며 ports를 통해 저장한다. game/adapters는 그 포트를 구현한다. game/features에는 장면과 스크립트, 전용 assets를 함께 둔다. apps/ait는 호스트다. 서버는 기본 미채택이다. `npm run check:architecture`로 공통에서 제품 참조와 core에서 Node, UI 및 SDK 접근을 검사한다.
+제품 코드는 안쪽 레이어가 바깥 레이어를 모르는 구조를 따른다.
+
+```mermaid
+flowchart TB
+  Domain["domain - 규칙과 값"]
+  UseCases["use_cases - 규칙을 쓰는 동작"]
+  Ports["ports - 바깥에 요구하는 인터페이스"]
+  Adapters["adapters - 저장, 광고, 분석 구현"]
+  Delivery["features와 bootstrap - Godot 장면과 연결"]
+
+  Domain --> UseCases
+  UseCases --> Ports
+  Ports --> Adapters
+  Adapters --> Delivery
+```
+
+- `core`(domain, use_cases, ports)는 Godot 장면, 광고와 분석 SDK, 파일과 네트워크, 기기 API를 직접 참조하지 않는다.
+- adapter는 port를 구현하고 `bootstrap`에서 주입한다.
+- 장면과 스크립트(`features`)는 그리기, 입력, 수명 주기, 화면 흐름을 맡는다.
+- 공통 묶음은 제품 코드를 참조하지 않는다.

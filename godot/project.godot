@@ -8,29 +8,21 @@
 
 config_version=5
 
-[admob]
-
-general/android/app_id="ca-app-pub-9932778305312246~4142834020"
-general/ios/app_id="ca-app-pub-9932778305312246~5356551184"
-
 [application]
 
-config/name="Seorilabs Game Starter"
-config/version="1.1.0"
+config/name="Four Alike"
+config/version="1.0.0"
 run/main_scene="res://game/bootstrap/main.tscn"
 config/features=PackedStringArray("4.7")
 config/icon="res://game/assets/icon.svg"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=390
+window/size/viewport_height=844
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/seori_account_link/plugin.cfg", "res://addons/GodotGooglePlayBilling/plugin.cfg", "res://addons/admob/plugin.cfg")
+window/stretch/aspect="keep_width"
+window/handheld/orientation=1
 
 [gui]
 

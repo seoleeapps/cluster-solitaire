@@ -46,9 +46,9 @@
   "devRuns": [
     "npm test",
     "python3 tools/check.py --capture --size 390x844",
-    "python3 tools/check.py --capture --size 360x640",
-    "python3 tools/check.py --capture --size 412x915",
-    "python3 tools/content/verify_packs.py",
+    "python3 tools/check.py --capture --size 390x693",
+    "python3 tools/check.py --capture --size 390x866",
+    "python3 tools/levels/verify_packs.py",
     "tools/check_monetization.sh"
   ],
   "reviewRounds": 3,

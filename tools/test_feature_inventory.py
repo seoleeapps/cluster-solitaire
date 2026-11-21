@@ -12,6 +12,13 @@ class FeatureInventoryTests(unittest.TestCase):
                 if field in feature:
                     self.assertTrue(feature[field], feature['id'] + ':' + field)
 
+    def test_repository_paths_match_existing_files(self):
+        inventory = json.loads((ROOT/'docs/qa/feature-inventory.json').read_text())
+        for feature in inventory['features']:
+            for field in ('paths','platformPaths'):
+                for pattern in feature.get(field, []):
+                    self.assertTrue(any(ROOT.glob(pattern)), feature['id'] + ':' + field + ' matches nothing: ' + pattern)
+
     def test_command_rejects_empty_optional_path_list(self):
         inventory = json.loads((ROOT/'docs/qa/feature-inventory.json').read_text())
         inventory['features'][0]['platformPaths'] = []
