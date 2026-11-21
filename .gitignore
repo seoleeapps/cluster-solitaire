@@ -67,6 +67,9 @@ godot/build/
 godot/android/
 godot/addons/admob/android/bin/
 
+# Service values injected for one release build (tools/prepare_services.py). Never tracked.
+godot/data/services/
+
 # Local code-analysis cache
 .serena/
 

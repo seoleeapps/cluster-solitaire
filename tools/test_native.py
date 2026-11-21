@@ -1,5 +1,6 @@
 import json
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,7 +12,7 @@ class NativeExportTests(unittest.TestCase):
     def clone_config(self,folder):
         root=Path(folder)
         patches=json.loads((ROOT/'native/dependencies.lock.json').read_text())['sources']['admob']['localPatches']
-        for name in ['native/dependencies.lock.json','godot/project.godot','godot/export_presets.cfg','godot/config/product.json','play-store/google-play.config.json',*[entry['file'] for entry in patches]]:
+        for name in ['.gitignore','native/dependencies.lock.json','godot/project.godot','godot/export_presets.cfg','godot/config/product.json','play-store/google-play.config.json',*[entry['file'] for entry in patches]]:
             target=root/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,target)
         return root
     def test_changed_vendor_patch_is_rejected(self):
@@ -48,6 +49,42 @@ class NativeExportTests(unittest.TestCase):
                 root=self.clone_config(folder);p=root/'godot/project.godot';text=p.read_text()
                 self.assertIn(old,text);p.write_text(text.replace(old,new))
                 self.assertIn('Display must be portrait 390x844 stretched by width',check_native.validate(root))
+    def test_project_written_by_the_editor_is_read(self):
+        # Godot rewrites project.godot with multi-line dictionaries once the AdMob editor plugin registers its settings.
+        project=check_native.load_project(ROOT)
+        self.assertEqual(390,check_native.project_value(project,'display','window/size/viewport_width'))
+        self.assertEqual({'mipmaps/generate':True},check_native.project_value(project,'importer_defaults','texture'))
+        self.assertIsNone(check_native.project_value(project,'display','missing'))
+    def test_disabled_admob_plugin_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'godot/project.godot';text=p.read_text()
+            self.assertIn('enabled=PackedStringArray("res://addons/admob/plugin.cfg")',text)
+            p.write_text(text.replace('enabled=PackedStringArray("res://addons/admob/plugin.cfg")','enabled=PackedStringArray()'))
+            self.assertIn('The AdMob editor plugin must be enabled in project.godot',check_native.validate(root))
+    def test_missing_android_permissions_are_rejected(self):
+        for permission in ['internet','vibrate']:
+            with self.subTest(permission=permission),tempfile.TemporaryDirectory() as folder:
+                root=self.clone_config(folder);p=root/'godot/export_presets.cfg';text=p.read_text()
+                self.assertIn('permissions/'+permission+'=true',text);p.write_text(text.replace('permissions/'+permission+'=true','permissions/'+permission+'=false'))
+                self.assertIn('Android must request the '+permission+' permission',check_native.validate(root))
+    def test_left_over_injected_service_values_are_rejected_without_echo(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'godot/project.godot'
+            p.write_text(p.read_text().replace('[application]','[admob]\n\ngeneral/android/app_id="ca-app-pub-1234567890123456~1234567890"\n\n[application]',1))
+            errors=check_native.validate(root)
+            self.assertIn('project.godot carries an injected AdMob app ID; run python3 tools/prepare_services.py --restore',errors)
+            self.assertNotIn('1234567890123456',' '.join(errors))
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'godot/data/services/release.json';p.parent.mkdir(parents=True);p.write_text('{"ga4_api_secret":"do-not-copy-this-value"}')
+            errors=check_native.validate(root)
+            self.assertIn('Injected service values were left behind; run python3 tools/prepare_services.py --restore',errors)
+            self.assertNotIn('do-not-copy-this-value',' '.join(errors))
+    def test_service_values_must_stay_untracked(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'.gitignore';p.write_text(p.read_text().replace('godot/data/services/\n',''))
+            self.assertIn('.gitignore must exclude godot/data/services/',check_native.validate(root))
+        tracked=subprocess.check_output(['git','-C',str(ROOT),'ls-files','godot/data/services'],text=True)
+        self.assertEqual('',tracked)
     def test_unvalidated_platform_preset_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             root=self.clone_config(folder);p=root/'godot/export_presets.cfg';p.write_text(p.read_text()+'\n[preset.2]\nname="iOS"\nplatform="iOS"\nrunnable=false\n\n[preset.2.options]\n')

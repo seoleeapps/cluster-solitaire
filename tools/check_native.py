@@ -8,6 +8,8 @@ import re
 ROOT=Path(__file__).resolve().parents[1]
 # Web is the only non-native preset. Any other platform has no validated build lane in this product.
 PRESET_PLATFORMS=('Android','Web')
+ADMOB_PLUGIN='res://addons/admob/plugin.cfg'
+SERVICE_VALUES='godot/data/services/release.json'
 def load_presets(root):
     cfg=configparser.ConfigParser(interpolation=None,strict=True)
     cfg.optionxform=str
@@ -16,6 +18,18 @@ def load_presets(root):
 def value(cfg,section,key):
     try:return json.loads(cfg.get(section,key))
     except (ValueError,configparser.Error):return None
+def load_project(root):
+    """Read project.godot as {section: {key: raw text}}. Godot writes dictionaries over several lines, which configparser rejects."""
+    sections={};section=None;key=None
+    for line in (root/'godot/project.godot').read_text().splitlines():
+        header=re.fullmatch(r'\[([^\]]+)\]',line);entry=re.match(r'([A-Za-z0-9_/.]+)=(.*)',line)
+        if header:section=sections.setdefault(header.group(1),{});key=None
+        elif section is not None and entry:key=entry.group(1);section[key]=entry.group(2)
+        elif section is not None and key and line.strip() and not line.startswith(';'):section[key]+='\n'+line
+    return sections
+def project_value(project,section,key):
+    try:return json.loads(project[section][key])
+    except (ValueError,KeyError):return None
 def validate(root):
     errors=[];cfg=load_presets(root)
     try:
@@ -27,11 +41,18 @@ def validate(root):
                 errors.append('Native source patch hash mismatch: '+entry['file'])
     except (OSError,ValueError,KeyError,TypeError) as error:
         errors.append('Invalid native dependency lock: '+type(error).__name__)
-    project=configparser.ConfigParser(interpolation=None);project.optionxform=str;project.read_string('[general]\n'+(root/'godot/project.godot').read_text())
-    if value(project,'rendering','textures/vram_compression/import_etc2_astc') is not True:errors.append('Mobile texture import must be enabled for native exports')
+    project=load_project(root)
+    if project_value(project,'rendering','textures/vram_compression/import_etc2_astc') is not True:errors.append('Mobile texture import must be enabled for native exports')
+    # The AdMob editor plugin adds the native library, its dependencies and the app ID to the Android build.
+    if ADMOB_PLUGIN not in project.get('editor_plugins',{}).get('enabled',''):errors.append('The AdMob editor plugin must be enabled in project.godot')
+    # The app ID and the service values are injected for one release build and removed afterwards (tools/prepare_services.py).
+    if 'admob' in project:errors.append('project.godot carries an injected AdMob app ID; run python3 tools/prepare_services.py --restore')
+    if (root/SERVICE_VALUES).exists():errors.append('Injected service values were left behind; run python3 tools/prepare_services.py --restore')
+    ignored=(root/'.gitignore').read_text().splitlines() if (root/'.gitignore').is_file() else []
+    if 'godot/data/services/' not in ignored:errors.append('.gitignore must exclude godot/data/services/')
     # Godot 4 takes the Android screen orientation from the project display settings, not from the export preset.
     # The common flow draws portrait screens at a fixed scale, so the logical size stays 390x844 and only the height grows.
-    display={key:value(project,'display',key) for key in ['window/size/viewport_width','window/size/viewport_height','window/handheld/orientation','window/stretch/mode','window/stretch/aspect']}
+    display={key:project_value(project,'display',key) for key in ['window/size/viewport_width','window/size/viewport_height','window/handheld/orientation','window/stretch/mode','window/stretch/aspect']}
     if display!={'window/size/viewport_width':390,'window/size/viewport_height':844,'window/handheld/orientation':1,'window/stretch/mode':'canvas_items','window/stretch/aspect':'keep_width'}:
         errors.append('Display must be portrait 390x844 stretched by width')
     try:
@@ -60,6 +81,8 @@ def validate(root):
         if value(cfg,options,'gradle_build/export_format')!=1 or value(cfg,options,'gradle_build/use_gradle_build') is not True:errors.append('Android must export a Gradle AAB')
         if int(value(cfg,options,'gradle_build/target_sdk') or 0)<36:errors.append('Android target SDK must be at least 36')
         if value(cfg,options,'package/signed') is not True:errors.append('Android release signing must be enabled')
+        for permission in ['internet','vibrate']:
+            if value(cfg,options,'permissions/'+permission) is not True:errors.append('Android must request the '+permission+' permission')
         for key in ['keystore/release','keystore/release_user','keystore/release_password']:
             if value(cfg,options,key):errors.append('Signing values must come from the environment: '+key)
         if (root/'godot'/str(value(cfg,base,'export_path'))).resolve()!=(root/str(play.get('aabPath'))).resolve():errors.append('Android bundle path mismatch')
