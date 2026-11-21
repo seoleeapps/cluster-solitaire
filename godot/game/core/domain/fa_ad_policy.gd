@@ -11,6 +11,8 @@ extends RefCounted
 ##   session_no(실행 번호), play_seconds(누적 플레이 초), rounds_since_interstitial,
 ##   rewarded_at(마지막 보상형 노출 시각), declined_at(마지막 보상형 거절 시각). 시각은 유닉스 초다.
 
+const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
+
 const FORMAT_REWARDED := "rewarded"
 const FORMAT_INTERSTITIAL := "interstitial"
 
@@ -18,10 +20,6 @@ const REWARDED_BOOSTER := "rewarded_booster"
 const REWARDED_CONTINUE := "rewarded_continue"
 const REWARDED_RESULT_BONUS := "rewarded_result_bonus"
 const INTERSTITIAL_LEVEL_END := "interstitial_level_end"
-
-const MODE_JOURNEY := "journey"
-const MODE_DAILY := "daily"
-const MODE_TUTORIAL := "tutorial"
 
 const DEFAULTS := {
 	REWARDED_BOOSTER: {
@@ -180,9 +178,9 @@ static func _block_reason(config: Dictionary, state: Dictionary, placement: Stri
 	var rule: Dictionary = config[placement]
 	if not rule["enabled"]:
 		return "disabled"
-	if mode == MODE_TUTORIAL:
+	if mode == RoundMode.TUTORIAL:
 		return "tutorial"
-	if mode == MODE_DAILY and BLOCKED_IN_DAILY.has(placement):
+	if mode == RoundMode.DAILY and BLOCKED_IN_DAILY.has(placement):
 		return "daily_challenge"
 	if state["session_no"] < rule["first_session"]:
 		return "first_session"
