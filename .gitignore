@@ -69,3 +69,6 @@ godot/addons/admob/android/bin/
 
 # Local code-analysis cache
 .serena/
+
+# Agent worktrees
+.claude/
