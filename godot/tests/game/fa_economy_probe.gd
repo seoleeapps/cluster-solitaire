@@ -52,6 +52,7 @@ func _prices_and_gifts() -> bool:
 	_check(Economy.BOOSTERS == ["hint", "undo", "slot"], "부스터 3종")
 	_check(Economy.price("hint") == 100 and Economy.price("undo") == 80 and Economy.price("slot") == 150, "힌트 100, 되돌리기 80, 칸 추가 150")
 	_check(Economy.price("bomb") == 0, "없는 부스터의 가격은 0")
+	_check(Economy.price("continue") == 150 and Economy.CONTINUE == "continue" and not Economy.BOOSTERS.has("continue"), "코인 이어하기는 150이고 부스터가 아니다")
 	_check(Economy.starter_gift() == {"coins": 200, "boosters": {"hint": 3, "undo": 3, "slot": 2}}, "시작 선물")
 	var gift: Dictionary = Economy.starter_gift()
 	gift["boosters"]["hint"] = 99

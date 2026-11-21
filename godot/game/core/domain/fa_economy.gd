@@ -22,7 +22,9 @@ const DAILY_REWARD := 30
 const DAILY_STREAK_STEP := 7
 const DAILY_STREAK_REWARD := 100
 
-const PRICES := {BOOSTER_HINT: 100, BOOSTER_UNDO: 80, BOOSTER_SLOT: 150}
+## 광고를 쓸 수 없을 때 코인으로 사는 이어하기. 부스터가 아니라서 보유하지 않고 살 때 바로 쓴다.
+const CONTINUE := "continue"
+const PRICES := {BOOSTER_HINT: 100, BOOSTER_UNDO: 80, BOOSTER_SLOT: 150, CONTINUE: 150}
 const AD_BOOSTER_COUNT := 1
 const STARTER_GIFT := {"coins": 200, "boosters": {BOOSTER_HINT: 3, BOOSTER_UNDO: 3, BOOSTER_SLOT: 2}}
 
@@ -64,9 +66,9 @@ static func ad_bonus(base: int) -> int:
 	return base * (AD_MULTIPLIER - 1)
 
 
-## 부스터 1개의 코인 가격. 없는 부스터는 0.
-static func price(booster: String) -> int:
-	return PRICES.get(booster, 0)
+## 부스터 1개나 이어하기(CONTINUE)의 코인 가격. 팔지 않는 것은 0.
+static func price(item: String) -> int:
+	return PRICES.get(item, 0)
 
 
 static func starter_gift() -> Dictionary:

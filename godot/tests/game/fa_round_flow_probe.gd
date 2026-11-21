@@ -14,6 +14,7 @@ const StartRound := preload("res://game/core/use_cases/fa_start_round.gd")
 const FinishRound := preload("res://game/core/use_cases/fa_finish_round.gd")
 const UseBooster := preload("res://game/core/use_cases/fa_use_booster.gd")
 const AdFlow := preload("res://game/core/use_cases/fa_ad_flow.gd")
+const ContinueRound := preload("res://game/core/use_cases/fa_continue_round.gd")
 
 const NOON := 1800000000
 
@@ -98,6 +99,7 @@ func _initialize() -> void:
 	_section("부스터 사용", _boosters)
 	_section("광고 판정(AC-016)", _ad_checks)
 	_section("광고 보상 적용(AC-017)", _ad_rewards)
+	_section("코인 이어하기(AC-007)", _coin_continue)
 	print("Fa round flow probe: %d checks, %d failed" % [_checks, _failed.size()])
 	for line: String in _failed:
 		print("  FAILED ", line)
@@ -157,6 +159,10 @@ func _finisher() -> FinishRound:
 
 func _ad_flow() -> AdFlow:
 	return AdFlow.new(_store, _ads, _clock, _config, _analytics)
+
+
+func _continuer(flow: AdFlow) -> ContinueRound:
+	return ContinueRound.new(_store, _analytics, flow)
 
 
 func _port_defaults() -> bool:
@@ -624,4 +630,73 @@ func _ad_rewards() -> bool:
 	_check(progress.ads()["declined_at"] == NOON + 50, "보상형 제안을 거절한 시각을 남긴다")
 	_check(_analytics.last("ad_declined") == {"placement": "rewarded_result_bonus", "format": "rewarded", "reason": "offer"}, "제안을 거절한 것을 알린다")
 	_check(LoadProgress.new(_store).execute()["progress"].ads()["declined_at"] == NOON + 50, "광고 상태를 저장한다")
+	return true
+
+
+func _coin_continue() -> bool:
+	var progress: Progress = Progress.create()
+	progress.grant("gift", {"coins": 400})
+	var flow: AdFlow = _ad_flow()
+	flow.begin_session(progress)
+	var continuer: ContinueRound = _continuer(flow)
+	var starter: StartRound = _starter()
+	var board: Board = Board.create(_level(1), Board.HOLD_SLOTS_BASE)
+	_check(continuer.check(progress, board) == {"ok": false, "way": "", "reason": "no_run", "price": 150}, "진행 중인 판이 없으면 이어 갈 것이 없다")
+	_check(continuer.pay_coins(progress, board) == {"ok": false, "reason": "no_run"}, "진행 중인 판이 없으면 코인도 쓰지 않는다")
+
+	board = starter.start(progress, "journey", 1, "", _level(1))
+	_check(continuer.check(progress, board)["reason"] == "no_effect" and continuer.pay_coins(progress, board) == {"ok": false, "reason": "no_effect"}, "실패하지 않은 판은 이어 갈 것이 없다")
+	_fail(board)
+	_check(continuer.check(progress, board) == {"ok": true, "way": "ad", "reason": "", "price": 150}, "광고를 쓸 수 있으면 광고로 이어 간다")
+
+	_ads.ready["rewarded"] = false
+	_check(continuer.check(progress, board) == {"ok": true, "way": "coins", "reason": "", "price": 150}, "광고가 준비되지 않았으면 코인 150으로 이어 갈 수 있다")
+	var writes: int = _store.writes
+	_check(continuer.pay_coins(progress, board) == {"ok": true, "saved": true}, "코인으로 이어 간다")
+	_check(progress.coins() == 250 and board.mistakes() == 2 and not board.is_failed() and board.continue_used(), "코인 150을 내고 실수가 2로 돌아간다")
+	_check(progress.run()["board"]["mistakes"] == 2 and progress.run()["board"]["continued"] and _store.writes == writes + 1, "이어 간 판을 진행 기록에 남기고 저장한다")
+	_check(_analytics.last("spend_virtual_currency") == {"virtual_currency_name": "coin", "value": 150, "item_name": "continue"}, "코인 사용을 알린다")
+
+	board.submit(["a1", "a2", "b3", "b4"])
+	board.submit(["a1", "a2", "c3", "c4"])
+	_check(board.is_failed() and continuer.check(progress, board)["reason"] == "no_effect", "두 번째 실패에는 코인 이어하기도 없다")
+	_check(continuer.pay_coins(progress, board) == {"ok": false, "reason": "no_effect"} and progress.coins() == 250, "판당 1회라 코인을 다시 받지 않는다")
+	_ads.ready["rewarded"] = true
+	_check(continuer.check(progress, board)["reason"] == "no_effect", "광고가 다시 준비돼도 같은 판은 이어 가지 못한다")
+	_check(flow.request(progress, "rewarded_continue", "journey")["ok"] and not flow.finish_continue(progress, "earned", board) and board.is_failed(), "코인으로 이어 간 판은 광고로도 다시 이어 가지 못한다")
+
+	board = starter.start(progress, "journey", 1, "", _level(1))
+	_win(board)
+	board = starter.start(progress, "journey", 1, "", _level(1))
+	_fail(board)
+	_ads.ready["rewarded"] = false
+	continuer.pay_coins(progress, board)
+	_win(board)
+	var result: Dictionary = _finisher().execute(progress, board, 90)
+	_check(result["ok"] and result["stars"] == 1 and progress.coins() == 100 + 10 + 20, "코인으로 이어 간 판도 별은 1개다")
+
+	_ads.ready["rewarded"] = true
+	flow.begin_session(progress)
+	_clock.now = NOON + 100
+	board = starter.start(progress, "journey", 2, "", _level(2, "x"))
+	_fail(board, "x")
+	_check(continuer.check(progress, board)["way"] == "ad" and flow.request(progress, "rewarded_continue", "journey")["ok"], "다시 실행하고 간격이 지나면 광고를 쓸 수 있다")
+	_check(flow.finish_continue(progress, "earned", board), "광고로 이어 간다")
+	board.submit(["xa1", "xa2", "xb3", "xb4"])
+	board.submit(["xa1", "xa2", "xc3", "xc4"])
+	_check(board.is_failed() and continuer.pay_coins(progress, board) == {"ok": false, "reason": "no_effect"} and progress.coins() == 130, "광고로 이어 간 판은 코인으로도 다시 이어 가지 못한다")
+
+	board = starter.start(progress, "journey", 2, "", _level(2, "x"))
+	_fail(board, "x")
+	_check(continuer.check(progress, board) == {"ok": false, "way": "", "reason": "no_coins", "price": 150}, "광고도 못 쓰고 코인도 모자라면 이어 갈 길이 없다")
+	_check(flow.check(progress, "rewarded_continue", "journey")["reason"] == "daily_cap", "광고를 못 쓰는 이유는 하루 상한이다")
+	_check(continuer.pay_coins(progress, board) == {"ok": false, "reason": "no_coins"} and progress.coins() == 130 and board.is_failed(), "코인이 모자라면 판은 그대로다")
+	progress.grant("more", {"coins": 100})
+	_check(continuer.check(progress, board)["way"] == "coins", "광고 상한에 닿았을 때도 코인이 있으면 코인으로 이어 간다")
+
+	_clock.date = "2026-12-10"
+	board = starter.start(progress, "daily", 0, "2026-12-10", _level(10, "d"))
+	_fail(board, "d")
+	_check(continuer.check(progress, board) == {"ok": false, "way": "", "reason": "daily", "price": 150}, "일일 도전에서는 이어 갈 길이 없다")
+	_check(continuer.pay_coins(progress, board) == {"ok": false, "reason": "daily"} and progress.coins() == 230 and board.is_failed(), "일일 도전에서는 코인 이어하기도 거부한다")
 	return true
