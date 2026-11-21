@@ -29,12 +29,26 @@
   "assets": {
     "playIcon": "play-store/assets/icon-512.png",
     "featureGraphic": "play-store/assets/feature-graphic-en-US.png",
-    "phoneScreenshots": "확정 필요"
+    "phoneScreenshots": [
+      "play-store/screenshots/phone/en-US/01-group.png",
+      "play-store/screenshots/phone/en-US/02-category.png",
+      "play-store/screenshots/phone/en-US/03-hold.png",
+      "play-store/screenshots/phone/en-US/04-daily.png",
+      "play-store/screenshots/phone/en-US/05-album.png",
+      "play-store/screenshots/phone/en-US/06-decor.png"
+    ]
   },
   "localizedAssets": {
     "ko-KR": {
       "featureGraphic": "play-store/assets/feature-graphic-ko-KR.png",
-      "phoneScreenshots": "확정 필요"
+      "phoneScreenshots": [
+        "play-store/screenshots/phone/ko-KR/01-group.png",
+        "play-store/screenshots/phone/ko-KR/02-category.png",
+        "play-store/screenshots/phone/ko-KR/03-hold.png",
+        "play-store/screenshots/phone/ko-KR/04-daily.png",
+        "play-store/screenshots/phone/ko-KR/05-album.png",
+        "play-store/screenshots/phone/ko-KR/06-decor.png"
+      ]
     }
   },
   "contentDeclarations": {

@@ -56,6 +56,8 @@
 
 `godot/tests/game/play_capture.gd`는 여정이 아니라 시안 비교용 캡처 도구다. 저장 파일을 미리 만들어 기준 그림과 같은 판에서 시작하고(고정 자료), 네 화면 크기와 모든 배치, 상태 시트, 연출의 중간 프레임, 일일 도전 모드를 찍는다. `tools/check.py`는 이 스크립트를 돌리지 않는다. 쓰는 법과 비교 기록은 [플레이 화면 비교 기록](../game-design/ui/play-review.md)에 있다.
 
+`godot/tests/game/store_capture.gd`도 여정이 아니라 Google Play 스크린숏의 원본 화면을 찍는 도구다. 실제 유스케이스로 판을 풀어 스테이지 30과 일일 도전 9일 연속의 진행 기록을 만든 뒤, 시작 장면을 띄워 탭으로 여섯 상태를 만들고 3배로 찍는다. `tools/store/build_screenshots.py`가 이 스크립트를 돌리고 문구를 얹는다. 렌더링이 필요하므로 `npm test`는 완성된 스크린숏의 수, 크기, 용량만 본다. 다시 만드는 방법은 [Google Play](../05-markets/google-play.md)의 "스토어 등록정보"에 있다.
+
 플레이 화면의 배치 계산과 카드 이름 맞춤은 `fa_play_layout_probe.gd`가, 튜토리얼 판이 안내 순서대로 풀리는지는 `fa_tutorial_probe.gd`와 `tools/levels/verify_packs.py`가 본다.
 
 서비스 어댑터(광고와 동의, 분석, 원격 설정)의 프로브는 SDK, HTTP, 파일, 시계를 메모리 안의 대역으로 바꿔 끼우고 네트워크 없이 돈다. `fa_admob_sdk_probe.gd`는 AdMob 플러그인의 GDScript 층까지 실제 그대로 쓰고 Android에만 있는 네이티브 싱글턴만 대역으로 바꾼다. 이 프로브는 플러그인의 클래스 이름을 풀어 줄 가져오기 캐시가 있어야 돈다. 새 복제본에서 `npm run test:core`로 바로 돌리면 실행하지 못했다고 알리고 실패하므로 `godot --headless --path godot --import`를 먼저 실행한다. `npm test`는 가져오기를 먼저 한다. 무엇을 확인하는지는 [서비스 어댑터](../03-architecture/service-adapters.md)의 "검수"에 있다.
