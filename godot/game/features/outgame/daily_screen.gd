@@ -12,7 +12,7 @@ const Juice := preload("res://addons/seorilabs_game/ui_kit/juice.gd")
 
 const WEEKDAYS := [["S", "일"], ["M", "월"], ["T", "화"], ["W", "수"], ["T", "목"], ["F", "금"], ["S", "토"]]
 const GAP := 5.0
-const CELL_MAX := 40.0
+const CELL_MAX := 44.0
 ## 완료 체크는 칸의 오른쪽 위 모서리에 걸쳐 칸 밖으로 TICK_OVERHANG만큼 나간다. 달력 양옆에 같은 여백을 두어
 ## 맨 오른쪽 열(토요일)의 체크가 목록의 가장자리에서 잘리지 않게 한다.
 const TICK_SIZE := Vector2(18, 19)
@@ -38,7 +38,7 @@ func _ready() -> void:
 	if selected.is_empty():
 		selected = _today
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_theme_constant_override("separation", 10)
+	add_theme_constant_override("separation", 8)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	rebuild()
 
@@ -55,11 +55,11 @@ func rebuild() -> void:
 	scroll.name = "daily_scroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	add_child(scroll)
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.add_theme_constant_override("separation", 10)
+	box.add_theme_constant_override("separation", 8)
 	box.mouse_filter = Control.MOUSE_FILTER_PASS
 	scroll.add_child(box)
 	box.add_child(_month_header())
@@ -71,14 +71,14 @@ func rebuild() -> void:
 	box.add_child(inset)
 	var month := VBoxContainer.new()
 	month.mouse_filter = Control.MOUSE_FILTER_PASS
-	month.add_theme_constant_override("separation", 10)
+	month.add_theme_constant_override("separation", 8)
 	inset.add_child(month)
 	month.add_child(_weekday_row())
 	_calendar = _month_grid()
 	month.add_child(_calendar)
 	box.add_child(_streak_row())
 	_detail = _day_card(selected)
-	box.add_child(_detail)
+	add_child(_detail)
 
 
 func _month_header() -> Control:
@@ -190,11 +190,11 @@ func _streak_row() -> Control:
 ## 고른 날의 판 카드.
 func _day_card(date: String) -> Control:
 	var player: RefCounted = _session.player
-	var card: PanelContainer = Ui.panel([14, 12, 14, 18])
+	var card: PanelContainer = Ui.panel([14, 10, 14, 16])
 	card.name = "day_card"
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_PASS
-	box.add_theme_constant_override("separation", 8)
+	box.add_theme_constant_override("separation", 6)
 	card.add_child(box)
 	var number: int = Daily.challenge_number(date)
 	var title: Label = Ui.heading(_t("Daily #%d", "오늘의 도전 #%d") % number if date == _today else _t("Daily #%d", "일일 도전 #%d") % number, 20)

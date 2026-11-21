@@ -99,7 +99,7 @@ func _build_tabs() -> void:
 		button.name = "tab_" + pair[0]
 		button.focus_mode = Control.FOCUS_NONE
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size.y = 44
+		button.custom_minimum_size.y = 48
 		var style: StyleBox = Art.box(Art.outgame("tab_on"), [20, 20, 20, 24], [8, 4, 8, 8]) if on else StyleBoxEmpty.new()
 		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 			button.add_theme_stylebox_override(state, style)
@@ -223,7 +223,7 @@ func _theme_tile(kind: String, id: String) -> Control:
 		using.add_child(Fonts.text(_t("In use", "사용 중"), Fonts.display(700), Ui.sized(15), Color("2f9a4c")))
 		box.add_child(using)
 	elif status["owned"]:
-		box.add_child(Ui.button("use_" + key, _t("Use", "사용"), false, _use.bind(kind, id), null, Vector2.ZERO, 110.0, [17, 15], 46.0))
+		box.add_child(Ui.button("use_" + key, _t("Use", "사용"), false, _use.bind(kind, id), null, Vector2.ZERO, 110.0, [17, 15], 48.0))
 	else:
 		box.add_child(_price_button("buy_" + id, int(status["price"]), _buy_theme.bind(id)))
 	return card
@@ -288,7 +288,7 @@ func _use(kind: String, id: String) -> void:
 ## 가격 버튼: 코인 아이콘과 가격. 코인이 모자라면 가격이 빨간 비활성 모양이고 눌러도 사지 않고 모자란 수를 알린다.
 func _price_button(button_name: String, price: int, action: Callable) -> Button:
 	var button: Button = Ui.button(button_name, _chip.format_amount(price), false, action,
-		Art.skin("icon_coin"), Vector2(22, 22), PRICE_ROOM, [17, 15], 46.0)
+		Art.skin("icon_coin"), Vector2(22, 22), PRICE_ROOM, [17, 15], 48.0)
 	button.custom_minimum_size.x = 104
 	button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER

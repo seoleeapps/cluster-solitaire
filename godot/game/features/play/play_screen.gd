@@ -1479,9 +1479,20 @@ func show_toast(text: String, kind: String = TOAST_INFO) -> void:
 	plate.size = Vector2(width, 40.0) * stage_scale()
 	label.size = Vector2(width, 36.0) * stage_scale()
 	label.add_theme_font_size_override("font_size", roundi(16.0 * stage_scale()))
-	# 받침의 줄 이름 위에 놓는다. 더미의 카드 이름과 임시 칸을 가리지 않는 자리다.
+	# 받침의 줄 이름 위에 놓는다. 팝업이 열려 있으면 팝업 프레임 위나 아래의 겹치지 않는 자리에 둔다.
 	var anchor: Vector2 = _stage.get_global_transform() * Vector2(_stage.size.x / 2.0, (_layout["tray"] as Rect2).position.y + 10.0)
-	plate.position = anchor - plate.size / 2.0
+	var pos := anchor - plate.size / 2.0
+	if popup != null and is_instance_valid(popup):
+		var frame: Control = popup.get_node_or_null("Center/Frame") as Control
+		if frame != null and frame.size.y > 0.0:
+			var frame_rect: Rect2 = frame.get_global_rect()
+			var below_y: float = frame_rect.end.y + 12.0
+			var above_y: float = frame_rect.position.y - plate.size.y - 12.0
+			if below_y + plate.size.y <= size.y - 16.0:
+				pos.y = below_y
+			elif above_y >= 16.0:
+				pos.y = above_y
+	plate.position = pos
 	host.layers.layer("Toast").add_child(plate)
 	_toast = plate
 	Juice.pop_in(plate, 0.2)

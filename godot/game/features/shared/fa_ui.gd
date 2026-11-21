@@ -26,8 +26,9 @@ const PRIMARY_CONTENT := [20, 9, 20, 13]
 const POPUP_WIDTH := 318.0
 const DIM := Color(0.09, 0.07, 0.3, 0.62)
 const RED := Color("ff4b5c")
-## 코인 칩: 판 그림은 사방에 1의 빈 테두리가 있어 보이는 높이는 32다.
-const CHIP_HEIGHT := 34.0
+## 코인 칩: 짙은 반투명 알약에 코인, 숫자, 초록 더하기(show_add일 때만). 터치 영역 높이는 48, 보이는 알약 높이는 34다.
+const CHIP_HEIGHT := 48.0
+const CHIP_INSET := 7.0
 ## 흰 판(ui_panel): 9분할 여백과 안쪽 여백.
 const PANEL_MARGINS := [24, 24, 24, 30]
 ## 둥근 메뉴 버튼(홈 아래 줄)의 원판 크기와 이름 글자 크기.
@@ -184,6 +185,7 @@ static func popup(title: String, closable: bool, screen_width: float) -> Control
 	var close: Button = node.get_node("Center/Frame/Body/Header/Close")
 	close.visible = closable
 	close.focus_mode = Control.FOCUS_NONE
+	close.custom_minimum_size = Vector2(maxf(close.custom_minimum_size.x, 48.0), 48.0)
 	icon_only(close, Art.outgame("icon_close"))
 	var heading_label: Label = node.get_node("Center/Frame/Body/Header/Title")
 	heading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if closable else HORIZONTAL_ALIGNMENT_CENTER
@@ -200,12 +202,15 @@ static func icon_only(node: Button, icon: Texture2D) -> void:
 	node.add_theme_color_override("icon_pressed_color", Color(0.85, 0.86, 0.95))
 
 
-## 코인 칩: 짙은 반투명 알약에 코인, 숫자, 초록 더하기(show_add일 때만). 더하기는 add_pressed로 알린다.
+## 코인 칩: 짙은 반투명 알약에 코인, 숫자, 초록 더하기(show_add일 때만). 더하기는 add_pressed로 알리고, 칩 전체(48 이상 높이)를 눌러도 같은 신호가 나간다.
 static func coin_chip(chip_name: String, show_add: bool) -> PanelContainer:
 	var chip: PanelContainer = CurrencyChip.instantiate()
 	chip.name = chip_name
 	chip.show_add = show_add
-	chip.add_theme_stylebox_override("panel", Art.box(Art.skin("ui_chip"), [22, 14, 22, 14], [0, 0, 5, 0]))
+	var chip_box: StyleBoxTexture = Art.box(Art.skin("ui_chip"), [22, 14, 22, 14], [0, CHIP_INSET, 5, CHIP_INSET])
+	chip_box.expand_margin_top = -CHIP_INSET
+	chip_box.expand_margin_bottom = -CHIP_INSET
+	chip.add_theme_stylebox_override("panel", chip_box)
 	chip.custom_minimum_size.y = CHIP_HEIGHT
 	chip.set_icon(Art.skin("icon_coin"))
 	var row: HBoxContainer = chip.get_node("Row")
@@ -221,11 +226,22 @@ static func coin_chip(chip_name: String, show_add: bool) -> PanelContainer:
 	value.add_theme_constant_override("outline_size", 0)
 	var add: Button = chip.get_node("Row/Add")
 	add.text = ""
-	add.custom_minimum_size = Vector2(22, 24)
+	add.focus_mode = Control.FOCUS_NONE
+	add.custom_minimum_size = Vector2(26, 34)
 	add.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var plus: StyleBoxTexture = Art.box(Art.play("plus_button"), [0, 0, 0, 0], [0, 0, 0, 0])
+	icon_only(add, Art.play("plus_button"))
+	var empty := StyleBoxEmpty.new()
 	for style: String in ["normal", "hover", "pressed", "disabled", "focus"]:
-		add.add_theme_stylebox_override(style, plus)
+		add.add_theme_stylebox_override(style, empty)
+	if show_add:
+		chip.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		chip.gui_input.connect(func(event: InputEvent) -> void:
+			var pressed_mouse: bool = event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and (event as InputEventMouseButton).pressed
+			var pressed_touch: bool = event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed
+			if pressed_mouse or pressed_touch:
+				Juice.press_punch(chip, 0.94, 0.1)
+				add.pressed.emit()
+				chip.accept_event())
 	return chip
 
 

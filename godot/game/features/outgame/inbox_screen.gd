@@ -104,7 +104,7 @@ func _mail_card(mail: Dictionary, primary: bool) -> Control:
 	elif expired:
 		row.add_child(Fonts.text(_t("Expired", "기간이 지났어요"), Fonts.display(600), Ui.sized(14), MUTED))
 	elif amount > 0:
-		var claim: Button = Ui.button("claim", _t("Claim", "받기"), primary, host.claim_mail.bind(id), null, Vector2.ZERO, 100.0, [17, 15], 46.0)
+		var claim: Button = Ui.button("claim", _t("Claim", "받기"), primary, host.claim_mail.bind(id), null, Vector2.ZERO, 100.0, [17, 15], 48.0)
 		claim.custom_minimum_size.x = 110
 		claim.size_flags_horizontal = Control.SIZE_SHRINK_END
 		row.add_child(claim)

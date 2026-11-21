@@ -243,7 +243,10 @@ func fits() -> String:
 				return "%s overlaps %s" % [solid[first].name, solid[second].name]
 	# 누르는 영역은 48 이상이다(화면을 줄인 작은 화면에서는 그 비율만큼).
 	var minimum: float = 48.0 * screen_play.stage_scale() - 0.5
-	for key: String in ["pause", "submit", "hint", "undo"]:
+	var touch_keys: Array[String] = ["pause", "submit", "hint", "undo"]
+	if screen_play.coin_chip.show_add:
+		touch_keys.append("coins")
+	for key: String in touch_keys:
 		var size: Vector2 = named[key].get_global_rect().size
 		if size.x < minimum or size.y < minimum:
 			return "%s touch area is under 48: %s" % [key, size]

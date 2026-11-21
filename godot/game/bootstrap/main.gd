@@ -95,6 +95,7 @@ var _consent_wait_over: bool = false
 var _started_msec: int = 0
 var _title_reported: bool = false
 var _exit_armed_until: int = 0
+var _last_language: String = ""
 var _settings_seen: Dictionary = {}
 var _toast: Control
 
@@ -208,6 +209,10 @@ func _notification(what: int) -> void:
 
 func _apply_settings() -> void:
 	super._apply_settings()
+	var current_language: String = language()
+	if not _last_language.is_empty() and _last_language != current_language:
+		_dismiss_toast()
+	_last_language = current_language
 	if custom_theme == null and theme != null:
 		_finish_theme()
 	if audio != null:
@@ -482,6 +487,8 @@ func _route_licenses() -> void:
 
 ## 공통 흐름의 머리 줄(뒤로, 제목, 닫기)을 제품 그림과 서체로 바꾼다.
 func _clear(title: String) -> void:
+	_exit_armed_until = 0
+	_dismiss_toast()
 	super._clear(title)
 	outgame_view = null
 	if screen in ["title", "home"]:
@@ -566,8 +573,7 @@ func _close_outgame_popup() -> void:
 ## 화면 아래쪽 가운데에 짧은 안내를 띄운다(홈의 아래 줄 위, 하위 화면 머리 줄과 겹치지 않는 자리). kind는 info 또는 red다.
 func show_toast(text: String, kind: String = "info") -> void:
 	toasts.append(text)
-	if is_instance_valid(_toast):
-		_toast.queue_free()
+	_dismiss_toast()
 	var plate: NinePatchRect = Art.plate(Art.play("toast_" + kind), TOAST_MARGINS)
 	var label: Label = Fonts.text(text, Fonts.display(700), 16, Color.WHITE)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -585,6 +591,12 @@ func show_toast(text: String, kind: String = "info") -> void:
 	plate.create_tween().tween_interval(TOAST_SECONDS).finished.connect(func() -> void:
 		if is_instance_valid(plate):
 			Juice.pop_out(plate, 0.14).finished.connect(plate.queue_free))
+
+
+func _dismiss_toast() -> void:
+	if is_instance_valid(_toast):
+		_toast.queue_free()
+	_toast = null
 
 
 func copy_text(text: String) -> bool:
@@ -777,6 +789,8 @@ func _open_round(round: Dictionary) -> void:
 		return
 	screen = "play"
 	_view += 1
+	_exit_armed_until = 0
+	_dismiss_toast()
 	ceremony.skip()
 	_close_outgame_popup()
 	outgame_view = null
