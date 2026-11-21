@@ -6,5 +6,45 @@
   "aabPath": "build/android/four-alike.aab",
   "release": {
     "track": "internal"
+  },
+  "appType": "game",
+  "freeOrPaid": "free",
+  "contactEmail": "cs@seorilabs.com",
+  "contactWebsite": "https://www.seorilabs.com",
+  "privacyPolicyUrl": "https://www.seorilabs.com/en/apps/four-alike/privacy/",
+  "storeListing": {
+    "appName": {
+      "en-US": "Four Alike: Card Group Puzzle",
+      "ko-KR": "끼리끼리: 연상 카드 퍼즐"
+    },
+    "shortDescription": {
+      "en-US": "Find four cards that belong together. Flip hidden cards and clear the table.",
+      "ko-KR": "숨은 공통점으로 카드 네 장을 묶어 보세요. 뒤집힌 카드를 열어 판을 비우는 퍼즐"
+    },
+    "fullDescription": {
+      "en-US": "Four cards share something. Can you see what?\n\nFour Alike is a card puzzle about hidden categories. Sixteen picture cards are on the table, and some of them lie face down in stacks. Pick four cards that belong together, like four fruits, four instruments or four things from the beach, and group them. The category name shows up only after you get it right.\n\nHOW IT PLAYS\n• Tap four open cards and press Group.\n• Stacks open one card at a time. Move the front card to a holding slot to reach the card behind it.\n• You get two holding slots and four mistakes per stage, so plan before you move.\n• \"One away\" tells you that three of your four were right.\n\nWHAT'S INSIDE\n• 600 stages that go from gentle to tricky. Every stage is checked to be solvable with the two slots you start with.\n• A Daily Challenge: one puzzle a day, the same for everyone, with no boosters.\n• 158 categories and 800 picture cards to collect in your Album.\n• Hint, Undo and an extra slot for the moments you get stuck.\n• Card backs and table themes to unlock with the coins you earn.\n• Plays offline. No account, no sign-in.\n• English and Korean.\n\nABOUT ADS\nFour Alike is free and supported by ads. Ads never appear in the middle of a stage. Some rewards are offered for watching an ad, and that is always your choice. There are no in-app purchases.",
+      "ko-KR": "카드 네 장에는 공통점이 있습니다. 무엇인지 보이나요?\n\n끼리끼리는 숨은 범주를 찾아내는 카드 퍼즐입니다. 판에는 그림 카드 열여섯 장이 놓여 있고, 그중 일부는 더미 속에 뒤집혀 있습니다. 과일 네 장, 악기 네 장, 바닷가에서 보는 것 네 장처럼 서로 어울리는 카드 네 장을 골라 묶어 보세요. 범주 이름은 맞힌 뒤에야 나타납니다.\n\n플레이 방법\n• 열린 카드 네 장을 고르고 묶기를 누릅니다.\n• 더미는 맨 앞 카드부터 열립니다. 앞 카드를 임시 칸으로 옮기면 뒤에 숨은 카드가 열립니다.\n• 임시 칸은 두 개, 실수는 한 판에 네 번까지입니다. 옮기기 전에 먼저 생각하세요.\n• \"한 장만 달라요\"는 네 장 가운데 세 장이 맞았다는 뜻입니다.\n\n들어 있는 것\n• 쉬운 판에서 까다로운 판까지 이어지는 스테이지 600개. 모든 판은 처음 주어지는 임시 칸 두 개로 풀 수 있는지 확인했습니다.\n• 일일 도전: 하루에 한 판, 모두가 같은 판을 부스터 없이 풉니다.\n• 도감에 모으는 범주 158개와 그림 카드 800장.\n• 막혔을 때 쓰는 힌트, 되돌리기, 칸 추가.\n• 플레이로 모은 코인으로 여는 카드 뒷면과 배경.\n• 인터넷 없이 플레이할 수 있고 계정이나 로그인이 필요 없습니다.\n• 한국어와 영어.\n\n광고 안내\n끼리끼리는 광고로 운영되는 무료 게임입니다. 판을 푸는 도중에는 광고가 나오지 않습니다. 일부 보상은 광고를 보고 받을 수 있고, 볼지 말지는 언제나 직접 고릅니다. 인앱 구매는 없습니다."
+    }
+  },
+  "assets": {
+    "playIcon": "play-store/assets/icon-512.png",
+    "featureGraphic": "play-store/assets/feature-graphic-en-US.png",
+    "phoneScreenshots": "확정 필요"
+  },
+  "localizedAssets": {
+    "ko-KR": {
+      "featureGraphic": "play-store/assets/feature-graphic-ko-KR.png",
+      "phoneScreenshots": "확정 필요"
+    }
+  },
+  "contentDeclarations": {
+    "dataSafety": "completed-in-play-console: 2026-11-21",
+    "contentRating": "completed-in-play-console: 2026-11-21",
+    "targetAudience": "13-and-over-not-children",
+    "ads": "yes",
+    "advertisingId": "completed-in-play-console: 2026-11-21",
+    "koreaDistribution": "yes",
+    "koreaGameRating": "completed-in-play-console: 2026-11-21",
+    "sellerStatus": "확정 필요"
   }
 }
