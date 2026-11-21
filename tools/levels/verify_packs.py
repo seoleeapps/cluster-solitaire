@@ -292,12 +292,16 @@ def print_stats(content, records_by_pack):
         print('| `%s` | %s | %d | %d | %d | %.2f%% |' % (
             key, category['domain'], category['tier'], len(content.candidates[key]), usage[key], usage[key] * 100 / levels))
 
+    unused = [key for key in content.categories if key not in usage]
+    if not unused:
+        print('\n한 번도 안 쓰인 범주는 없다.')
+        return
     print('\n| 한 번도 안 쓰인 범주 | 난도 | 소속 수 | 소속을 가장 많이 품는 다른 범주 | 그 범주의 후보인 소속 수 |')
     print('|---|---|---|---|---|')
-    for key, category in content.categories.items():
-        if key not in usage:
-            overlap, other = closest(content, key)
-            print('| `%s` | %d | %d | `%s` | %d장 |' % (key, category['tier'], len(category['members']), other, overlap))
+    for key in unused:
+        category = content.categories[key]
+        overlap, other = closest(content, key)
+        print('| `%s` | %d | %d | `%s` | %d장 |' % (key, category['tier'], len(category['members']), other, overlap))
 
 
 def main():
