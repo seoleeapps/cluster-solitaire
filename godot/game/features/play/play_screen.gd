@@ -154,7 +154,19 @@ func _ready() -> void:
 	_popups = Popups.new(self)
 	_guide = Guide.new(self)
 	_build_static()
-	resized.connect(_relayout)
+	resized.connect(_on_resized)
+
+
+## 화면 크기가 바뀌면 자리를 다시 잡는다. 두는 중이면 카드까지 새 크기로 다시 놓고 선택과 힌트 표시는 그대로 둔다.
+func _on_resized() -> void:
+	if board == null or not idle() or _dragging:
+		_relayout()
+		return
+	_rebuild()
+	for card: String in selection:
+		(_views[card] as CardView).set_selected(true, false)
+	for card: String in _hinted:
+		(_views[card] as CardView).set_hinted(true)
 
 
 ## 판을 띄운다. round는 FaSession.open_round의 결과다.
@@ -1042,7 +1054,7 @@ func _fly_to_medal(view: CardView, target_medal: MedalView, delay: float) -> Twe
 	var destination: Vector2 = target_medal.position + target_medal.size / 2.0 - view.size / 2.0
 	view.pivot_offset = view.size / 2.0
 	var tween: Tween = view.create_tween().set_parallel(true)
-	tween.tween_property(view, "position", destination, FLY_SECONDS).set_delay(delay).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(view, "position", destination, FLY_SECONDS).set_delay(delay).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(view, "scale", Vector2.ONE * 0.3, FLY_SECONDS).set_delay(delay).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(view, "modulate:a", 0.0, FLY_SECONDS * 0.3).set_delay(delay + FLY_SECONDS * 0.7)
 	tween.chain().tween_callback(view.queue_free)
@@ -1490,7 +1502,8 @@ func show_toast(text: String, kind: String = TOAST_INFO) -> void:
 	plate.size = Vector2(width, 40.0) * stage_scale()
 	label.size = Vector2(width, 36.0) * stage_scale()
 	label.add_theme_font_size_override("font_size", roundi(16.0 * stage_scale()))
-	var anchor: Vector2 = _stage.get_global_transform() * Vector2(_stage.size.x / 2.0, (_layout["tray"] as Rect2).position.y - 14.0)
+	# 받침의 줄 이름 위에 놓는다. 더미의 카드 이름과 임시 칸을 가리지 않는 자리다.
+	var anchor: Vector2 = _stage.get_global_transform() * Vector2(_stage.size.x / 2.0, (_layout["tray"] as Rect2).position.y + 10.0)
 	plate.position = anchor - plate.size / 2.0
 	host.layers.layer("Toast").add_child(plate)
 	_toast = plate

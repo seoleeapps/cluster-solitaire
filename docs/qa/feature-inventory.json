@@ -26,7 +26,8 @@
       "foundation": false,
       "paths": [
         "godot/addons/seorilabs_game/**",
-        "godot/game/**"
+        "godot/game/**",
+        "godot/data/levels/tutorial.json"
       ]
     },
     {
@@ -136,6 +137,69 @@
         "godot/addons/seorilabs_game/ui_kit/**",
         "godot/addons/seorilabs_game/skins/**",
         "godot/tests/common/ui_kit_probe.gd"
+      ]
+    },
+    {
+      "id": "core_play",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/features/play/**",
+        "godot/game/features/shared/**",
+        "godot/game/bootstrap/**",
+        "godot/game/core/domain/**",
+        "godot/game/core/use_cases/**",
+        "godot/data/content/**",
+        "godot/data/levels/**",
+        "godot/game/skins/candy_pop/**"
+      ]
+    },
+    {
+      "id": "boosters",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/core/use_cases/fa_use_booster.gd",
+        "godot/game/core/domain/fa_solver.gd",
+        "godot/game/features/play/**"
+      ]
+    },
+    {
+      "id": "result_rewards",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/core/use_cases/fa_finish_round.gd",
+        "godot/game/core/domain/fa_economy.gd",
+        "godot/game/features/play/play_popups.gd",
+        "godot/game/features/play/play_screen.gd"
+      ]
+    },
+    {
+      "id": "ad_placements",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/core/use_cases/fa_ad_flow.gd",
+        "godot/game/core/use_cases/fa_continue_round.gd",
+        "godot/game/core/domain/fa_ad_policy.gd",
+        "godot/game/core/ports/fa_ads_port.gd",
+        "godot/game/adapters/fa_scripted_ads.gd",
+        "godot/game/features/play/**",
+        "godot/data/monetization/bm-profile.json"
+      ]
+    },
+    {
+      "id": "run_save",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/adapters/fa_file_store.gd",
+        "godot/game/core/domain/fa_progress.gd",
+        "godot/game/core/domain/fa_board.gd",
+        "godot/game/core/use_cases/fa_start_round.gd",
+        "godot/game/core/use_cases/fa_load_progress.gd",
+        "godot/game/bootstrap/fa_session.gd"
       ]
     }
   ]

@@ -5,7 +5,6 @@ extends RefCounted
 const Solver := preload("res://game/core/domain/fa_solver.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const ClockPort := preload("res://game/core/ports/fa_clock_port.gd")
-const AnalyticsPort := preload("res://game/core/ports/fa_analytics_port.gd")
 
 ## 애니메이션이 끝나길 기다리는 한도(프레임). headless는 초당 약 145프레임, 렌더링은 60프레임이다.
 const SETTLE_FRAMES := 1500
@@ -23,29 +22,24 @@ class FakeClock extends ClockPort:
 		return date
 
 
-## 보낸 분석 이벤트를 기억한다.
-class Recorder extends AnalyticsPort:
-	var events: Array[Dictionary] = []
-
-	func log_event(name: String, params: Dictionary) -> void:
-		events.append({"name": name, "params": params})
-
-	func count(name: String) -> int:
-		return events.filter(func(event: Dictionary) -> bool: return event["name"] == name).size()
-
-	func last(name: String) -> Dictionary:
-		for index: int in range(events.size() - 1, -1, -1):
-			if events[index]["name"] == name:
-				return events[index]["params"]
-		return {}
-
-
 var d: RefCounted
 var main: Control
+var _focused_once: bool = false
 
 
 func _init(driver: RefCounted) -> void:
 	d = driver
+	d.tree.root.focus_entered.connect(func() -> void: _focused_once = true)
+	d.tree.root.focus_exited.connect(_on_focus_lost)
+
+
+## 창이 초점을 잃으면(다른 앱의 창이 앞으로 나올 때) 엔진이 누르고 있던 입력을 취소해 그 탭이 사라진다.
+## 렌더링 실행이 그 탓에 실패했는지 로그에서 가릴 수 있게 남긴다. headless 실행에는 창 초점이 없다.
+func _on_focus_lost() -> void:
+	# 창이 처음 초점을 받기 전의 변화는 창이 뜨는 과정이다.
+	if not _focused_once:
+		return
+	print("The window lost focus at frame %d. The engine cancels a press in flight, so a tap around here can be dropped." % Engine.get_process_frames())
 
 
 func play() -> Control:

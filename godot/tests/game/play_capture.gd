@@ -4,7 +4,8 @@ extends SceneTree
 ##
 ##   godot --audio-driver Dummy --path godot --script res://tests/game/play_capture.gd -- --out <폴더> [--only <묶음>]
 ##   묶음: reference(기준 그림과 같은 상태, 한국어와 영어, 3배), sizes(세 화면 크기), layouts(모든 배치),
-##         states(카드·칸·버튼의 상태 시트), motion(묶음 완성·오답·결과 연출의 중간 프레임)
+##         states(카드·칸·버튼의 상태 시트), motion(묶음 완성·오답·결과 연출의 중간 프레임),
+##         daily(일일 도전 모드. 진입 화면이 아직 없어 시작 장면의 launch_daily를 직접 부른다)
 ## 렌더링 모드(--headless 없이)에서만 PNG가 남는다. 출력 폴더는 build/ 아래에 둔다.
 ##
 ## 기준 그림은 위 50, 아래 30의 여백으로 그려졌다. 같은 여백이 나오게 안전 영역을 위 34, 아래 16으로 넣는다.
@@ -36,6 +37,7 @@ const REFERENCE_SELECTION: Array[String] = ["banana", "strawberry", "lemon", "gr
 var d: RefCounted
 var pilot: Pilot
 var ads: ScriptedAds
+var clock: Pilot.FakeClock
 var save_dir: String = ""
 var main: Control
 var serial: int = 0
@@ -52,6 +54,7 @@ func run() -> void:
 	d = Driver.new(self, BASE, out, true)
 	pilot = Pilot.new(d)
 	ads = ScriptedAds.new()
+	clock = Pilot.FakeClock.new()
 	save_dir = "user://capture-%d" % Time.get_ticks_usec()
 	DirAccess.make_dir_recursive_absolute(save_dir)
 	d.begin("play-capture", ["core_play"])
@@ -65,6 +68,8 @@ func run() -> void:
 		await states()
 	if only in ["", "motion"]:
 		await motion()
+	if only in ["", "daily"]:
+		await daily()
 	if main != null:
 		await d.unmount(main)
 	d.end()
@@ -131,16 +136,16 @@ func motion() -> void:
 	for card: String in near:
 		await pilot.tap_card(card)
 	await d.tap(play.submit_button)
-	await d.frames(6)
+	await pause(0.1)
 	await d.shot("motion-miss", false)
 	await pilot.settle()
 	var group: Array = pilot.open_group()
 	for card: String in group:
 		await pilot.tap_card(card)
 	await d.tap(play.submit_button)
-	await d.frames(9)
+	await pause(0.2)
 	await d.shot("motion-group-fly", false)
-	await d.frames(12)
+	await pause(0.28)
 	await d.shot("motion-group-medal", false)
 	await pilot.settle()
 	await pilot.hold(pilot.board().front_card(0))
@@ -154,13 +159,18 @@ func motion() -> void:
 		await pilot.tap_card(card)
 	await d.tap(play.submit_button)
 	d.step("clear ceremony starts", await d.wait_for(func() -> bool: return pilot.board().is_won() and not play.result.is_empty(), 900))
-	await d.frames(28)
+	await pause(0.45)
 	await d.shot("motion-clear", false)
 	d.step("result popup", await d.wait_for(func() -> bool: return play.popup != null and play.popup.state == "open", 900))
-	await d.frames(24)
+	await pause(0.62)
 	await d.shot("motion-result-stars", false)
 	await d.wait_for(func() -> bool: return play.result_settled, 900)
 	await d.shot("result")
+
+
+## 연출의 중간을 찍으려고 정해진 시간만큼 기다린다(화면 주사율과 무관하게).
+func pause(seconds: float) -> void:
+	await create_timer(seconds).timeout
 
 
 ## 카드, 칸, 메달, 버튼, 하트, 토스트의 모든 상태를 한 장에.
@@ -172,8 +182,26 @@ func states() -> void:
 		var sheet: Control = build_state_sheet(language)
 		await d.mount(sheet)
 		await d.frames(10)
+		d.step("state sheet in " + language, sheet.get_child_count() > 30)
 		await d.shot("states-" + language)
 		await d.unmount(sheet)
+
+
+## 일일 도전 모드: 부스터는 회색이고 잠긴 칸이 없으며 표지에 날짜가 보인다.
+func daily() -> void:
+	d.step("home", await open_game(seed_save("ko", stage_progress(30), true), BASE, Vector2.ZERO, false))
+	main.launch_daily(clock.date)
+	d.step("daily board", await pilot.settle())
+	var play: Control = main.play
+	d.expect_equal("daily mode shows two slots and no boosters", [play.mode, play.hold_cell_count(), play.hint_button.state, play.undo_button.state, play.hint_button.disabled], ["daily", 2, "off", "off", true])
+	d.expect_equal("the ribbon shows the date", play.text_of("stage"), "일일 도전 12/1")
+	var problem: String = pilot.fits()
+	d.step("daily board fits", problem.is_empty(), problem)
+	await d.shot("daily")
+	for index: int in 4:
+		await pilot.submit(pilot.wrong_pick(2, index))
+	d.step("daily fail popup has no continue", await pilot.popup_open("fail") and not play.popup_button("continue").visible)
+	await d.shot("daily-fail")
 
 
 # =====================================================================
@@ -235,7 +263,8 @@ func seed_save(language: String, progress: Dictionary, tutorial_done: bool) -> S
 	return save_name
 
 
-func open_game(save_name: String, size: Vector2i, insets: Vector2) -> bool:
+## 게임을 띄우고 타이틀의 시작을 누른다. enter_play가 참이면 홈에서 플레이까지 들어간다.
+func open_game(save_name: String, size: Vector2i, insets: Vector2, enter_play: bool = true) -> bool:
 	if main != null:
 		await d.unmount(main)
 	d.viewport.size = size
@@ -244,6 +273,7 @@ func open_game(save_name: String, size: Vector2i, insets: Vector2) -> bool:
 	main.device_locale = "en-US"
 	var services: GameServices = GameServices.local(save_dir + "/" + save_name + "-progress.json")
 	services.ads = ads
+	services.clock = clock
 	main.game_services = services
 	main.safe_insets_override = insets
 	main.feature_routes["shop"] = func() -> void: pass
@@ -253,6 +283,8 @@ func open_game(save_name: String, size: Vector2i, insets: Vector2) -> bool:
 		return false
 	if not await d.tap(main.find_child("start", true, false)):
 		return false
+	if not enter_play:
+		return main.screen == "home"
 	if main.screen == "home" and not await d.tap(main.find_child("play", true, false)):
 		return false
 	return main.screen == "play" and await pilot.settle()

@@ -296,6 +296,12 @@ static func fit_name(display_name: String, language: String, width: float, large
 		for lines: int in [1, NAME_LINES]:
 			# 한 줄로는 한 단계만 줄여 본다. 더 줄이기보다 두 줄이 읽기 쉽다.
 			var smallest: int = maxi(NAME_MIN, base - 1) if lines == 1 else NAME_MIN
+			# 한글은 글자 사이 어디서나 줄이 바뀌어 낱말이 끊긴다(오른쪽 화살/표). 띄어쓰기에서 나눠 두 줄에 들어가면 그렇게 놓는다.
+			if lines > 1 and language == "ko":
+				for font_size: int in range(base, smallest - 1, -1):
+					var split: String = _split_at_space(display_name, font, font_size, width)
+					if not split.is_empty():
+						return {"fits": true, "size": font_size, "lines": NAME_LINES, "mode": TextServer.AUTOWRAP_OFF, "stretch": stretch, "text": split}
 			for font_size: int in range(base, smallest - 1, -1):
 				var modes: Array[int] = [TextServer.AUTOWRAP_WORD]
 				if lines > 1 and language == "ko":
@@ -303,8 +309,25 @@ static func fit_name(display_name: String, language: String, width: float, large
 				for mode: int in modes:
 					var measured: Dictionary = _measure(display_name, font, font_size, width, mode)
 					if measured["lines"] <= lines and measured["width"] <= width + 0.5:
-						return {"fits": true, "size": font_size, "lines": measured["lines"], "mode": mode, "stretch": stretch}
-	return {"fits": false, "size": NAME_MIN, "lines": NAME_LINES, "mode": TextServer.AUTOWRAP_ARBITRARY, "stretch": stretches.back()}
+						return {"fits": true, "size": font_size, "lines": measured["lines"], "mode": mode, "stretch": stretch, "text": display_name}
+	return {"fits": false, "size": NAME_MIN, "lines": NAME_LINES, "mode": TextServer.AUTOWRAP_ARBITRARY, "stretch": stretches.back(), "text": display_name}
+
+
+## 이름을 띄어쓰기 한 곳에서 두 줄로 나눈다. 두 줄이 모두 폭에 들어가는 자리 가운데 긴 줄이 가장 짧은 곳을 고른다.
+## 그런 자리가 없으면 빈 문자열.
+static func _split_at_space(display_name: String, font: Font, font_size: int, width: float) -> String:
+	var words: PackedStringArray = display_name.split(" ", false)
+	var best: String = ""
+	var best_width: float = INF
+	for cut: int in range(1, words.size()):
+		var first: String = " ".join(words.slice(0, cut))
+		var second: String = " ".join(words.slice(cut))
+		var widest: float = maxf(font.get_string_size(first, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x,
+			font.get_string_size(second, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x)
+		if widest <= width + 0.5 and widest < best_width:
+			best_width = widest
+			best = first + "\n" + second
+	return best
 
 
 func _fit_name() -> void:
@@ -325,7 +348,7 @@ func _fit_name() -> void:
 	name_label.add_theme_font_size_override("font_size", font_size)
 	name_label.add_theme_constant_override("line_spacing", roundi(pitch - line_box))
 	name_label.autowrap_mode = chosen["mode"]
-	name_label.text = _display_name
+	name_label.text = chosen["text"]
 	_arrange()
 
 

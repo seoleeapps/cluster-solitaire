@@ -243,7 +243,9 @@ func fail() -> Control:
 	holder.name = "continue_row"
 	box.add_child(holder)
 	_fill_continue(holder)
-	box.add_child(_button("restart", _t("Restart", "다시 하기"), false, _screen.restart))
+	# 이어 갈 길이 없으면 다시 하기가 주 행동이다.
+	var can_continue: bool = _screen.session.continue_round.check(_screen.player(), board)["ok"]
+	box.add_child(_button("restart", _t("Restart", "다시 하기"), not can_continue, _screen.restart))
 	box.add_child(_button("home", _t("Home", "홈으로"), false, _screen.leave_home))
 	return popup
 

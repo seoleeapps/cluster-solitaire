@@ -79,6 +79,10 @@ func _init() -> void:
 	resized.connect(_arrange)
 
 
+func _ready() -> void:
+	_arrange()
+
+
 ## 상태를 바꾼다. 놓을 수 있는 칸은 맥동한다.
 func set_state(next: String) -> void:
 	if state == next:

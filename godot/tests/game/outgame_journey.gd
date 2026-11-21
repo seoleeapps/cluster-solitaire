@@ -1,6 +1,6 @@
 extends SceneTree
 ## 제품 여정. 실제 시작 장면을 띄우고 화면 좌표 입력만으로 진행한다.
-## 대역은 광고(ScriptedAds), 시계(FakeClock), 분석 기록, 저장 경로뿐이다. 판의 상태는 읽어서 확인만 한다.
+## 대역은 광고(ScriptedAds), 시계(FakeClock), 분석 기록(FaMemoryAnalytics), 저장 경로뿐이다. 판의 상태는 읽어서 확인만 한다.
 ## 단계 이름의 AC-번호는 GDD 인수 시나리오의 조건이다.
 
 const Driver := preload("res://tests/common/e2e_driver.gd")
@@ -8,6 +8,7 @@ const Pilot := preload("res://tests/game/play_pilot.gd")
 const State := preload("res://addons/seorilabs_game/flow/state.gd")
 const GameServices := preload("res://game/bootstrap/fa_services.gd")
 const ScriptedAds := preload("res://game/adapters/fa_scripted_ads.gd")
+const MemoryAnalytics := preload("res://game/adapters/fa_memory_analytics.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const Economy := preload("res://game/core/domain/fa_economy.gd")
 const Solver := preload("res://game/core/domain/fa_solver.gd")
@@ -22,7 +23,7 @@ var d: RefCounted
 var pilot: Pilot
 var ads: ScriptedAds
 var clock: Pilot.FakeClock
-var recorder: Pilot.Recorder
+var recorder: MemoryAnalytics
 var save_dir: String = ""
 var main: Control
 
@@ -120,7 +121,7 @@ func run() -> void:
 	pilot = Pilot.new(d)
 	ads = ScriptedAds.new()
 	clock = Pilot.FakeClock.new()
-	recorder = Pilot.Recorder.new()
+	recorder = MemoryAnalytics.new()
 	save_dir = "user://e2e-game-%d" % Time.get_ticks_usec()
 	DirAccess.make_dir_recursive_absolute(save_dir)
 	print("Isolated save: ", ProjectSettings.globalize_path(save_dir))
@@ -284,6 +285,16 @@ func hold_undo_drag() -> void:
 	d.step("AC-005 a reserve card can be selected", await pilot.tap_card(reserve_card) and play.selection == [reserve_card])
 	d.step("AC-005 but it does not move to a slot", await d.tap(play.hold_cell(1)) and await pilot.settle() and pilot.board().holds()[1] == "" and pilot.board().reserve().has(reserve_card))
 	d.step("AC-005 a held card can be selected too", await pilot.tap_card(reserve_card) and await pilot.tap_card(card) and play.selection == [card])
+	# 화면 크기가 바뀌어도(분할 화면, 접는 화면) 판은 새 크기에 맞게 다시 놓이고 선택은 남는다.
+	var screen: Vector2i = d.viewport.size
+	d.viewport.size = screen + Vector2i(0, 80)
+	await d.frames(4)
+	d.step("the selection survives a taller screen", play.selection == [card] and play.card_view(card).selected)
+	play_fit_step("board on the taller screen")
+	d.viewport.size = screen
+	await d.frames(4)
+	d.step("and the screen going back", play.selection == [card] and play.card_view(card).selected)
+	play_fit_step("board back on the first screen")
 	d.step("deselect", await pilot.tap_card(card) and play.selection.is_empty())
 
 	var undo_before: int = player().booster("undo")

@@ -139,6 +139,13 @@ func _card_names_fit() -> void:
 				if not fit["fits"] or int(fit["lines"]) > CardView.NAME_LINES or int(fit["size"]) < CardView.NAME_MIN:
 					cut.append(content.item_name(item, language))
 			_check(cut.is_empty(), "%s card names fit in two lines (large text %s): %s" % [language, large, ", ".join(cut)])
+	# 한글 이름이 두 줄이 될 때 낱말 가운데가 아니라 띄어쓰기에서 나뉜다. 390보다 좁은 화면의 카드 폭(72)으로 본다.
+	var arrow: Dictionary = CardView.fit_name("오른쪽 화살표", "ko", 72.0 - CardView.PAD_SIDE * 2.0, false)
+	_check(arrow["fits"] and arrow["text"] == "오른쪽\n화살표", "a Korean name breaks at its space: %s" % str(arrow["text"]).c_escape())
+	var single: Dictionary = CardView.fit_name("브라키오사우루스", "ko", width, false)
+	_check(single["fits"] and single["text"] == "브라키오사우루스" and int(single["lines"]) == 2, "a long Korean word without a space still wraps")
+	var short: Dictionary = CardView.fit_name("생일 케이크", "ko", width, false)
+	_check(short["fits"] and int(short["lines"]) == 1 and short["text"] == "생일 케이크", "a name that fits one line stays on one line")
 
 
 func _read(path: String) -> Dictionary:
