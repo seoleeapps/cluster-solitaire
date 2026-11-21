@@ -183,8 +183,10 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 | `FaEconomy.booster_reward(booster)` | 부스터 id | 보상. 그 부스터 1개 |
 | `FaEconomy.album_milestone(count)` | 도감의 범주 수 | `int`. 10개 단위면 50, 아니면 0 |
 | `FaEconomy.attendance_reward(day)` | 주기 안의 날(0부터) | 보상. 20코인, 힌트 1, 30코인, 되돌리기 1, 40코인, 칸 추가 1, 60코인 |
+| `FaEconomy.themes(kind)` | `card_back` 또는 `background` | 파는 테마 `[{id, kind, price}]`(가격 순서). 기본 테마(`""`)는 들어 있지 않다 |
+| `FaEconomy.theme_price(id)`, `theme_kind(id)` | 테마 id | `int`, `String`. 기본과 모르는 테마는 0과 `""` |
 
-그 밖의 상수: `DAILY_REWARD` 30, `ALBUM_NEW_CATEGORY` 5, `AD_MULTIPLIER` 2, `CONTINUE`(`"continue"`).
+그 밖의 상수: `DAILY_REWARD` 30, `ALBUM_NEW_CATEGORY` 5, `AD_MULTIPLIER` 2, `CONTINUE`(`"continue"`), 테마 종류 `THEME_CARD_BACK`(`card_back`)과 `THEME_BACKGROUND`(`background`), 파는 테마 `THEMES`(카드 뒷면 `card_back_mint` 600, `card_back_sunset` 900, `card_back_night` 1,200, 배경 `background_mint` 800, `background_peach` 1,200, `background_night` 1,600).
 
 ### FaDaily (`domain/fa_daily.gd`)
 
@@ -281,6 +283,8 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 | | `show(format, on_result)` | 형식, 결과를 받을 함수 | 없음. `on_result`를 `earned`, `dismissed`, `failed` 중 하나와 함께 한 번 부른다 |
 | | `privacy_choice_required()` | 없음 | `bool` |
 | | `open_privacy_choice()` | 없음 | 없음 |
+| | `consent_settled()` | 없음 | `bool`. 이번 실행의 동의 확인이 끝났는지. 동의를 물을 것이 없는 구현은 참 |
+| | 신호 `consent_changed` | | 동의 상태나 개인정보 선택 요건이 바뀌었을 수 있다 |
 | `FaAnalyticsPort` | `log_event(name, params)` | 이벤트 이름, 매개변수 | 없음 |
 | `FaClockPort` | `now_unix()` | 없음 | `int`. 유닉스 초 |
 | | `today()` | 없음 | `String`. 현지 날짜 |
@@ -304,6 +308,12 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 | | `execute(progress, board, booster, source)` | 저장, 판, 부스터 id, `owned`, `coins`, `ad` | 아래 설명 |
 | `FaContinueRound.new(store, analytics, ad_flow)` | `check(progress, board)` | 저장, 실패한 판 | `{ok, way, reason, price}`. way는 `ad`(광고를 쓸 수 있음), `coins`(광고를 못 쓰고 코인이 충분함), 이어 갈 수 없으면 `""`. reason은 `no_run`, `daily`, `no_effect`, `no_coins` |
 | | `pay_coins(progress, board)` | 저장, 실패한 판 | `{ok: true, saved}` 또는 `{ok: false, reason}`. 코인 150을 내고 실수 2회를 지운다 |
+| `FaShop.new(store, analytics)` | `buy_booster(progress, booster)` | 저장, 부스터 id | `{ok, reason, price, short}`. reason은 `unknown`, `no_coins`(short개 모자람). 사면 저장하고 `spend_virtual_currency`를 보낸다 |
+| | `status(progress, id)` | 저장, 테마 id | `{owned, selected, price, short}`. 기본 테마(`""`)는 가진 것으로 본다 |
+| | `buy_theme(progress, id)` | 저장, 테마 id | `{ok, reason}`. reason은 `unknown`, `owned`, `no_coins`. 사면 그 테마를 바로 쓰고 저장한다 |
+| | `select_theme(progress, kind, id)` | 저장, 종류, 가진 테마 id 또는 `""` | `bool`. 바꾸면 저장한다 |
+| `FaAttendance.new(store, analytics)` | `status(progress, today)` | 저장, 오늘 | `{rewards, today, claimed, can_claim}`. today는 오늘 받을 칸(0부터, 받을 수 없으면 -1), claimed는 이번 주기에서 받은 칸 수(오늘 일곱째를 받았으면 7) |
+| | `claim(progress, today)` | 저장, 오늘 | `{ok, day, reward}`. 받으면 저장하고 `attendance_claim`(`day`는 1부터)과 코인 획득을 보낸다 |
 | `FaAdFlow.new(store, ads, clock, config, analytics)` | `begin_session(progress)` | 저장 | 없음. 실행(세션)마다 한 번 |
 | | `add_play_time(progress, seconds)` | 저장, 플레이한 초 | 없음 |
 | | `check(progress, placement, mode)` | 저장, 배치 id, 판 종류 | `{ok, reason}`. `FaAdPolicy`의 사유에 `not_ready`가 더해진다. 기록을 남기지 않으므로 버튼을 보일지 정할 때 쓴다 |
@@ -569,5 +579,5 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 - 팩과 저장은 JSON에서 읽은 Dictionary를 그대로 넘기면 된다. 숫자가 실수로 읽혀도 코어가 정수로 바꾼다
 - 튜토리얼 판(`intro` 배치, 범주 3개)은 손으로 만든 `godot/data/levels/tutorial.json`에 있다. 안내 순서(`guide`)도 같은 파일에 있고 `tools/levels/verify_packs.py`와 `fa_tutorial_probe.gd`가 그 순서대로 풀리는지 본다. 화면은 `FaStartRound.start`의 판 종류 `tutorial`로 시작하고 정산이 시작 선물을 한 번만 준다
 - 일일 도전 달력의 "실패 뒤 미완료" 표시에 쓸 기록은 저장 모델에 없다. 성공한 날의 결과만 남긴다
-- 테마의 가격과 목록은 코어에 없다. `buy_theme(id, price)`에 화면이 05 문서의 값을 넘긴다
+- 테마의 가격과 목록은 `FaEconomy.THEMES`(05 문서의 값)에 있고, 상점은 `FaShop`으로 사고 고른다. 테마의 모양(그림과 색, 이름)은 화면 쪽(`features/shared/fa_look.gd`)이 안다
 - 일일 도전 팩은 1,100일 뒤 처음으로 돌아간다. 1,100은 7의 배수가 아니라서 그때부터는 판의 등급과 실제 요일이 하루씩 어긋난다. 순환 경계에서는 21일 재사용 금지도 확인하지 않는다. 그 전에 팩을 늘려야 한다

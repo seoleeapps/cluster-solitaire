@@ -48,8 +48,9 @@
 | 묶음 | 경로 | 수량 | 만드는 방법 | 출처와 라이선스 |
 |---|---|---|---|---|
 | 공통 스킨 | `godot/game/skins/candy_pop/` | SVG 10장(버튼 판 6, 칩, 패널, 팝업 틀, 코인), `skin.json`, `theme.tres` | `tools/art/build_candy_pop.py`와 공통 기반의 테마 생성 스크립트 | 자체 제작 |
-| 플레이 그림 | `godot/game/features/play/assets/` | SVG 41장(카드 판 3, 뒷면 판과 물방울, 번진 그림자, 칸 3, 받침, 메달 2, 이름표, 표지, 상단 버튼 판, 부스터 판 3, 조작 아이콘 6, 배지, 개수 표, 체크, 더하기, 광고 꼬리표, 하트 2, 별 2, 토스트 3, 선물 그림 3, 말풍선, 손가락) | `tools/art/build_candy_pop.py` | 자체 제작 |
-| SVG 원문 묶음 | `godot/game/features/shared/svg_sources.json` | 위 두 묶음의 SVG 51장의 원문 | 같은 생성 도구. 화면 배율에 맞춰 선명하게 그리려고 싣는다([기록](../../game-design/ui/notes/hidpi-art.md)) | 자체 제작 |
+| 플레이 그림 | `godot/game/features/play/assets/` | SVG 48장(카드 판 3, 뒷면 판과 물방울, 꾸미기 카드 뒷면 3종의 판과 무늬, 기울인 뒷면의 무늬 틀, 번진 그림자, 칸 3, 받침, 메달 2, 이름표, 표지, 상단 버튼 판, 부스터 판 3, 조작 아이콘 6, 배지, 개수 표, 체크, 더하기, 광고 꼬리표, 하트 2, 별 2, 토스트 3, 선물 그림 3, 말풍선, 손가락) | `tools/art/build_candy_pop.py` | 자체 제작 |
+| 바깥 화면 그림 | `godot/game/features/outgame/assets/` | SVG 39장(타이틀의 이름표와 막대 2, 홈의 상단 아이콘 2와 둥근 메뉴 판 4, 불꽃, 복사, 뒤로와 닫기, 달력 칸 4와 빈 원, 못 본 카드 윤곽, 상점 탭 2와 미리 보기 틀, 설정 스위치 4, 설정 줄 아이콘 12와 꺾쇠) | `tools/art/build_candy_pop.py` | 자체 제작 |
+| SVG 원문 묶음 | `godot/game/features/shared/svg_sources.json` | 위 세 묶음의 SVG 97장의 원문 | 같은 생성 도구. 화면 배율에 맞춰 선명하게 그리려고 싣는다([기록](../../game-design/ui/notes/hidpi-art.md)) | 자체 제작 |
 | 카드 그림 | `godot/game/assets/icons/` | PNG 800장, 192×192, 투명 배경 | `tools/content/rasterize_icons.py`가 Fluent Emoji Flat SVG를 변환 | Microsoft Fluent Emoji, MIT. 원본 커밋 `1ffb34c` |
 | 꾸미기 | `godot/game/features/shop/assets/` | 뒷면 4, 배경 4 | 같은 생성 도구의 색 변형 | 자체 제작 |
 | 서체 | 공통 기반의 `fonts/` | Fredoka, Jua, Noto Sans KR, Noto Sans Mono | 공통 묶음 | SIL OFL 1.1 |

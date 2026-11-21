@@ -8,7 +8,7 @@
 
 | 파일 | 내용 |
 |---|---|
-| `fa_live_services.gd` | `FaLiveServices`(Node). 아래 어댑터를 만들어 `ads`, `analytics`, `config`로 내놓고 프레임마다 시간을 흘린다. 앱이 백그라운드로 가고 돌아오는 것을 어댑터에 알린다 |
+| `fa_live_services.gd` | `FaLiveServices`(Node). 아래 어댑터를 만들어 `ads`, `analytics`, `config`로 내놓고 프레임마다 시간을 흘린다. 앱이 백그라운드로 가고 돌아오는 것을 어댑터에 알린다. 새 실행은 bootstrap이 판단해 `begin_session()`을 부른다 |
 | `fa_admob_ads.gd` | `FaAdmobAds`. `FaAdsPort` 구현. 동의, 초기화, 미리 불러오기, 보여 주기와 결과 판정의 순서 |
 | `fa_ad_show.gd` | `FaAdShow`. 떠 있는 광고 하나의 결과(`earned`, `dismissed`, `failed`)를 알림 순서와 시간으로 한 번 정한다 |
 | `fa_ad_sdk.gd` | `FaAdSdk`. 광고와 동의 SDK의 경계. 기본 구현은 SDK가 없는 환경이다 |
@@ -36,8 +36,9 @@
 | `can_request_ads()` | 광고를 요청해도 되는 동의 상태인지 |
 | `start()`, `advance(seconds)`, `resume()`, `stop()` | `FaLiveServices`가 부른다 |
 | `set_consent_debug(geography, device_ids)` | 기기 검수용. 아래 "기기에서 동의 양식 확인하기"에 적었다 |
-| `presenting_changed(active)` | 광고가 화면을 덮기 직전에 `true`, 결과가 정해진 직후(`on_result`보다 먼저)에 `false` |
-| `availability_changed`, `consent_changed` | 준비 여부, 동의 상태나 개인정보 선택 요건이 바뀌었을 수 있음 |
+| `consent_settled()` | 이번 실행의 동의 갱신이 한 번 끝났는지(양식을 띄웠다면 닫혔는지). SDK가 없으면 참. 타이틀이 기다린다 |
+| `presenting_changed(active)` | 광고가 화면을 덮기 직전에 `true`, 결과가 정해진 직후(`on_result`보다 먼저)에 `false`. 화면은 쓰지 않는다 |
+| `availability_changed`, `consent_changed` | 준비 여부, 동의 상태나 개인정보 선택 요건이 바뀌었을 수 있음. `consent_changed`는 포트(`FaAdsPort`)의 신호다 |
 
 결과 판정은 `FaAdShow`가 맡는다. 보상 알림과 닫힘 알림은 어느 쪽이 먼저 와도 `earned`다. 보상형이 보상 없이 닫히면 늦은 보상 알림을 1.5초 기다린 뒤 `dismissed`로 정한다. 떴다는 알림 없이 10초가 지나면 `failed`, 뜬 뒤 90초 동안 아무 알림이 없으면 받은 알림만으로 정한다. 이 시간은 게임이 화면 앞에서 돌아간 시간만 센다. 광고가 화면을 덮는 동안에는 게임이 멈춰 있어 흐르지 않고, 돌아온 첫 프레임의 긴 간격은 0.25초로만 센다.
 
@@ -107,59 +108,25 @@
 
 AdMob 앱 ID와 광고 단위, GA4 측정 값, 원격 설정 주소는 저장소에 없다. 릴리스 빌드가 로컬 자격증명에서 읽어 `godot/data/services/release.json`과 `godot/project.godot`의 `[admob]` 절에 넣었다가 빌드가 끝나면 지운다. 방법은 [Android 빌드](../06-release/android-build.md)에 있다. 앱은 내보낸 빌드에서만 이 파일을 읽는다.
 
-## bootstrap에 끼우는 방법
+## bootstrap에 끼운 방법
 
-아래는 `godot/game/bootstrap/main.gd`에 넣을 코드다. 포트 묶음의 변수 이름(`ports`)은 bootstrap의 실제 이름에 맞춘다. 공통 흐름이 이미 `services`, `analytics`, `config`라는 이름을 쓰므로 겹치지 않게 한다.
+`godot/game/bootstrap/main.gd`가 연결한다. 순서와 조건은 다음과 같다.
 
-```gdscript
-const LiveServices := preload("res://game/adapters/fa_live_services.gd")
+| 순서 | 하는 일 |
+|---|---|
+| `_init` | 로컬 묶음(`FaServices.local`: 파일 저장, 기기 시계)을 만들고 `use_live_services()`로 `FaLiveServices`를 만들어 `ads`, `analytics`, `config`에 끼운다. 여정은 장면을 트리에 넣기 전에 이 필드를 대역으로 바꾼다 |
+| `_ready`, `super._ready()` 전 | 포트 묶음이 실제 어댑터를 하나라도 쓰면 `FaLiveServices`를 시작 장면의 직접 자식으로 넣고, 아니면 버린다. 분석 포트가 `set_enabled`와 `discard_pending`을 가지면 공통 흐름의 분석 선택(`analytics.port`)에 끼우고 `analytics_policy_allowed`를 켠다. 광고 포트의 `consent_changed`를 받는다 |
+| 타이틀 | 준비 단계의 마지막이 동의 확인이다. 광고 포트의 `consent_settled()`가 참이 되거나 5초가 지나면 시작 버튼을 보인다. 규제 지역에서는 그동안 UMP 동의 양식이 먼저 뜬다(SCR-001의 동의 필요 상태) |
+| 동의가 바뀜 | `consent_changed`를 받으면 분석 선택을 다시 적용하고(`analytics.apply`), 타이틀이나 설정 화면이 떠 있으면 다시 그린다. 설정의 개인정보 선택 줄은 `privacy_choice_required()`가 참일 때만 보인다 |
+| 앱 복귀 | `main.gd`의 `_notification`이 백그라운드에 있던 시간을 시계 포트로 재고, 수익화 프로필의 `caps.interstitial_session_reset_s`(1,800초)를 넘으면 `FaSession.begin_session()`과 `FaLiveServices.begin_session()`을 부른다. 광고 어댑터의 다시 갱신(`resume`)과 분석의 보내기(`flush`)는 `FaLiveServices`가 스스로 한다 |
 
-var live: LiveServices
+같은 일을 두 곳에서 하지 않도록 정리한 것:
 
-# _init(): 로컬 기본 묶음을 만든 뒤, 여정이 대역을 주입하지 않았을 때만 실제 어댑터로 바꾼다.
-func use_live_services() -> void:
-	live = LiveServices.new()
-	ports.ads = live.ads
-	ports.analytics = live.analytics
-	ports.config = live.config
-	analytics.port = live.analytics                 # 설정의 "데이터 분석 허용"이 어댑터를 켜고 끈다
-	config["analytics_policy_allowed"] = true
+- 광고 중 소리: 플레이 화면이 광고를 보여 달라고 할 때 음악을 멈추고 결과를 받으면 되돌린다. 광고 어댑터의 `presenting_changed`는 화면 쪽에서 쓰지 않는다(프로브만 순서를 본다). `FaLiveServices`가 넘겨주던 `ad_presenting_changed`, `ad_availability_changed`, `consent_changed`, `session_restarted` 신호는 없앴다. 동의 변화는 광고 포트(`FaAdsPort`)의 `consent_changed`로 받는다.
+- 새 실행 판단: `FaLiveServices`는 더 이상 백그라운드 시간을 재지 않는다. bootstrap 한곳에서 판단하고 `begin_session()`을 부른다.
+- `app_first_run`, `app_session`: 분석 어댑터만 보낸다. 03 문서의 타이틀 분석 `app_open`은 같은 시점의 `app_session`과 겹쳐 보내지 않고, 타이틀이 준비되는 데 걸린 시간은 `title_ready`(`ms`)로 한 번 보낸다. 홈의 `screen_view`는 웹 스트림이 받지 않는 예약 이름이라 보내지 않는다.
 
-func _ready() -> void:
-	if live != null:
-		add_child(live)                             # super._ready()보다 먼저. 화면을 지울 때 함께 지워지지 않는 자리다
-		live.ad_presenting_changed.connect(_on_ad_presenting)
-		live.consent_changed.connect(_on_consent_changed)
-		live.session_restarted.connect(func() -> void: ad_flow.begin_session(progress))
-	super._ready()
-
-# 광고가 떠 있는 동안 게임 소리를 멈춘다. 음악과 효과음 버스의 음소거는 설정이 쓰므로 Master를 쓴다.
-func _on_ad_presenting(active: bool) -> void:
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), active)
-
-# 동의 상태가 바뀌면 분석 선택을 다시 적용하고, 설정 화면이 떠 있으면 다시 그린다.
-func _on_consent_changed() -> void:
-	if state.data.is_empty():
-		return
-	analytics.apply(state)
-	if screen == "settings":
-		_route("settings")
-
-# 설정 화면에 개인정보 선택 항목을 붙인다. UMP가 요건이 있다고 할 때만 보인다.
-func _settings() -> void:
-	super._settings()
-	if ports.ads.privacy_choice_required():
-		var box: Node = find_child("language", true, false).get_parent()
-		_button(tr_text("Privacy choices", "개인정보 선택"), ports.ads.open_privacy_choice, box).name = "privacy_choice"
-```
-
-지켜야 할 순서와 조건은 다음과 같다.
-
-- `analytics.port`와 `config["analytics_policy_allowed"]`는 `super._ready()` 전에 정한다. 공통 흐름은 초기화 중에 설정을 읽어 `set_enabled`를 부른다.
-- `FaLiveServices`는 `super._ready()` 전에 트리에 넣는다. 동의 갱신이 먼저 시작돼야 분석의 문이 "기다림"에서 출발한다.
-- `ad_flow.begin_session(progress)`는 앱을 켰을 때 한 번, 그리고 `session_restarted`를 받을 때 부른다. 백그라운드에 1,800초(프로필의 `caps.interstitial_session_reset_s`) 넘게 있다가 돌아오면 이 신호가 온다.
-- 여정은 광고 대역을 `ports.ads`에 넣는다. `FaLiveServices`를 만들지 않아도 되고, 만들어도 개발 PC에서는 아무것도 보내지 않는다.
-- 연결한 뒤에는 `godot/data/outgame/outgame-profile.json`의 `services`를 실제대로 고친다. `ads`는 `status: wired`, `exposed: true`, `binding: godot/game/adapters/fa_admob_ads.gd`, `analytics`와 `remote_config`의 `binding`은 각각 `fa_ga4_analytics.gd`와 `fa_remote_config.gd`다. `docs/qa/feature-inventory.json`에는 광고 기능의 `platformPaths`에 `godot/game/adapters/fa_admob_sdk.gd`와 `godot/project.godot`을 넣는다.
+개발 PC와 headless에서는 SDK가 없어 `consent_settled()`가 곧바로 참이고 광고는 준비되지 않는다. 여정의 `live-services-offline` 시나리오가 이 기본 구성으로 시작 장면을 띄워 확인한다.
 
 ## 검수
 
