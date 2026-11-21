@@ -567,7 +567,7 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 - 결과 창의 2배 버튼은 정산 결과의 `bonus`가 비어 있지 않고 `check`가 허용할 때만 보인다
 - `begin_session`은 실행(세션)마다 한 번 부른다. 수익화 프로필은 백그라운드에 1,800초 넘게 있다가 돌아오면 새 실행으로 보라고 적었다(`caps.interstitial_session_reset_s`). 그 판단은 화면이나 어댑터가 한다
 - 팩과 저장은 JSON에서 읽은 Dictionary를 그대로 넘기면 된다. 숫자가 실수로 읽혀도 코어가 정수로 바꾼다
-- 튜토리얼 판(`intro` 배치, 범주 3개)의 레벨은 아직 없다. `FaBoard`와 `FaSolver`는 범주 3개 판도 처리하고, `FaStartRound.start`의 판 종류 `tutorial`과 정산의 시작 선물은 준비돼 있다
+- 튜토리얼 판(`intro` 배치, 범주 3개)은 손으로 만든 `godot/data/levels/tutorial.json`에 있다. 안내 순서(`guide`)도 같은 파일에 있고 `tools/levels/verify_packs.py`와 `fa_tutorial_probe.gd`가 그 순서대로 풀리는지 본다. 화면은 `FaStartRound.start`의 판 종류 `tutorial`로 시작하고 정산이 시작 선물을 한 번만 준다
 - 일일 도전 달력의 "실패 뒤 미완료" 표시에 쓸 기록은 저장 모델에 없다. 성공한 날의 결과만 남긴다
 - 테마의 가격과 목록은 코어에 없다. `buy_theme(id, price)`에 화면이 05 문서의 값을 넘긴다
 - 일일 도전 팩은 1,100일 뒤 처음으로 돌아간다. 1,100은 7의 배수가 아니라서 그때부터는 판의 등급과 실제 요일이 하루씩 어긋난다. 순환 경계에서는 21일 재사용 금지도 확인하지 않는다. 그 전에 팩을 늘려야 한다

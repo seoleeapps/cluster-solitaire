@@ -47,8 +47,9 @@
 
 | 묶음 | 경로 | 수량 | 만드는 방법 | 출처와 라이선스 |
 |---|---|---|---|---|
-| 공통 스킨 | `godot/game/skins/candy_pop/` | SVG 9장, `skin.json`, `theme.tres` | `tools/art/build_candy_pop.py`와 공통 기반의 테마 생성 스크립트 | 자체 제작 |
-| 플레이 그림 | `godot/game/features/play/assets/` | SVG 30장(카드 판 3, 뒷면, 칸 3, 받침, 메달 2, 이름표, 표지, 버튼 판 4, 조작 아이콘 6, 배지, 체크, 광고 꼬리표, 더하기, 원, 하트 2, 별 2) | `tools/art/build_candy_pop.py` | 자체 제작 |
+| 공통 스킨 | `godot/game/skins/candy_pop/` | SVG 10장(버튼 판 6, 칩, 패널, 팝업 틀, 코인), `skin.json`, `theme.tres` | `tools/art/build_candy_pop.py`와 공통 기반의 테마 생성 스크립트 | 자체 제작 |
+| 플레이 그림 | `godot/game/features/play/assets/` | SVG 41장(카드 판 3, 뒷면 판과 물방울, 번진 그림자, 칸 3, 받침, 메달 2, 이름표, 표지, 상단 버튼 판, 부스터 판 3, 조작 아이콘 6, 배지, 개수 표, 체크, 더하기, 광고 꼬리표, 하트 2, 별 2, 토스트 3, 선물 그림 3, 말풍선, 손가락) | `tools/art/build_candy_pop.py` | 자체 제작 |
+| SVG 원문 묶음 | `godot/game/features/shared/svg_sources.json` | 위 두 묶음의 SVG 51장의 원문 | 같은 생성 도구. 화면 배율에 맞춰 선명하게 그리려고 싣는다([기록](../../game-design/ui/notes/hidpi-art.md)) | 자체 제작 |
 | 카드 그림 | `godot/game/assets/icons/` | PNG 800장, 192×192, 투명 배경 | `tools/content/rasterize_icons.py`가 Fluent Emoji Flat SVG를 변환 | Microsoft Fluent Emoji, MIT. 원본 커밋 `1ffb34c` |
 | 꾸미기 | `godot/game/features/shop/assets/` | 뒷면 4, 배경 4 | 같은 생성 도구의 색 변형 | 자체 제작 |
 | 서체 | 공통 기반의 `fonts/` | Fredoka, Jua, Noto Sans KR, Noto Sans Mono | 공통 묶음 | SIL OFL 1.1 |
@@ -107,8 +108,8 @@
 | 게이트 | 기준 | 상태 |
 |---|---|---|
 | 방향 선택 | 같은 화면 시안 3안에서 사용자 선택 | 완료(2026-11-21, B) |
-| 스킨과 플레이 그림 | 기준 그림과 나란히 놓아 색과 형태 일치 | 구현 중 확인 |
-| 필수 재료 게이트 | `ui_gate.py` 실패 0 | 구현 뒤 확인 |
-| 실행 화면 비교 | 플레이와 타이틀의 실제 렌더링을 기준 그림과 비교, 차이 수정 | 구현 뒤 확인 |
+| 스킨과 플레이 그림 | 기준 그림과 나란히 놓아 색과 형태 일치 | 개발 환경에서 확인함. [플레이 화면 비교 기록](../../game-design/ui/play-review.md) |
+| 필수 재료 게이트 | `ui_gate.py` 실패 0 | 플레이 화면까지 넣은 상태에서 8항목 통과(2026-11-21, `docs/game-design/ui/gate-report.json`). 화면을 더할 때마다 다시 돌린다 |
+| 실행 화면 비교 | 플레이와 타이틀의 실제 렌더링을 기준 그림과 비교, 차이 수정 | 플레이는 비교하고 고쳤다([기록](../../game-design/ui/play-review.md)). 타이틀은 타이틀 화면을 만들 때 한다 |
 | 소리 청취 | 사용자가 배경음악 반복 지점과 효과음을 듣고 판단 | 사용자 확인 대기(진행은 막지 않는다) |
 | 스토어 그림 | 유아용으로 보이지 않음, 다른 마켓 이름 없음, 실제 화면과 일치 | 등록 전 확인 |

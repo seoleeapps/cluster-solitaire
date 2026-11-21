@@ -2,32 +2,32 @@
  {
   "item": "display_font",
   "status": "PASS",
-  "evidence": "fonts=['res://addons/seorilabs_game/fonts/Fredoka.ttf', 'res://addons/seorilabs_game/fonts/Jua.ttf', 'res://addons/seorilabs_game/fonts/NotoSansKR.ttf', 'res://addons/seorilabs_game/fonts/NotoSansMono.ttf'] theme_tres=['addons/seorilabs_game/skins/soft_adventure/theme.tres']"
+  "evidence": "fonts=['res://addons/seorilabs_game/fonts/Fredoka.ttf', 'res://addons/seorilabs_game/fonts/Jua.ttf', 'res://addons/seorilabs_game/fonts/NotoSansKR.ttf', 'res://addons/seorilabs_game/fonts/NotoSansMono.ttf'] theme_tres=['game/skins/candy_pop/theme.tres', 'addons/seorilabs_game/skins/soft_adventure/theme.tres']"
  },
  {
   "item": "painted_skin",
   "status": "PASS",
-  "evidence": "painted=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/theme_builder.gd', 'addons/seorilabs_game/skins/soft_adventure/theme.tres'] skin_json=['addons/seorilabs_game/skins/soft_adventure/skin.json']"
+  "evidence": "painted=['game/features/shared/fa_art.gd', 'game/features/play/play_screen.gd', 'game/features/play/slot_cell.gd', 'game/features/play/booster_button.gd', 'game/features/play/card_view.gd'] skin_json=['game/skins/candy_pop/skin.json', 'addons/seorilabs_game/skins/soft_adventure/skin.json']"
  },
  {
   "item": "popup_motion",
   "status": "PASS",
-  "evidence": "popup=['addons/seorilabs_game/ui_kit/popup_base.gd'] kit=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/popup_base.tscn']"
+  "evidence": "popup=['game/features/play/play_popups.gd', 'addons/seorilabs_game/ui_kit/popup_base.gd'] kit=['game/features/play/play_popups.gd', 'tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/popup_base.tscn']"
  },
  {
   "item": "button_sfx",
   "status": "PASS",
-  "evidence": "attach=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/flow/outgame_main.gd'] buttons=12 sfx_connections=1"
+  "evidence": "attach=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/flow/outgame_main.gd'] buttons=20 sfx_connections=1"
  },
  {
   "item": "reward_ceremony",
   "status": "PASS",
-  "evidence": "kit=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/flow/outgame_main.gd', 'addons/seorilabs_game/ui_kit/reward_ceremony.tscn'] staged=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/reward_ceremony.gd']"
+  "evidence": "kit=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/flow/outgame_main.gd', 'addons/seorilabs_game/ui_kit/reward_ceremony.tscn'] staged=['game/features/play/play_popups.gd', 'tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/reward_ceremony.gd']"
  },
  {
   "item": "particles",
   "status": "PASS",
-  "evidence": "particles=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/particles/sparkle.tscn', 'addons/seorilabs_game/ui_kit/particles/burst.tscn']"
+  "evidence": "particles=['game/features/play/play_screen.gd', 'game/features/play/play_popups.gd', 'game/features/play/medal_view.gd', 'tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui_kit/particles/sparkle.tscn']"
  },
  {
   "item": "hud_layers",
@@ -37,6 +37,6 @@
  {
   "item": "currency_chip",
   "status": "PASS",
-  "evidence": "kit=['tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui/camp_home.gd', 'addons/seorilabs_game/flow/outgame_main.gd'] structural=[]"
+  "evidence": "kit=['game/features/play/play_screen.gd', 'tests/common/ui_kit_probe.gd', 'addons/seorilabs_game/ui/camp_home.gd'] structural=[]"
  }
 ]

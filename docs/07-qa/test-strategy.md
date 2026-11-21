@@ -6,11 +6,12 @@
 
 | 명령 | 확인하는 것 |
 |---|---|
-| `npm test` | 생성물 대조(`check:generated`), 레벨 팩 검증(`check:levels`), 원격 설정 대조(`check:remote-config`), 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체 |
+| `npm test` | 생성물 대조(`check:generated`), 레벨 팩 검증(`check:levels`), 원격 설정 대조(`check:remote-config`), 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체, 내보낸 묶음 검사(`check:export-pack`) |
 | `python3 tools/check.py` | 구조 검사, 공통 묶음 해시, import, 공통 계약 프로브, 제품 여정, `tests/game`의 프로브, 기능 목록 누락, 추적 파일 불변 |
-| `python3 tools/check.py --capture --size 390x844 --out build/render-390` | 같은 여정을 렌더링해 장면별 PNG를 남긴다. `--size 360x640`으로 작은 화면도 찍는다 |
+| `python3 tools/check.py --capture --size 390x844 --out build/render-390` | 같은 여정을 렌더링해 장면별 PNG를 남긴다. 지원하는 가장 낮은 화면 `--size 390x693`, 긴 화면 `--size 390x866`, 지원 범위 밖의 작은 화면 `--size 360x640`도 찍는다 |
 | `npm run test:core` | `godot/game/core`의 규칙 프로브만. `python3 tools/run_probes.py board solver`처럼 이름 일부를 주면 그 프로브만 돈다 |
-| `npm run check:levels` | 실린 레벨 팩의 모든 판을 참고용 Python 탐색기로 다시 검사한다(풀이 가능, 관대함, 묶음 유일성, 등급의 범주 조건) |
+| `npm run check:levels` | 실린 레벨 팩의 모든 판을 참고용 Python 탐색기로 다시 검사한다(풀이 가능, 관대함, 묶음 유일성, 등급의 범주 조건). 손으로 만든 튜토리얼 판과 안내 순서도 본다 |
+| `npm run check:export-pack` | Android 프리셋으로 자원 묶음을 내보내(`--export-pack`, 내보내기 템플릿과 SDK 없이 돈다) 선명한 그림의 SVG 원문 묶음, 카드 아이콘, 소리, 데이터 파일이 들어 있는지 본다 |
 | `npm run build:levels` | 여정과 일일 도전 팩을 다시 만들고 바로 검사한다. 콘텐츠 표나 생성 규칙을 고친 뒤에 쓴다 |
 | `npm run check:architecture`, `npm run check:bundle`, `npm run check:local-mode` | core 경계, 공통 묶음 해시, 로컬 전용 구성 |
 | `npm run check:remote-config` | `remote/config.json`의 열쇠, 형, 범위를 수익화 프로필과 대조한다 |
@@ -21,19 +22,32 @@
 
 `--size`는 기기 픽셀이 아니라 논리 화면 크기다. 폭 기준으로 늘리므로 360×640 기기의 논리 화면은 390×693, 412×915 기기는 390×866이다. 검수 범위와 크기의 정본은 [QA 론칭 계획](../design/2026-11-21-four-alike-launch/07-qa-launch-plan.md)과 [테스트 계획](../design/2026-11-21-four-alike-launch/test-plan.json)이다.
 
-렌더링 여정은 실제 창을 띄운다. 같은 데스크톱에서 다른 창이 초점을 가져가는 동안에는 탭 입력 하나가 빠져 실패한 적이 있다. 같은 명령을 다시 실행해 확인하고, 반복해서 같은 단계에서 실패하면 결함으로 본다. headless 실행과 CI의 `xvfb-run`에서는 이 현상을 보지 못했다.
+렌더링 여정은 실제 창을 띄운다. 같은 데스크톱에서 다른 창이 초점을 가져가는 동안에는 탭 입력 하나가 빠져 실패한 적이 있다. 창이 초점을 잃으면 엔진이 누르고 있던 입력을 취소하기 때문이다(누름과 뗌 사이에 창 초점 상실 알림을 넣어 재현했다). 플레이 여정은 창이 초점을 잃을 때마다 로그에 `The window lost focus at frame N`을 남기므로, 실패한 단계 바로 앞에 이 줄이 있으면 같은 명령을 다시 실행해 확인한다. 이 줄 없이 실패하거나 반복해서 같은 단계에서 실패하면 결함으로 본다. headless 실행과 CI의 `xvfb-run`에서는 이 현상을 보지 못했다. 고치는 자리는 공통 묶음의 `e2e_driver.gd`다.
 
 ## 여정
 
-`godot/tests/game/outgame_journey.gd`는 실제 시작 장면을 띄우고 화면 좌표 입력으로만 진행한다. 저장은 실행마다 새로 만든 임시 경로를 주입한다.
+`godot/tests/game/outgame_journey.gd`는 실제 시작 장면을 띄우고 화면 좌표 입력으로만 진행한다. 판의 상태는 읽어서 확인만 하고, 대역은 광고(`FaScriptedAds`), 시계, 분석 기록(`FaMemoryAnalytics`), 저장 경로뿐이다. 저장은 실행마다 새로 만든 임시 경로를 쓴다. 단계 이름의 `AC-번호`는 GDD 인수 시나리오의 조건이다. 플레이 화면을 모는 도우미는 `play_pilot.gd`에 있다.
 
 | 시나리오 | 흐름 |
 |---|---|
-| `offline-first-play-restart` | 타이틀, 안내, 샘플 라운드, 보상 연출, 결과, 홈, 우편함, 재실행 뒤 보상 복원 |
-| `settings-language-support-focus` | 분석 끄기, 지원코드, 한국어 전환, 큰 글자, 키보드 초점, 재실행 뒤 설정 유지 |
-| `skip-guide-home-replay` | 안내 건너뛰기, 재실행 뒤 안내를 강제하지 않음, 홈의 두 플레이 버튼 |
+| `first-run-tutorial-stage-one` | 타이틀, 튜토리얼 세 단계(안내 밖 카드는 무시), 끝 카드와 시작 선물, 홈의 보상 연출, 우편함, 스테이지 1 클리어, 결과, 다음 |
+| `wrong-answers` | 한 장 차이 토스트, 같은 조합 다시 내기, 그냥 오답, 다섯 번째 선택 무시 |
+| `hold-undo-drag` | 임시 칸으로 옮기기, 예비 카드는 옮겨지지 않음, 되돌리기, 끌어서 옮기기, 보유한 칸 추가, 다음 판에서 다시 잠김 |
+| `resume-in-english` | 힌트, 판 도중 종료 뒤 재실행, 홈의 이어 하기, 설정에서 영어로 바꾼 뒤 같은 판 |
+| `result-double` | 결과 2배 광고: 떠 있는 동안 지급 없음, 끝까지 본 뒤 지급 |
+| `pause-restart-home` | 일시정지의 계속, 뒤로 가기, 다시 하기와 홈으로(확인 뒤 실행) |
+| `interstitial-at-level-end` | 누적 플레이 3분과 보상형 뒤 2분을 채운 판 종료에서만 전면 광고, 결과 창보다 먼저 |
+| `stuck-extra-slot` | 막힘 창의 선택지, 광고로 칸 추가, 다시 막힌 뒤 닫고 판에서 되돌리기 |
+| `fail-continue` | 부스터 얻기 창에서 광고 중도 닫기와 코인 구매, 실수 네 번, 광고로 이어하기, 두 번째 실패, 코인 이어하기, 코인 부족 표시 |
+| `dead-end-notice` | 풀 수 없게 되는 수를 둔 뒤 막힌 길 안내와 되돌리기 강조 |
+| `settings-language-support-focus` | 분석 끄기, 지원코드, 한국어 전환, 큰 글자, 키보드 초점, 큰 글자의 판, 재실행 뒤 설정 유지 |
+| `replay-guide` | 설정의 안내 다시 보기: 튜토리얼 판을 다시 하고 선물은 또 받지 않음 |
 
-타이틀, 샘플 라운드, 결과, 홈에서는 버튼이 세로 화면 밖으로 나가거나 서로 겹치지 않는지도 검사한다. 함수 직접 호출로 화면을 건너뛰지 않는다. 캡처한 PNG는 직접 열어 글자 잘림과 겹침을 본다. PNG를 저장한 것만으로 화면 검수가 끝나지 않는다.
+타이틀과 홈에서는 공통 화면의 버튼이, 플레이에서는 카드와 칸과 버튼이 화면 밖으로 나가거나 서로 겹치지 않는지, 카드 높이가 84 이상인지, 카드 이름이 잘리지 않는지, 누르는 영역이 48 이상인지도 검사한다. 함수 직접 호출로 화면을 건너뛰지 않는다. 여정은 같은 화면 흐름을 되풀이해 스테이지를 넘기는 구간과 누적 플레이 3분을 채우는 구간에서만 시간을 빨리 돌린다. 캡처한 PNG는 직접 열어 글자 잘림과 겹침을 본다. PNG를 저장한 것만으로 화면 검수가 끝나지 않는다.
+
+`godot/tests/game/play_capture.gd`는 여정이 아니라 시안 비교용 캡처 도구다. 저장 파일을 미리 만들어 기준 그림과 같은 판에서 시작하고(고정 자료), 네 화면 크기와 모든 배치, 상태 시트, 연출의 중간 프레임, 일일 도전 모드를 찍는다. `tools/check.py`는 이 스크립트를 돌리지 않는다. 쓰는 법과 비교 기록은 [플레이 화면 비교 기록](../game-design/ui/play-review.md)에 있다.
+
+플레이 화면의 배치 계산과 카드 이름 맞춤은 `fa_play_layout_probe.gd`가, 튜토리얼 판이 안내 순서대로 풀리는지는 `fa_tutorial_probe.gd`와 `tools/levels/verify_packs.py`가 본다.
 
 서비스 어댑터(광고와 동의, 분석, 원격 설정)의 프로브는 SDK, HTTP, 파일, 시계를 메모리 안의 대역으로 바꿔 끼우고 네트워크 없이 돈다. `fa_admob_sdk_probe.gd`는 AdMob 플러그인의 GDScript 층까지 실제 그대로 쓰고 Android에만 있는 네이티브 싱글턴만 대역으로 바꾼다. 이 프로브는 플러그인의 클래스 이름을 풀어 줄 가져오기 캐시가 있어야 돈다. 새 복제본에서 `npm run test:core`로 바로 돌리면 실행하지 못했다고 알리고 실패하므로 `godot --headless --path godot --import`를 먼저 실행한다. `npm test`는 가져오기를 먼저 한다. 무엇을 확인하는지는 [서비스 어댑터](../03-architecture/service-adapters.md)의 "검수"에 있다.
 

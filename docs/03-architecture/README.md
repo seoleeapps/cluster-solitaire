@@ -29,18 +29,35 @@ Godot 프로젝트는 `godot/`에 있다. 제품 코드는 `godot/game`에만 �
 
 | 자리 | 쓰임 | 지금 들어 있는 것 |
 |---|---|---|
-| `stage_factory(profile) -> Control` | 홈 가운데에 놓을 제품 Control. 홈 형식이 `map`이나 `world`일 때만 불린다 | `features/home/home.gd`의 샘플 지도 |
-| `launch_game(owner)` | 홈의 플레이 버튼이나 첫 실행 안내에서 플레이를 시작한다 | `features/sample_round`의 샘플 라운드 |
-| `score_provider() -> Dictionary` | 결과에서 점수를 제출할 때 쓴다 | 샘플 점수 |
-| `feature_routes[이름] = Callable` | `_open("이름")`으로 여는 제품 화면을 등록한다. 내장 화면보다 먼저 찾는다 | 없음 |
-| `home_text`, `resource_provider` | 홈의 문구와 재화 칩 값 | 공통 기본값 |
-| `skin_dir`, `custom_theme` | 제품 스킨 폴더나 테마 | 공통 `soft_adventure` |
+| `skin_dir` | 제품 스킨 폴더 | `game/skins/candy_pop`. 테마를 적용할 때마다 그림 판을 `DPITexture`로 바꿔 끼우고 주 버튼의 글자를 흰색으로 맞춘다(`_apply_settings` 재정의) |
+| `game_services` | 포트 묶음(`FaServices`: store, ads, clock, config, analytics) | `FaServices.local(저장 경로)`: 파일 저장과 기기 시계, 나머지는 아무 일도 하지 않는 기본 포트. 장면을 트리에 넣기 전에 필드를 바꿔 끼우면 그 구현이 쓰인다 |
+| `session` | 실행 상태와 유스케이스(`FaSession`). `_ready`에서 `FaSession.open(game_services)`로 콘텐츠, 레벨 팩, 저장을 읽는다 | 화면은 이 묶음만 받는다 |
+| `launch_game(owner)` | 홈의 플레이 버튼이나 첫 실행에서 플레이를 시작한다 | `_launch_play`: 공통 튜토리얼이 진행 중이면 튜토리얼 판, 아니면 하던 판이나 다음 스테이지를 `features/play/play_screen.tscn`에 띄운다 |
+| `stage_factory(profile) -> Control` | 홈 가운데에 놓을 제품 Control | `features/home/home.gd`: 다음 스테이지 번호와 모은 별. 시작은 그 아래 공통 주 버튼(`play`)이 맡고 문구는 `_home` 재정의에서 `스테이지 N 시작`이나 `이어 하기`로 바꾼다 |
+| `resource_provider` | 홈 코인 칩의 값 | 제품 저장의 코인. 우편함에서 받은 코인은 `_home`에서 제품 저장으로 한 번씩 옮긴다(`FaSession.absorb_outgame_grants`) |
+| `feature_routes[이름] = Callable` | `_open("이름")`으로 여는 제품 화면을 등록한다. 내장 화면보다 먼저 찾는다 | 없음. `shop`을 등록하면 플레이 화면의 코인 칩에 더하기가 보이고 누르면 그 경로를 연다 |
+| `launch_daily(date)` | 날짜의 일일 도전 판을 플레이 화면에 띄운다 | 진입 화면은 아직 없다 |
 
-플레이 화면은 `owner._clear(제목)`으로 프레임과 뒤로, 닫기 버튼을 그린 뒤 `owner.content`나 `owner._scroll()`에 내용을 넣는다. 판이 끝나면 `owner.popups.enqueue("reward", {"text": ..., "amount": ...})`와 `owner._show_next_popup()`으로 공통 결과 화면과 보상 연출을 띄운다. 샘플 라운드(`features/sample_round/sample_round.gd`)가 이 순서를 그대로 보여 준다.
+플레이 화면은 공통 흐름의 내용 칸을 쓰지 않는다. `_open_round`가 내용 칸을 비우고 화면을 `layers.layer("World")`에 올리며, 팝업은 `Popup` 층, 토스트는 `Toast` 층, 튜토리얼의 손가락과 말풍선은 `Ftue` 층에 올린다. 화면이 끝나면 `exit_requested`로 알리고 `main.gd`가 화면을 지운 뒤 홈을 그린다. 시스템 뒤로 가기는 `_back` 재정의가 플레이 화면에 넘겨 일시정지를 열거나 열린 창을 닫는다.
 
-타이틀(`_title`), 홈(`_home`), 결과(`_draw_result`)는 공통 흐름이 직접 호출하므로 `feature_routes`에 같은 이름을 넣어도 바뀌지 않는 경로가 있다. 이 화면을 제품 화면으로 바꾸려면 `main.gd`에서 해당 함수를 재정의한다. 여정 테스트는 `start`, `play`, `settings`, `inbox`, `back`, `close`, `reward_continue` 같은 노드 이름으로 버튼을 찾으므로, 화면을 바꾸면 여정도 함께 고친다.
+타이틀(`_title`)과 홈(`_home`)은 공통 흐름이 직접 호출한다. 제품 화면으로 바꾸려면 `main.gd`에서 해당 함수를 재정의한다. 지금은 두 화면 모두 공통 구성에 제품 배경(`features/shared/fa_backdrop.gd`)만 깔았다. 여정 테스트는 `start`, `play`, `settings`, `inbox`, `back`, `close` 같은 노드 이름으로 버튼을 찾으므로, 화면을 바꾸면 여정도 함께 고친다.
 
-튜토리얼 상태는 공통 저장(`flow/state.gd`)이 관리한다. `state.action_completed("target_hit")` 세 번과 `state.action_completed("reward_collected")` 한 번으로만 진행하고, 첫 완료 보상은 한 번만 준다. 설계는 튜토리얼 판의 묶음 3개를 이 행동에 연결한다.
+튜토리얼 상태는 공통 저장(`flow/state.gd`)이 관리한다. 튜토리얼 판(`godot/data/levels/tutorial.json`)의 묶음 하나를 완성할 때마다 `state.action_completed("target_hit")`를 부르고(세 번), 끝 카드의 받기에서 `state.action_completed("reward_collected")`를 부른다. 시작 선물은 제품 저장의 지급 열쇠 `starter_gift`로 한 번만 준다. 설정의 안내 다시 보기는 같은 판을 다시 하고 선물은 또 주지 않는다.
+
+## 플레이 화면의 구성
+
+| 파일 | 내용 |
+|---|---|
+| `features/play/play_screen.tscn`, `play_screen.gd` | 화면. 선택 상태와 연출, 팝업과 광고의 앞뒤를 맡고 규칙은 코어에 묻는다 |
+| `features/play/play_layout.gd` | 배치 계산. 화면 크기와 안전 영역, 판의 모양에서 각 구역의 자리를 낸다. 수치는 기준 그림에서 잰 값이다 |
+| `features/play/card_view.gd`, `slot_cell.gd`, `medal_view.gd`, `booster_button.gd` | 카드, 칸(임시 칸과 예비 자리), 메달, 부스터 버튼 |
+| `features/play/play_popups.gd` | 일시정지, 막힘, 실패, 결과, 부스터 얻기, 튜토리얼 끝 카드. 공통 기반의 `popup_base`를 쓴다 |
+| `features/play/tutorial_guide.gd` | 튜토리얼 안내: 강조, 손가락, 말풍선, 안내 밖 입력 막기 |
+| `features/shared/fa_art.gd`, `fa_fonts.gd`, `fa_audio.gd`, `fa_backdrop.gd` | 그림(SVG를 `DPITexture`로), 서체, 효과음과 음악과 진동, 배경 |
+| `bootstrap/fa_services.gd`, `fa_session.gd` | 포트 묶음과 실행 상태 |
+| `adapters/fa_file_store.gd`, `fa_system_clock.gd`, `fa_scripted_ads.gd` | 파일 저장, 기기 시계, 여정용 광고 대역 |
+
+실제 광고와 분석, 원격 설정 어댑터(`adapters/fa_live_services.gd`)를 시작 장면에 끼우는 일은 아직 하지 않았다. 끼울 자리는 `main.gd`의 `game_services`다.
 
 ## 로컬 모드
 
