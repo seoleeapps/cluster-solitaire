@@ -1,0 +1,66 @@
+class_name FaStartRound
+extends RefCounted
+## 판을 시작하고, 진행 중인 판을 저장하고 되살린다. 레벨은 FaPickLevel이 찾은 것을 받는다.
+
+const Board := preload("res://game/core/domain/fa_board.gd")
+const Progress := preload("res://game/core/domain/fa_progress.gd")
+const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
+const Events := preload("res://game/core/use_cases/fa_round_events.gd")
+const StorePort := preload("res://game/core/ports/fa_store_port.gd")
+const AnalyticsPort := preload("res://game/core/ports/fa_analytics_port.gd")
+const ClockPort := preload("res://game/core/ports/fa_clock_port.gd")
+
+var _store: StorePort
+var _analytics: AnalyticsPort
+var _clock: ClockPort
+
+
+func _init(store: StorePort, analytics: AnalyticsPort, clock: ClockPort) -> void:
+	_store = store
+	_analytics = analytics
+	_clock = clock
+
+
+## 새 판을 임시 칸 2개로 시작해 진행 중인 판으로 기록한다. 이전에 진행하던 판은 덮어쓴다.
+## mode는 journey, daily, tutorial이고 여정은 stage, 일일 도전은 date가 판의 id다.
+## 다음 경우에는 시작하지 않고 null을 돌려준다: 레벨 형식이 틀림, 아직 열리지 않은 스테이지,
+## 지금 풀 수 없는 일일 도전 날짜(앞날, 지난달, 이미 성공한 날, 잘못된 날짜).
+func start(progress: Progress, mode: String, stage: int, date: String, level: Dictionary) -> Board:
+	if mode == RoundMode.JOURNEY and stage > progress.stage():
+		return null
+	var today: String = _clock.today()
+	if mode == RoundMode.DAILY and not progress.can_play_daily(date, today):
+		return null
+	var board: Board = Board.create(level, Board.HOLD_SLOTS_BASE)
+	var started: String = today if mode == RoundMode.DAILY else ""
+	if board == null or not progress.set_run(mode, stage, date, started, 0, board):
+		return null
+	_store.write(progress.to_dict())
+	Events.level_start(_analytics, progress.run(), board)
+	return board
+
+
+## 진행 중인 판을 되살린다. 없으면 null이다. 판의 종류와 id, 걸린 시간은 progress.run()에서 읽는다.
+func resume(progress: Progress) -> Board:
+	return Board.from_dict(progress.run()["board"]) if progress.has_run() else null
+
+
+## 판이 바뀔 때마다 불러 진행 중인 판을 저장한다. seconds는 이 판에 지금까지 쓴 시간이다. 저장했으면 true.
+func checkpoint(progress: Progress, board: Board, seconds: int) -> bool:
+	return progress.update_run(board, seconds) and _store.write(progress.to_dict())
+
+
+## 끝내지 않고 판을 버린다(다시 하기, 나가기). 마지막으로 저장한 판에서 완성한 범주는 도감에 남긴다.
+## 결과는 도감에 새로 들어간 {new, coins}이고, 진행 중인 판이 없으면 둘 다 비어 있다.
+func abandon(progress: Progress) -> Dictionary:
+	if not progress.has_run():
+		return {"new": [], "coins": 0}
+	var run: Dictionary = progress.run()
+	var board: Board = Board.from_dict(run["board"])
+	var album: Dictionary = progress.collect_album(board)
+	progress.clear_run()
+	_store.write(progress.to_dict())
+	Events.level_end(_analytics, run, board, false, 0, run["seconds"])
+	Events.album_unlocked(_analytics, album)
+	Events.coins_earned(_analytics, album["coins"], run["mode"])
+	return album

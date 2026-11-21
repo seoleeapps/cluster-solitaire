@@ -6,10 +6,12 @@
 
 | 명령 | 확인하는 것 |
 |---|---|
-| `npm test` | 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체 |
+| `npm test` | 생성물 대조(`check:generated`), 레벨 팩 검증(`check:levels`), 도구 단위 테스트, Android 설정 검사, 아래 `tools/check.py` 전체 |
 | `python3 tools/check.py` | 구조 검사, 공통 묶음 해시, import, 공통 계약 프로브, 제품 여정, `tests/game`의 프로브, 기능 목록 누락, 추적 파일 불변 |
 | `python3 tools/check.py --capture --size 390x844 --out build/render-390` | 같은 여정을 렌더링해 장면별 PNG를 남긴다. `--size 360x640`으로 작은 화면도 찍는다 |
-| `npm run test:core` | `godot/game/core`의 규칙 프로브만 |
+| `npm run test:core` | `godot/game/core`의 규칙 프로브만. `python3 tools/run_probes.py board solver`처럼 이름 일부를 주면 그 프로브만 돈다 |
+| `npm run check:levels` | 실린 레벨 팩의 모든 판을 참고용 Python 탐색기로 다시 검사한다(풀이 가능, 관대함, 묶음 유일성, 등급의 범주 조건) |
+| `npm run build:levels` | 여정과 일일 도전 팩을 다시 만들고 바로 검사한다. 콘텐츠 표나 생성 규칙을 고친 뒤에 쓴다 |
 | `npm run check:architecture`, `npm run check:bundle`, `npm run check:local-mode` | core 경계, 공통 묶음 해시, 로컬 전용 구성 |
 
 `tools/check.py`는 Godot 로그에 `SCRIPT ERROR`나 `ERROR:`로 시작하는 줄이 있으면 실패한다. `--out`은 `build/` 아래의 새 폴더나 빈 폴더여야 한다. Linux에서 `--capture`는 `xvfb-run -a`로 감싼다.
