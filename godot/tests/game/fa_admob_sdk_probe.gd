@@ -204,9 +204,9 @@ func _journey() -> void:
 	var live: LiveServices = LiveServices.new("user://fa-admob-sdk-probe-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()])
 	_check(live.ads.consent_pending() and not live.ads.can_request_ads(), "시작 전의 동의 상태는 모름이다")
 	var log: Array[String] = []
-	live.ad_presenting_changed.connect(func(active: bool) -> void: log.append("presenting:" + str(active)))
+	live.ads.presenting_changed.connect(func(active: bool) -> void: log.append("presenting:" + str(active)))
 	var consent_changes: Array[int] = [0]
-	live.consent_changed.connect(func() -> void: consent_changes[0] += 1)
+	live.ads.consent_changed.connect(func() -> void: consent_changes[0] += 1)
 	var on_result: Callable = func(result: String) -> void: log.append("result:" + result)
 	root.add_child(live)
 	await _frames()
@@ -215,9 +215,11 @@ func _journey() -> void:
 	_check(consent.updates.size() == 1 and consent.updates[0].get("tag_for_under_age_of_consent") == false, "트리에 들어가면 동의 갱신을 요청한다(미성년 동의 태그 없음)")
 	_check(consent.updates[0].has("consent_debug_settings") and consent.updates[0]["consent_debug_settings"] == null, "검수용 동의 설정은 넣지 않는다")
 	_check(ads_native.initialized == 0, "동의를 모르는 동안 광고 SDK를 초기화하지 않는다")
+	_check(not live.ads.consent_settled(), "갱신 답이 오기 전에는 동의 확인이 끝나지 않았다(타이틀이 기다린다)")
 	consent.on_consent_info_updated_failure.emit({"error_code": 2, "message": "offline"})
 	await _frames()
 	_check(live.ads.consent_pending() and ads_native.initialized == 0, "갱신에 실패했고 상태를 모르면 계속 기다린다")
+	_check(live.ads.consent_settled(), "갱신이 실패해도 확인은 끝난 것으로 본다(타이틀은 더 기다리지 않는다)")
 	live.ads.resume()
 	_check(consent.updates.size() == 2, "다시 갱신을 요청한다")
 	consent.status = 2

@@ -13,12 +13,11 @@ const AdSdk := preload("res://game/adapters/fa_ad_sdk.gd")
 const AdShow := preload("res://game/adapters/fa_ad_show.gd")
 
 ## 광고가 화면을 덮기 직전에 true, 결과가 정해진 직후(on_result를 부르기 전)에 false로 알린다.
-## 화면 쪽은 이 신호로 게임 소리를 멈추고 되돌린다.
+## 게임 소리는 이 신호가 아니라 플레이 화면이 광고를 보여 달라고 할 때 멈추고 결과를 받을 때 되돌린다(어느 광고 포트에서나 같은 길).
 signal presenting_changed(active: bool)
-## 광고의 준비 여부가 바뀌었다. 광고 버튼을 다시 그릴 때 쓴다.
+## 광고의 준비 여부가 바뀌었다.
 signal availability_changed
-## 동의 상태나 개인정보 선택 요건이 바뀌었을 수 있다. 설정 화면과 분석 어댑터가 다시 읽는다.
-signal consent_changed
+# consent_changed는 포트(FaAdsPort)의 신호를 그대로 쓴다. 설정 화면과 분석 선택이 다시 읽는다.
 
 const FORMAT_REWARDED := "rewarded"
 const FORMAT_INTERSTITIAL := "interstitial"
@@ -144,6 +143,12 @@ func analytics_allowed() -> bool:
 ## SDK가 없으면 알아낼 것이 없으므로 거짓이다.
 func consent_pending() -> bool:
 	return _sdk.available() and (not _consent_settled or _sdk.consent_status() == AdSdk.CONSENT_UNKNOWN)
+
+
+## 이번 실행의 동의 갱신이 한 번 끝났는지(성공이든 실패든, 양식을 띄웠다면 닫혔는지). SDK가 없으면 확인할 것이 없어 참이다.
+## 갱신이 실패해 상태를 모르면 뒤에서 다시 시도하지만, 타이틀은 더 기다리지 않는다.
+func consent_settled() -> bool:
+	return not _sdk.available() or _consent_settled
 
 
 func is_ready(format: String) -> bool:

@@ -6,6 +6,10 @@ var ready: Dictionary = {"rewarded": true, "interstitial": true}
 ## 미리 불러 달라고 한 형식과 보여 달라고 한 형식(순서대로).
 var requests: Array[String] = []
 var shown: Array[String] = []
+## 동의: 이번 실행의 동의 확인이 끝났는지, 개인정보 선택 진입점이 필요한지, 그 화면을 연 횟수.
+var consent_done: bool = true
+var privacy_required: bool = false
+var privacy_opened: int = 0
 
 var _showing: String = ""
 var _on_result: Callable
@@ -26,6 +30,25 @@ func show(format: String, on_result: Callable) -> void:
 		return
 	_showing = format
 	_on_result = on_result
+
+
+func consent_settled() -> bool:
+	return consent_done
+
+
+func privacy_choice_required() -> bool:
+	return privacy_required
+
+
+func open_privacy_choice() -> void:
+	privacy_opened += 1
+
+
+## 동의 확인을 끝낸다(동의 창이 닫힌 것처럼). 개인정보 선택 요건을 함께 정하고 consent_changed를 알린다.
+func settle_consent(required: bool) -> void:
+	consent_done = true
+	privacy_required = required
+	consent_changed.emit()
 
 
 ## 지금 떠 있는 광고의 형식. 없으면 "".

@@ -44,6 +44,19 @@ const ATTENDANCE: Array[Dictionary] = [
 ]
 const ATTENDANCE_DAYS := 7
 
+## 꾸미기(테마) 종류. FaProgress의 selected_theme와 select_theme에 넘기는 이름이다.
+const THEME_CARD_BACK := "card_back"
+const THEME_BACKGROUND := "background"
+## 상점에서 파는 테마(05 문서). 기본 테마는 id가 ""이고 처음부터 가진 것으로 본다.
+const THEMES: Array[Dictionary] = [
+	{"id": "card_back_mint", "kind": THEME_CARD_BACK, "price": 600},
+	{"id": "card_back_sunset", "kind": THEME_CARD_BACK, "price": 900},
+	{"id": "card_back_night", "kind": THEME_CARD_BACK, "price": 1200},
+	{"id": "background_mint", "kind": THEME_BACKGROUND, "price": 800},
+	{"id": "background_peach", "kind": THEME_BACKGROUND, "price": 1200},
+	{"id": "background_night", "kind": THEME_BACKGROUND, "price": 1600},
+]
+
 
 static func stars(mistakes: int, continued: bool) -> int:
 	if continued or mistakes > TWO_STAR_MISTAKES_MAX:
@@ -88,3 +101,28 @@ static func album_milestone(count: int) -> int:
 ## 주기 안의 day번째(0부터) 출석 보상. 7일이 지나면 처음으로 돌아간다.
 static func attendance_reward(day: int) -> Dictionary:
 	return ATTENDANCE[day % ATTENDANCE_DAYS].duplicate(true)
+
+
+## 그 종류의 파는 테마(가격 순서). 한 항목은 {id, kind, price}다.
+static func themes(kind: String) -> Array[Dictionary]:
+	var found: Array[Dictionary] = []
+	for theme: Dictionary in THEMES:
+		if theme["kind"] == kind:
+			found.append(theme.duplicate())
+	return found
+
+
+## 테마의 코인 가격. 기본 테마("")와 모르는 테마는 0.
+static func theme_price(id: String) -> int:
+	for theme: Dictionary in THEMES:
+		if theme["id"] == id:
+			return theme["price"]
+	return 0
+
+
+## 테마의 종류. 모르는 테마는 "".
+static func theme_kind(id: String) -> String:
+	for theme: Dictionary in THEMES:
+		if theme["id"] == id:
+			return theme["kind"]
+	return ""

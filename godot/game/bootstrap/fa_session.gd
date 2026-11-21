@@ -16,6 +16,8 @@ const FinishRound := preload("res://game/core/use_cases/fa_finish_round.gd")
 const UseBooster := preload("res://game/core/use_cases/fa_use_booster.gd")
 const ContinueRound := preload("res://game/core/use_cases/fa_continue_round.gd")
 const AdFlow := preload("res://game/core/use_cases/fa_ad_flow.gd")
+const Shop := preload("res://game/core/use_cases/fa_shop.gd")
+const Attendance := preload("res://game/core/use_cases/fa_attendance.gd")
 
 const ITEMS_PATH := "res://data/content/items.json"
 const CATEGORIES_PATH := "res://data/content/categories.json"
@@ -38,6 +40,8 @@ var start_round: StartRound
 var finish_round: FinishRound
 var use_booster: UseBooster
 var continue_round: ContinueRound
+var shop: Shop
+var attendance: Attendance
 ## 읽지 못한 자료(콘텐츠, 팩). 비어 있으면 문제 없음.
 var problems: PackedStringArray = []
 ## 저장 파일이 있었는데 쓸 수 없어 새로 시작했는지. 화면이 알린다.
@@ -73,6 +77,8 @@ static func open(bundle: GameServices) -> Self:
 	session.finish_round = FinishRound.new(bundle.store, bundle.analytics)
 	session.use_booster = UseBooster.new(bundle.store, bundle.analytics)
 	session.continue_round = ContinueRound.new(bundle.store, bundle.analytics, session.ad_flow)
+	session.shop = Shop.new(bundle.store, bundle.analytics)
+	session.attendance = Attendance.new(bundle.store, bundle.analytics)
 	return session
 
 
