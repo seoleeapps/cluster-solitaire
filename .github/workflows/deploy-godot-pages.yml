@@ -1,0 +1,22 @@
+# Godot Web export → GitHub Pages. 수동 실행만 허용한다.
+# org 재사용 워크플로우 호출(export 캐시로 비용 절감).
+name: Deploy Godot Web Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: godot-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pages:
+    uses: seorilabs/.github/.github/workflows/godot-pages.yml@main
+    secrets: inherit
+    with:
+      runs_on: ${{ github.event.repository.private && 'seorilabs-x64' || 'ubuntu-latest' }}

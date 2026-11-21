@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 2,
+  "e2e": {
+    "workflow": ".github/workflows/godot-checks.yml",
+    "command": "npm test"
+  },
+  "features": [
+    {
+      "id": "startup",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**",
+        "godot/config/**",
+        "godot/export_presets.cfg",
+        "tools/check_native.py"
+      ],
+      "platformPaths": [
+        "godot/export_presets.cfg"
+      ]
+    },
+    {
+      "id": "tutorial",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "account_save",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "settings_support",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "inbox",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "commerce",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "observability",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "operations",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_support_entry",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_analytics_opt_out",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_locale_offline",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_navigation",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_leaderboard",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/**",
+        "godot/game/**"
+      ]
+    },
+    {
+      "id": "ui_landscape",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/ui/**",
+        "godot/addons/seorilabs_game/flow/outgame_main.gd",
+        "godot/game/features/**"
+      ]
+    },
+    {
+      "id": "platform_end_to_end",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/game/adapters/**",
+        "firebase/**",
+        "native/**"
+      ],
+      "platformPaths": [
+        "godot/game/adapters/native_identity.gd",
+        "godot/game/adapters/android_play_billing_market.gd",
+        "godot/game/adapters/ios_storekit_market.gd",
+        "godot/addons/seori_account_link/**",
+        "godot/addons/GodotGooglePlayBilling/**",
+        "native/**"
+      ]
+    },
+    {
+      "id": "ui_kit",
+      "core": true,
+      "foundation": false,
+      "paths": [
+        "godot/addons/seorilabs_game/ui_kit/**",
+        "godot/addons/seorilabs_game/skins/**",
+        "godot/tests/common/ui_kit_probe.gd"
+      ]
+    }
+  ]
+}
