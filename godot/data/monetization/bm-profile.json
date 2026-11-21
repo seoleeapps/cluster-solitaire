@@ -1,0 +1,786 @@
+{
+  "kind": "bm-profile",
+  "framework_version": "1.1.0",
+  "game_id": "four-alike",
+  "title_ko": "끼리끼리",
+  "template_id": "ad-first-interstitial",
+  "genre_tag": "워드퍼즐",
+  "plc_phase": "launch",
+  "competitive": {
+    "mode": "single"
+  },
+  "agentPurpose": "Four Alike(끼리끼리)의 수익화 프로필. 광고만 쓴다. 보상형은 플레이어가 고르는 네 자리(임시 칸 추가와 부스터 충전, 이어하기, 결과 2배)이고 전면은 판이 끝난 자리에서만 낸다. 결제 상품은 없다(사용자 결정 2026-11-21, DEC-002). 전면 광고에 광고 제거 상품을 함께 두는 조건(DEC-M03)의 예외이며 send-lane-duel(DEC-M19), Gather Puzzle(DEC-M22)과 같은 방식이다. 전면의 마찰은 빈도와 시점 제한, 원격 끄기 스위치로 다룬다. 일일 도전에서는 부스터와 이어하기 보상형을 끈다.",
+  "markets": {
+    "google_play": {
+      "enabled": true
+    },
+    "app_store": {
+      "enabled": false
+    },
+    "apps_in_toss": {
+      "enabled": false
+    }
+  },
+  "currencies": [
+    {
+      "id": "coin",
+      "name_ko": "코인",
+      "kind": "soft",
+      "purchasable": false,
+      "ad_earnable": true,
+      "agentPurpose": "판 클리어, 일일 도전, 출석, 도감으로 버는 재화. 힌트, 되돌리기, 칸 추가와 카드 뒷면·테이블 테마에 쓴다. 팔지 않는다. 결과 창의 보상형은 그 판 코인을 2배로 만든다."
+    }
+  ],
+  "hurdles": [
+    {
+      "hurdle_id": "slots_full",
+      "type": "difficulty_spike",
+      "where": {
+        "kind": "progression",
+        "milestone": "stage_6_onward"
+      },
+      "expected_first_encounter_min": 8,
+      "free_path": {
+        "kind": "grind",
+        "description": "코인으로 되돌리기(80)나 칸 추가(150)를 사거나 판을 다시 시작한다. 하루 6판 이용자는 부스터 수요의 약 44%를 코인으로 충당한다(경제 시뮬, 가설)",
+        "expected_minutes": 6
+      },
+      "paid_path": {
+        "product_skus": [],
+        "placement_ids": [
+          "rewarded_booster"
+        ],
+        "expected_minutes": 1
+      },
+      "motives": [
+        "insurance_continue"
+      ],
+      "agentPurpose": "임시 칸 2개가 가득 차 더 열 수 없는 순간이다. 모든 판은 2칸으로 풀리게 검증하지만 뒤집힌 카드를 모르고 넣은 선택으로 막힐 수 있다. 무작위 선택 성공률의 중앙값은 표준 배치에서 10%다(규칙 프로토타입 측정)."
+    },
+    {
+      "hurdle_id": "mistake_limit",
+      "type": "risk_loss",
+      "where": {
+        "kind": "progression",
+        "milestone": "stage_21_onward"
+      },
+      "expected_first_encounter_min": 15,
+      "free_path": {
+        "kind": "skill",
+        "description": "판을 다시 시작해 범주를 더 신중하게 추리한다",
+        "expected_minutes": 3
+      },
+      "paid_path": {
+        "product_skus": [],
+        "placement_ids": [
+          "rewarded_continue"
+        ],
+        "expected_minutes": 1
+      },
+      "motives": [
+        "insurance_continue"
+      ],
+      "agentPurpose": "실수 4회로 판이 끝나는 순간이다. 이어하기는 실수 2회를 지우고 판당 한 번만 쓸 수 있다."
+    },
+    {
+      "hurdle_id": "pair_unseen",
+      "type": "skill_plateau",
+      "where": {
+        "kind": "progression",
+        "milestone": "stage_21_onward"
+      },
+      "expected_first_encounter_min": 12,
+      "free_path": {
+        "kind": "grind",
+        "description": "코인으로 힌트(100)를 사거나 출석 보상으로 받는다",
+        "expected_minutes": 8
+      },
+      "paid_path": {
+        "product_skus": [],
+        "placement_ids": [
+          "rewarded_booster"
+        ],
+        "expected_minutes": 1
+      },
+      "motives": [
+        "convenience"
+      ],
+      "agentPurpose": "열린 카드에서 공통점이 보이지 않는 순간이다. 힌트는 같은 범주 2장만 알려 준다."
+    }
+  ],
+  "products": [],
+  "ad_placements": [
+    {
+      "placement_id": "rewarded_booster",
+      "format": "rewarded",
+      "trigger": {
+        "kind": "hurdle",
+        "screen_hint": "플레이 화면의 잠긴 3번째 칸, 0개가 된 힌트·되돌리기 버튼, 막힘 창"
+      },
+      "cooldown_s": 30,
+      "daily_cap": 5,
+      "session_cap": 2,
+      "first_eligible_at": {
+        "session_index": 1
+      },
+      "never_at": [
+        "app_open",
+        "during_load",
+        "during_tutorial",
+        "mid_action",
+        "after_purchase_flow"
+      ],
+      "enabled_default": true,
+      "markets": [
+        "google_play"
+      ],
+      "opt_in": true,
+      "closable": true,
+      "expected": {
+        "view_rate": {
+          "value": 0.25,
+          "hypothesis": true
+        },
+        "duration_s": {
+          "value": 30,
+          "hypothesis": true
+        }
+      },
+      "rc_bindings": {
+        "enabled": "rewarded_booster_enabled",
+        "cooldown_s": "rewarded_booster_cooldown_s",
+        "session_cap": "rewarded_booster_session_cap",
+        "daily_cap": "rewarded_booster_daily_cap"
+      },
+      "analytics": {
+        "events": [
+          {
+            "name": "ad_requested",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_impression",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_failed",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "rewarded_earned",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          }
+        ]
+      },
+      "agentPurpose": "임시 칸을 이번 판에 하나 더 열거나, 0개가 된 힌트·되돌리기를 1개 충전하는 보상형이다. 플레이어가 버튼을 눌러 시작하고 광고가 없거나 상한에 닿으면 코인 구매 길이 남는다. 일일 도전에서는 끈다.",
+      "reward": {
+        "currency_id": "coin",
+        "effect": "임시 칸 1개를 이번 판에 열거나 힌트 또는 되돌리기 1개를 준다",
+        "amount": 0,
+        "affects_competitive_outcome": false
+      },
+      "reward_grant": "on_user_earned_reward",
+      "reward_disclosed_before": true
+    },
+    {
+      "placement_id": "rewarded_continue",
+      "format": "rewarded",
+      "trigger": {
+        "kind": "level_fail",
+        "screen_hint": "실수 4회 실패 창"
+      },
+      "cooldown_s": 60,
+      "daily_cap": 2,
+      "session_cap": 1,
+      "first_eligible_at": {
+        "session_index": 1
+      },
+      "never_at": [
+        "app_open",
+        "during_load",
+        "during_tutorial",
+        "mid_action",
+        "after_purchase_flow"
+      ],
+      "enabled_default": true,
+      "markets": [
+        "google_play"
+      ],
+      "opt_in": true,
+      "closable": true,
+      "expected": {
+        "view_rate": {
+          "value": 0.3,
+          "hypothesis": true
+        },
+        "duration_s": {
+          "value": 30,
+          "hypothesis": true
+        }
+      },
+      "rc_bindings": {
+        "enabled": "rewarded_continue_enabled",
+        "cooldown_s": "rewarded_continue_cooldown_s",
+        "session_cap": "rewarded_continue_session_cap",
+        "daily_cap": "rewarded_continue_daily_cap"
+      },
+      "analytics": {
+        "events": [
+          {
+            "name": "ad_requested",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_impression",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_failed",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "rewarded_earned",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          }
+        ]
+      },
+      "agentPurpose": "실수 4회로 끝난 판에서 실수 2회를 지우고 이어 하는 보상형이다. 판당 한 번이고 일일 도전에서는 끈다. 거절하면 다시 하기와 나가기가 그대로 남는다.",
+      "reward": {
+        "currency_id": "coin",
+        "effect": "진행 중인 판의 실수 2회를 지운다",
+        "amount": 0,
+        "affects_competitive_outcome": false
+      },
+      "reward_grant": "on_user_earned_reward",
+      "reward_disclosed_before": true
+    },
+    {
+      "placement_id": "rewarded_result_bonus",
+      "format": "rewarded",
+      "trigger": {
+        "kind": "settlement",
+        "screen_hint": "결과 창"
+      },
+      "cooldown_s": 60,
+      "daily_cap": 3,
+      "session_cap": 1,
+      "first_eligible_at": {
+        "session_index": 1
+      },
+      "never_at": [
+        "app_open",
+        "during_load",
+        "during_tutorial",
+        "mid_action",
+        "after_purchase_flow"
+      ],
+      "enabled_default": true,
+      "markets": [
+        "google_play"
+      ],
+      "opt_in": true,
+      "closable": true,
+      "expected": {
+        "view_rate": {
+          "value": 0.3,
+          "hypothesis": true
+        },
+        "duration_s": {
+          "value": 30,
+          "hypothesis": true
+        }
+      },
+      "rc_bindings": {
+        "enabled": "rewarded_result_bonus_enabled",
+        "cooldown_s": "rewarded_result_bonus_cooldown_s",
+        "session_cap": "rewarded_result_bonus_session_cap",
+        "daily_cap": "rewarded_result_bonus_daily_cap"
+      },
+      "analytics": {
+        "events": [
+          {
+            "name": "ad_requested",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_impression",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_failed",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "rewarded_earned",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          }
+        ]
+      },
+      "agentPurpose": "결과 창에서 그 판의 코인을 2배로 받는 보상형이다. 그냥 받기 버튼을 같은 크기로 둔다.",
+      "reward": {
+        "currency_id": "coin",
+        "effect": "그 판에서 받은 코인만큼 한 번 더 준다. amount는 수익 모의 계산에 쓰는 판당 평균값이고 지급액이 아니다",
+        "amount": 13,
+        "affects_competitive_outcome": false
+      },
+      "reward_grant": "on_user_earned_reward",
+      "reward_disclosed_before": true
+    },
+    {
+      "placement_id": "interstitial_level_end",
+      "format": "interstitial",
+      "trigger": {
+        "kind": "level_end",
+        "screen_hint": "클리어 연출이 끝나고 결과 창이 뜨기 전. 다음 판 버튼을 누른 뒤에는 내지 않는다"
+      },
+      "cooldown_s": 120,
+      "daily_cap": 8,
+      "session_cap": 3,
+      "first_eligible_at": {
+        "session_index": 2
+      },
+      "never_at": [
+        "app_open",
+        "before_first_interaction",
+        "during_load",
+        "during_tutorial",
+        "mid_action",
+        "after_purchase_flow"
+      ],
+      "enabled_default": true,
+      "markets": [
+        "google_play"
+      ],
+      "opt_in": false,
+      "closable": true,
+      "expected": {
+        "view_rate": {
+          "value": 0.9,
+          "source_ref": "SRC-215",
+          "hypothesis": true
+        },
+        "duration_s": {
+          "value": 15,
+          "hypothesis": true
+        }
+      },
+      "rc_bindings": {
+        "enabled": "interstitial_level_end_enabled",
+        "cooldown_s": "interstitial_level_end_cooldown_s",
+        "session_cap": "interstitial_level_end_session_cap",
+        "daily_cap": "interstitial_level_end_daily_cap"
+      },
+      "analytics": {
+        "events": [
+          {
+            "name": "ad_requested",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_impression",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          },
+          {
+            "name": "ad_failed",
+            "params": [
+              "app_market",
+              "runtime_platform",
+              "release_version"
+            ]
+          }
+        ]
+      },
+      "agentPurpose": "여정 스테이지를 클리어한 자리에서 결과 창보다 먼저 내는 전면 광고다. 두 번째 실행부터, 누적 플레이 3분 이후, 직전 전면 뒤 2판 이상, 120초 간격으로만 낸다. 튜토리얼, 플레이 중, 일일 도전, 보상형을 보거나 거절한 뒤 120초 안에는 내지 않는다. 미리 불러 두고 준비되지 않았으면 건너뛴다.",
+      "backoff_s": [
+        120,
+        240,
+        360
+      ]
+    }
+  ],
+  "caps": {
+    "session_length_expected_min": 6,
+    "sessions_per_day_expected": {
+      "value": 2.0,
+      "hypothesis": true
+    },
+    "interstitial_session_reset_s": 1800
+  },
+  "remote_config": [
+    {
+      "key": "rewarded_booster_enabled",
+      "type": "bool",
+      "default": true,
+      "range": {},
+      "purpose": "rewarded_booster kill-switch"
+    },
+    {
+      "key": "rewarded_booster_cooldown_s",
+      "type": "int",
+      "default": 30,
+      "range": {
+        "min": 0,
+        "max": 600
+      },
+      "purpose": "rewarded_booster 쿨다운(초)"
+    },
+    {
+      "key": "rewarded_booster_session_cap",
+      "type": "int",
+      "default": 2,
+      "range": {
+        "min": 0,
+        "max": 4
+      },
+      "purpose": "rewarded_booster 세션 상한"
+    },
+    {
+      "key": "rewarded_booster_daily_cap",
+      "type": "int",
+      "default": 5,
+      "range": {
+        "min": 0,
+        "max": 10
+      },
+      "purpose": "rewarded_booster 일 상한"
+    },
+    {
+      "key": "rewarded_continue_enabled",
+      "type": "bool",
+      "default": true,
+      "range": {},
+      "purpose": "rewarded_continue kill-switch"
+    },
+    {
+      "key": "rewarded_continue_cooldown_s",
+      "type": "int",
+      "default": 60,
+      "range": {
+        "min": 0,
+        "max": 600
+      },
+      "purpose": "rewarded_continue 쿨다운(초)"
+    },
+    {
+      "key": "rewarded_continue_session_cap",
+      "type": "int",
+      "default": 1,
+      "range": {
+        "min": 0,
+        "max": 2
+      },
+      "purpose": "rewarded_continue 세션 상한"
+    },
+    {
+      "key": "rewarded_continue_daily_cap",
+      "type": "int",
+      "default": 2,
+      "range": {
+        "min": 0,
+        "max": 4
+      },
+      "purpose": "rewarded_continue 일 상한"
+    },
+    {
+      "key": "rewarded_result_bonus_enabled",
+      "type": "bool",
+      "default": true,
+      "range": {},
+      "purpose": "rewarded_result_bonus kill-switch"
+    },
+    {
+      "key": "rewarded_result_bonus_cooldown_s",
+      "type": "int",
+      "default": 60,
+      "range": {
+        "min": 0,
+        "max": 600
+      },
+      "purpose": "rewarded_result_bonus 쿨다운(초)"
+    },
+    {
+      "key": "rewarded_result_bonus_session_cap",
+      "type": "int",
+      "default": 1,
+      "range": {
+        "min": 0,
+        "max": 2
+      },
+      "purpose": "rewarded_result_bonus 세션 상한"
+    },
+    {
+      "key": "rewarded_result_bonus_daily_cap",
+      "type": "int",
+      "default": 3,
+      "range": {
+        "min": 0,
+        "max": 6
+      },
+      "purpose": "rewarded_result_bonus 일 상한"
+    },
+    {
+      "key": "interstitial_level_end_enabled",
+      "type": "bool",
+      "default": true,
+      "range": {},
+      "purpose": "interstitial_level_end kill-switch"
+    },
+    {
+      "key": "interstitial_level_end_cooldown_s",
+      "type": "int",
+      "default": 120,
+      "range": {
+        "min": 0,
+        "max": 600
+      },
+      "purpose": "interstitial_level_end 쿨다운(초)"
+    },
+    {
+      "key": "interstitial_level_end_session_cap",
+      "type": "int",
+      "default": 3,
+      "range": {
+        "min": 0,
+        "max": 6
+      },
+      "purpose": "interstitial_level_end 세션 상한"
+    },
+    {
+      "key": "interstitial_level_end_daily_cap",
+      "type": "int",
+      "default": 8,
+      "range": {
+        "min": 0,
+        "max": 16
+      },
+      "purpose": "interstitial_level_end 일 상한"
+    },
+    {
+      "key": "interstitial_min_play_seconds",
+      "type": "int",
+      "default": 180,
+      "range": {
+        "min": 180,
+        "max": 1800
+      },
+      "purpose": "전면 광고 첫 노출까지 실제 플레이한 시간. 최소 3분."
+    },
+    {
+      "key": "interstitial_min_stages_between",
+      "type": "int",
+      "default": 2,
+      "range": {
+        "min": 2,
+        "max": 6
+      },
+      "purpose": "전면 광고 사이에 끝내야 하는 판 수. 최소 2판."
+    }
+  ],
+  "kpi_targets": {
+    "d1": {
+      "target": 28,
+      "min": 20,
+      "max": 40,
+      "inherited_from_template": true,
+      "source_ref": "SRC-513"
+    },
+    "d3": {
+      "target": 16,
+      "min": 10,
+      "max": 28,
+      "inherited_from_template": true,
+      "source_ref": "SRC-513"
+    },
+    "d7": {
+      "target": 12,
+      "min": 4,
+      "max": 20,
+      "inherited_from_template": true,
+      "source_ref": "SRC-513"
+    },
+    "d30": {
+      "target": 5,
+      "min": 1,
+      "max": 10,
+      "inherited_from_template": true,
+      "source_ref": "SRC-107"
+    },
+    "arpdau_ad": {
+      "target": 0.018,
+      "min": 0.0,
+      "max": 0.09,
+      "inherited_from_template": true,
+      "source_ref": "SRC-234"
+    },
+    "arpdau_iap": {
+      "target": 0.0015,
+      "min": 0.0,
+      "max": 0.0075,
+      "inherited_from_template": true,
+      "source_ref": "SRC-116"
+    },
+    "payer_conv": {
+      "target": 0.3,
+      "min": 0.0,
+      "max": 0.9,
+      "inherited_from_template": true,
+      "hypothesis": true
+    },
+    "arppu": {
+      "target": 5.0,
+      "min": 2.5,
+      "max": 15.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-115"
+    },
+    "rewarded_views_per_dau": {
+      "target": 0.6,
+      "min": 0.0,
+      "max": 3.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-207"
+    },
+    "interstitials_per_dau": {
+      "target": 1.2,
+      "min": 0.0,
+      "max": 6.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-215"
+    },
+    "ltv_d90": {
+      "target": 0.24,
+      "min": 0.0,
+      "max": 1.2,
+      "inherited_from_template": true,
+      "source_ref": "SRC-119"
+    },
+    "sessions_per_dau": {
+      "target": 3.0,
+      "min": 1.5,
+      "max": 6.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-102"
+    },
+    "session_length_min": {
+      "target": 4.0,
+      "min": 2.0,
+      "max": 8.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-102"
+    },
+    "rewarded_completion": {
+      "target": 80.0,
+      "min": 40.0,
+      "max": 100.0,
+      "inherited_from_template": true,
+      "source_ref": "SRC-123"
+    },
+    "ad_removal_conv": {
+      "target": 0.5,
+      "min": 0.25,
+      "max": 1.0,
+      "inherited_from_template": true,
+      "hypothesis": true
+    }
+  },
+  "simulation": {
+    "assumptions": {
+      "region": "KR",
+      "cohort_size": 1000,
+      "ecpm_source": "benchmarks"
+    },
+    "last_result": {
+      "computed_at": "2026-11-21T01:32:45Z",
+      "computed_with_framework_version": "1.1.0",
+      "inputs_hash": "c4a438df1ac7f2bf4ad81681f4f06c26454a5d826fcd99944666a663fa711aef",
+      "retention_fit": {
+        "a": 0.286,
+        "b": 0.4988,
+        "active_days_d90": 6.04,
+        "active_days_d365": 11.57
+      },
+      "arpdau_usd": {
+        "ads": 0.0701,
+        "iap": 0.0,
+        "total": 0.0701
+      },
+      "ltv_usd": {
+        "d30": 0.263,
+        "d90": 0.4239,
+        "d180": 0.5822,
+        "d365": 0.8119
+      },
+      "revenue_split": {
+        "ads": 1.0,
+        "iap": 0.0
+      },
+      "verdict": "WARN",
+      "warnings": [
+        "입력의 58% 가 가설입니다. 판정은 WARN 을 넘지 못합니다."
+      ]
+    }
+  },
+  "decisions": [
+    "DEC-M03",
+    "DEC-M27",
+    "DEC-002",
+    "DEC-012",
+    "DEC-017"
+  ]
+}

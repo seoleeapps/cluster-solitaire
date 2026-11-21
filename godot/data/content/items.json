@@ -1,0 +1,4811 @@
+{
+ "version": 1,
+ "items": [
+  {
+   "id": "banana",
+   "icon": "banana",
+   "en": "Banana",
+   "ko": "바나나"
+  },
+  {
+   "id": "grapes",
+   "icon": "grapes",
+   "en": "Grapes",
+   "ko": "포도"
+  },
+  {
+   "id": "strawberry",
+   "icon": "strawberry",
+   "en": "Strawberry",
+   "ko": "딸기"
+  },
+  {
+   "id": "watermelon",
+   "icon": "watermelon",
+   "en": "Watermelon",
+   "ko": "수박"
+  },
+  {
+   "id": "peach",
+   "icon": "peach",
+   "en": "Peach",
+   "ko": "복숭아"
+  },
+  {
+   "id": "pear",
+   "icon": "pear",
+   "en": "Pear",
+   "ko": "서양배"
+  },
+  {
+   "id": "pineapple",
+   "icon": "pineapple",
+   "en": "Pineapple",
+   "ko": "파인애플"
+  },
+  {
+   "id": "mango",
+   "icon": "mango",
+   "en": "Mango",
+   "ko": "망고"
+  },
+  {
+   "id": "melon",
+   "icon": "melon",
+   "en": "Melon",
+   "ko": "멜론"
+  },
+  {
+   "id": "kiwi_fruit",
+   "icon": "kiwi_fruit",
+   "en": "Kiwi",
+   "ko": "키위"
+  },
+  {
+   "id": "cherries",
+   "icon": "cherries",
+   "en": "Cherries",
+   "ko": "체리"
+  },
+  {
+   "id": "red_apple",
+   "icon": "red_apple",
+   "en": "Apple",
+   "ko": "사과"
+  },
+  {
+   "id": "green_apple",
+   "icon": "green_apple",
+   "en": "Green Apple",
+   "ko": "청사과"
+  },
+  {
+   "id": "lemon",
+   "icon": "lemon",
+   "en": "Lemon",
+   "ko": "레몬"
+  },
+  {
+   "id": "tangerine",
+   "icon": "tangerine",
+   "en": "Tangerine",
+   "ko": "귤"
+  },
+  {
+   "id": "blueberries",
+   "icon": "blueberries",
+   "en": "Blueberries",
+   "ko": "블루베리"
+  },
+  {
+   "id": "carrot",
+   "icon": "carrot",
+   "en": "Carrot",
+   "ko": "당근"
+  },
+  {
+   "id": "broccoli",
+   "icon": "broccoli",
+   "en": "Broccoli",
+   "ko": "브로콜리"
+  },
+  {
+   "id": "cucumber",
+   "icon": "cucumber",
+   "en": "Cucumber",
+   "ko": "오이"
+  },
+  {
+   "id": "eggplant",
+   "icon": "eggplant",
+   "en": "Eggplant",
+   "ko": "가지"
+  },
+  {
+   "id": "bell_pepper",
+   "icon": "bell_pepper",
+   "en": "Bell Pepper",
+   "ko": "피망"
+  },
+  {
+   "id": "onion",
+   "icon": "onion",
+   "en": "Onion",
+   "ko": "양파"
+  },
+  {
+   "id": "garlic",
+   "icon": "garlic",
+   "en": "Garlic",
+   "ko": "마늘"
+  },
+  {
+   "id": "potato",
+   "icon": "potato",
+   "en": "Potato",
+   "ko": "감자"
+  },
+  {
+   "id": "leafy_green",
+   "icon": "leafy_green",
+   "en": "Lettuce",
+   "ko": "상추"
+  },
+  {
+   "id": "ear_of_corn",
+   "icon": "ear_of_corn",
+   "en": "Corn",
+   "ko": "옥수수"
+  },
+  {
+   "id": "pea_pod",
+   "icon": "pea_pod",
+   "en": "Peas",
+   "ko": "완두콩"
+  },
+  {
+   "id": "bread",
+   "icon": "bread",
+   "en": "Bread",
+   "ko": "식빵"
+  },
+  {
+   "id": "baguette_bread",
+   "icon": "baguette_bread",
+   "en": "Baguette",
+   "ko": "바게트"
+  },
+  {
+   "id": "croissant",
+   "icon": "croissant",
+   "en": "Croissant",
+   "ko": "크루아상"
+  },
+  {
+   "id": "bagel",
+   "icon": "bagel",
+   "en": "Bagel",
+   "ko": "베이글"
+  },
+  {
+   "id": "pretzel",
+   "icon": "pretzel",
+   "en": "Pretzel",
+   "ko": "프레첼"
+  },
+  {
+   "id": "flatbread",
+   "icon": "flatbread",
+   "en": "Flatbread",
+   "ko": "납작빵"
+  },
+  {
+   "id": "candy",
+   "icon": "candy",
+   "en": "Candy",
+   "ko": "사탕"
+  },
+  {
+   "id": "lollipop",
+   "icon": "lollipop",
+   "en": "Lollipop",
+   "ko": "막대사탕"
+  },
+  {
+   "id": "chocolate_bar",
+   "icon": "chocolate_bar",
+   "en": "Chocolate",
+   "ko": "초콜릿"
+  },
+  {
+   "id": "cookie",
+   "icon": "cookie",
+   "en": "Cookie",
+   "ko": "쿠키"
+  },
+  {
+   "id": "doughnut",
+   "icon": "doughnut",
+   "en": "Donut",
+   "ko": "도넛"
+  },
+  {
+   "id": "cupcake",
+   "icon": "cupcake",
+   "en": "Cupcake",
+   "ko": "컵케이크"
+  },
+  {
+   "id": "custard",
+   "icon": "custard",
+   "en": "Caramel Pudding",
+   "ko": "푸딩"
+  },
+  {
+   "id": "shortcake",
+   "icon": "shortcake",
+   "en": "Cake Slice",
+   "ko": "조각 케이크"
+  },
+  {
+   "id": "birthday_cake",
+   "icon": "birthday_cake",
+   "en": "Birthday Cake",
+   "ko": "생일 케이크"
+  },
+  {
+   "id": "pie",
+   "icon": "pie",
+   "en": "Pie",
+   "ko": "파이"
+  },
+  {
+   "id": "hamburger",
+   "icon": "hamburger",
+   "en": "Hamburger",
+   "ko": "햄버거"
+  },
+  {
+   "id": "french_fries",
+   "icon": "french_fries",
+   "en": "French Fries",
+   "ko": "감자튀김"
+  },
+  {
+   "id": "pizza",
+   "icon": "pizza",
+   "en": "Pizza",
+   "ko": "피자"
+  },
+  {
+   "id": "hot_dog",
+   "icon": "hot_dog",
+   "en": "Hot Dog",
+   "ko": "핫도그"
+  },
+  {
+   "id": "taco",
+   "icon": "taco",
+   "en": "Taco",
+   "ko": "타코"
+  },
+  {
+   "id": "burrito",
+   "icon": "burrito",
+   "en": "Burrito",
+   "ko": "부리토"
+  },
+  {
+   "id": "sandwich",
+   "icon": "sandwich",
+   "en": "Sandwich",
+   "ko": "샌드위치"
+  },
+  {
+   "id": "glass_of_milk",
+   "icon": "glass_of_milk",
+   "en": "Milk",
+   "ko": "우유"
+  },
+  {
+   "id": "cup_with_straw",
+   "icon": "cup_with_straw",
+   "en": "Soda",
+   "ko": "탄산음료"
+  },
+  {
+   "id": "beverage_box",
+   "icon": "beverage_box",
+   "en": "Juice Box",
+   "ko": "팩 주스"
+  },
+  {
+   "id": "bubble_tea",
+   "icon": "bubble_tea",
+   "en": "Bubble Tea",
+   "ko": "버블티"
+  },
+  {
+   "id": "tropical_drink",
+   "icon": "tropical_drink",
+   "en": "Tropical Drink",
+   "ko": "트로피컬 주스"
+  },
+  {
+   "id": "hot_beverage",
+   "icon": "hot_beverage",
+   "en": "Coffee",
+   "ko": "커피"
+  },
+  {
+   "id": "teacup_without_handle",
+   "icon": "teacup_without_handle",
+   "en": "Green Tea",
+   "ko": "녹차"
+  },
+  {
+   "id": "mate",
+   "icon": "mate",
+   "en": "Yerba Mate",
+   "ko": "마테차"
+  },
+  {
+   "id": "teapot",
+   "icon": "teapot",
+   "en": "Teapot",
+   "ko": "찻주전자"
+  },
+  {
+   "id": "crab",
+   "icon": "crab",
+   "en": "Crab",
+   "ko": "게"
+  },
+  {
+   "id": "lobster",
+   "icon": "lobster",
+   "en": "Lobster",
+   "ko": "바닷가재"
+  },
+  {
+   "id": "shrimp",
+   "icon": "shrimp",
+   "en": "Shrimp",
+   "ko": "새우"
+  },
+  {
+   "id": "squid",
+   "icon": "squid",
+   "en": "Squid",
+   "ko": "오징어"
+  },
+  {
+   "id": "oyster",
+   "icon": "oyster",
+   "en": "Oyster",
+   "ko": "굴"
+  },
+  {
+   "id": "fried_shrimp",
+   "icon": "fried_shrimp",
+   "en": "Fried Shrimp",
+   "ko": "새우튀김"
+  },
+  {
+   "id": "bacon",
+   "icon": "bacon",
+   "en": "Bacon",
+   "ko": "베이컨"
+  },
+  {
+   "id": "cut_of_meat",
+   "icon": "cut_of_meat",
+   "en": "Raw Meat",
+   "ko": "생고기"
+  },
+  {
+   "id": "meat_on_bone",
+   "icon": "meat_on_bone",
+   "en": "Meat on Bone",
+   "ko": "뼈 붙은 고기"
+  },
+  {
+   "id": "poultry_leg",
+   "icon": "poultry_leg",
+   "en": "Chicken Leg",
+   "ko": "닭다리"
+  },
+  {
+   "id": "egg",
+   "icon": "egg",
+   "en": "Egg",
+   "ko": "달걀"
+  },
+  {
+   "id": "cooking",
+   "icon": "cooking",
+   "en": "Fried Egg",
+   "ko": "달걀프라이"
+  },
+  {
+   "id": "pancakes",
+   "icon": "pancakes",
+   "en": "Pancakes",
+   "ko": "팬케이크"
+  },
+  {
+   "id": "waffle",
+   "icon": "waffle",
+   "en": "Waffle",
+   "ko": "와플"
+  },
+  {
+   "id": "butter",
+   "icon": "butter",
+   "en": "Butter",
+   "ko": "버터"
+  },
+  {
+   "id": "fork_and_knife",
+   "icon": "fork_and_knife",
+   "en": "Fork and Knife",
+   "ko": "포크와 나이프"
+  },
+  {
+   "id": "fork_and_knife_with_plate",
+   "icon": "fork_and_knife_with_plate",
+   "en": "Plate",
+   "ko": "접시"
+  },
+  {
+   "id": "spoon",
+   "icon": "spoon",
+   "en": "Spoon",
+   "ko": "숟가락"
+  },
+  {
+   "id": "chopsticks",
+   "icon": "chopsticks",
+   "en": "Chopsticks",
+   "ko": "젓가락"
+  },
+  {
+   "id": "bowl_with_spoon",
+   "icon": "bowl_with_spoon",
+   "en": "Bowl",
+   "ko": "그릇"
+  },
+  {
+   "id": "tumbler_glass",
+   "icon": "tumbler_glass",
+   "en": "Glass",
+   "ko": "유리잔"
+  },
+  {
+   "id": "cooked_rice",
+   "icon": "cooked_rice",
+   "en": "White Rice",
+   "ko": "쌀밥"
+  },
+  {
+   "id": "curry_rice",
+   "icon": "curry_rice",
+   "en": "Curry",
+   "ko": "카레"
+  },
+  {
+   "id": "rice_ball",
+   "icon": "rice_ball",
+   "en": "Rice Ball",
+   "ko": "주먹밥"
+  },
+  {
+   "id": "sushi",
+   "icon": "sushi",
+   "en": "Sushi",
+   "ko": "초밥"
+  },
+  {
+   "id": "bento_box",
+   "icon": "bento_box",
+   "en": "Bento Box",
+   "ko": "도시락"
+  },
+  {
+   "id": "steaming_bowl",
+   "icon": "steaming_bowl",
+   "en": "Ramen",
+   "ko": "라면"
+  },
+  {
+   "id": "spaghetti",
+   "icon": "spaghetti",
+   "en": "Spaghetti",
+   "ko": "스파게티"
+  },
+  {
+   "id": "pot_of_food",
+   "icon": "pot_of_food",
+   "en": "Stew",
+   "ko": "스튜"
+  },
+  {
+   "id": "shallow_pan_of_food",
+   "icon": "shallow_pan_of_food",
+   "en": "Paella",
+   "ko": "파에야"
+  },
+  {
+   "id": "green_salad",
+   "icon": "green_salad",
+   "en": "Salad",
+   "ko": "샐러드"
+  },
+  {
+   "id": "fondue",
+   "icon": "fondue",
+   "en": "Fondue",
+   "ko": "퐁뒤"
+  },
+  {
+   "id": "stuffed_flatbread",
+   "icon": "stuffed_flatbread",
+   "en": "Pita Sandwich",
+   "ko": "피타 샌드위치"
+  },
+  {
+   "id": "dumpling",
+   "icon": "dumpling",
+   "en": "Dumpling",
+   "ko": "만두"
+  },
+  {
+   "id": "salt",
+   "icon": "salt",
+   "en": "Salt",
+   "ko": "소금"
+  },
+  {
+   "id": "hot_pepper",
+   "icon": "hot_pepper",
+   "en": "Chili Pepper",
+   "ko": "고추"
+  },
+  {
+   "id": "ginger_root",
+   "icon": "ginger_root",
+   "en": "Ginger",
+   "ko": "생강"
+  },
+  {
+   "id": "honey_pot",
+   "icon": "honey_pot",
+   "en": "Honey Pot",
+   "ko": "꿀단지"
+  },
+  {
+   "id": "tomato",
+   "icon": "tomato",
+   "en": "Tomato",
+   "ko": "토마토"
+  },
+  {
+   "id": "ring_buoy",
+   "icon": "ring_buoy",
+   "en": "Life Ring",
+   "ko": "구명튜브"
+  },
+  {
+   "id": "optical_disk",
+   "icon": "optical_disk",
+   "en": "CD",
+   "ko": "CD"
+  },
+  {
+   "id": "ring",
+   "icon": "ring",
+   "en": "Ring",
+   "ko": "반지"
+  },
+  {
+   "id": "cow",
+   "icon": "cow",
+   "en": "Cow",
+   "ko": "젖소"
+  },
+  {
+   "id": "pig",
+   "icon": "pig",
+   "en": "Pig",
+   "ko": "돼지"
+  },
+  {
+   "id": "horse",
+   "icon": "horse",
+   "en": "Horse",
+   "ko": "말"
+  },
+  {
+   "id": "chicken",
+   "icon": "chicken",
+   "en": "Chicken",
+   "ko": "닭"
+  },
+  {
+   "id": "rooster",
+   "icon": "rooster",
+   "en": "Rooster",
+   "ko": "수탉"
+  },
+  {
+   "id": "goat",
+   "icon": "goat",
+   "en": "Goat",
+   "ko": "염소"
+  },
+  {
+   "id": "ewe",
+   "icon": "ewe",
+   "en": "Sheep",
+   "ko": "양"
+  },
+  {
+   "id": "ram",
+   "icon": "ram",
+   "en": "Ram",
+   "ko": "숫양"
+  },
+  {
+   "id": "duck",
+   "icon": "duck",
+   "en": "Duck",
+   "ko": "오리"
+  },
+  {
+   "id": "donkey",
+   "icon": "donkey",
+   "en": "Donkey",
+   "ko": "당나귀"
+  },
+  {
+   "id": "turkey",
+   "icon": "turkey",
+   "en": "Turkey",
+   "ko": "칠면조"
+  },
+  {
+   "id": "goose",
+   "icon": "goose",
+   "en": "Goose",
+   "ko": "거위"
+  },
+  {
+   "id": "dog",
+   "icon": "dog",
+   "en": "Dog",
+   "ko": "강아지"
+  },
+  {
+   "id": "cat",
+   "icon": "cat",
+   "en": "Cat",
+   "ko": "고양이"
+  },
+  {
+   "id": "hamster",
+   "icon": "hamster",
+   "en": "Hamster",
+   "ko": "햄스터"
+  },
+  {
+   "id": "rabbit",
+   "icon": "rabbit",
+   "en": "Rabbit",
+   "ko": "토끼"
+  },
+  {
+   "id": "parrot",
+   "icon": "parrot",
+   "en": "Parrot",
+   "ko": "앵무새"
+  },
+  {
+   "id": "tropical_fish",
+   "icon": "tropical_fish",
+   "en": "Tropical Fish",
+   "ko": "열대어"
+  },
+  {
+   "id": "turtle",
+   "icon": "turtle",
+   "en": "Turtle",
+   "ko": "거북이"
+  },
+  {
+   "id": "poodle",
+   "icon": "poodle",
+   "en": "Poodle",
+   "ko": "푸들"
+  },
+  {
+   "id": "lion",
+   "icon": "lion",
+   "en": "Lion",
+   "ko": "사자"
+  },
+  {
+   "id": "tiger",
+   "icon": "tiger",
+   "en": "Tiger",
+   "ko": "호랑이"
+  },
+  {
+   "id": "leopard",
+   "icon": "leopard",
+   "en": "Leopard",
+   "ko": "표범"
+  },
+  {
+   "id": "black_cat",
+   "icon": "black_cat",
+   "en": "Black Cat",
+   "ko": "검은 고양이"
+  },
+  {
+   "id": "elephant",
+   "icon": "elephant",
+   "en": "Elephant",
+   "ko": "코끼리"
+  },
+  {
+   "id": "giraffe",
+   "icon": "giraffe",
+   "en": "Giraffe",
+   "ko": "기린"
+  },
+  {
+   "id": "zebra",
+   "icon": "zebra",
+   "en": "Zebra",
+   "ko": "얼룩말"
+  },
+  {
+   "id": "rhinoceros",
+   "icon": "rhinoceros",
+   "en": "Rhino",
+   "ko": "코뿔소"
+  },
+  {
+   "id": "hippopotamus",
+   "icon": "hippopotamus",
+   "en": "Hippo",
+   "ko": "하마"
+  },
+  {
+   "id": "dolphin",
+   "icon": "dolphin",
+   "en": "Dolphin",
+   "ko": "돌고래"
+  },
+  {
+   "id": "spouting_whale",
+   "icon": "spouting_whale",
+   "en": "Whale",
+   "ko": "고래"
+  },
+  {
+   "id": "shark",
+   "icon": "shark",
+   "en": "Shark",
+   "ko": "상어"
+  },
+  {
+   "id": "octopus",
+   "icon": "octopus",
+   "en": "Octopus",
+   "ko": "문어"
+  },
+  {
+   "id": "jellyfish",
+   "icon": "jellyfish",
+   "en": "Jellyfish",
+   "ko": "해파리"
+  },
+  {
+   "id": "seal",
+   "icon": "seal",
+   "en": "Seal",
+   "ko": "물개"
+  },
+  {
+   "id": "blowfish",
+   "icon": "blowfish",
+   "en": "Pufferfish",
+   "ko": "복어"
+  },
+  {
+   "id": "coral",
+   "icon": "coral",
+   "en": "Coral",
+   "ko": "산호"
+  },
+  {
+   "id": "spiral_shell",
+   "icon": "spiral_shell",
+   "en": "Conch Shell",
+   "ko": "소라 껍데기"
+  },
+  {
+   "id": "eagle",
+   "icon": "eagle",
+   "en": "Eagle",
+   "ko": "독수리"
+  },
+  {
+   "id": "owl",
+   "icon": "owl",
+   "en": "Owl",
+   "ko": "부엉이"
+  },
+  {
+   "id": "penguin",
+   "icon": "penguin",
+   "en": "Penguin",
+   "ko": "펭귄"
+  },
+  {
+   "id": "flamingo",
+   "icon": "flamingo",
+   "en": "Flamingo",
+   "ko": "홍학"
+  },
+  {
+   "id": "swan",
+   "icon": "swan",
+   "en": "Swan",
+   "ko": "백조"
+  },
+  {
+   "id": "dove",
+   "icon": "dove",
+   "en": "Dove",
+   "ko": "비둘기"
+  },
+  {
+   "id": "peacock",
+   "icon": "peacock",
+   "en": "Peacock",
+   "ko": "공작"
+  },
+  {
+   "id": "blackbird",
+   "icon": "blackbird",
+   "en": "Crow",
+   "ko": "까마귀"
+  },
+  {
+   "id": "dodo",
+   "icon": "dodo",
+   "en": "Dodo",
+   "ko": "도도새"
+  },
+  {
+   "id": "ant",
+   "icon": "ant",
+   "en": "Ant",
+   "ko": "개미"
+  },
+  {
+   "id": "honeybee",
+   "icon": "honeybee",
+   "en": "Bee",
+   "ko": "꿀벌"
+  },
+  {
+   "id": "butterfly",
+   "icon": "butterfly",
+   "en": "Butterfly",
+   "ko": "나비"
+  },
+  {
+   "id": "lady_beetle",
+   "icon": "lady_beetle",
+   "en": "Ladybug",
+   "ko": "무당벌레"
+  },
+  {
+   "id": "beetle",
+   "icon": "beetle",
+   "en": "Beetle",
+   "ko": "딱정벌레"
+  },
+  {
+   "id": "cricket",
+   "icon": "cricket",
+   "en": "Grasshopper",
+   "ko": "메뚜기"
+  },
+  {
+   "id": "fly",
+   "icon": "fly",
+   "en": "Fly",
+   "ko": "파리"
+  },
+  {
+   "id": "mosquito",
+   "icon": "mosquito",
+   "en": "Mosquito",
+   "ko": "모기"
+  },
+  {
+   "id": "cockroach",
+   "icon": "cockroach",
+   "en": "Cockroach",
+   "ko": "바퀴벌레"
+  },
+  {
+   "id": "bug",
+   "icon": "bug",
+   "en": "Caterpillar",
+   "ko": "애벌레"
+  },
+  {
+   "id": "crocodile",
+   "icon": "crocodile",
+   "en": "Crocodile",
+   "ko": "악어"
+  },
+  {
+   "id": "lizard",
+   "icon": "lizard",
+   "en": "Lizard",
+   "ko": "도마뱀"
+  },
+  {
+   "id": "snake",
+   "icon": "snake",
+   "en": "Snake",
+   "ko": "뱀"
+  },
+  {
+   "id": "t_rex",
+   "icon": "t_rex",
+   "en": "T-Rex",
+   "ko": "티라노사우루스"
+  },
+  {
+   "id": "sauropod",
+   "icon": "sauropod",
+   "en": "Brachiosaurus",
+   "ko": "브라키오사우루스"
+  },
+  {
+   "id": "mammoth",
+   "icon": "mammoth",
+   "en": "Mammoth",
+   "ko": "매머드"
+  },
+  {
+   "id": "mouse",
+   "icon": "mouse",
+   "en": "Mouse",
+   "ko": "생쥐"
+  },
+  {
+   "id": "rat",
+   "icon": "rat",
+   "en": "Rat",
+   "ko": "쥐"
+  },
+  {
+   "id": "chipmunk",
+   "icon": "chipmunk",
+   "en": "Squirrel",
+   "ko": "다람쥐"
+  },
+  {
+   "id": "beaver",
+   "icon": "beaver",
+   "en": "Beaver",
+   "ko": "비버"
+  },
+  {
+   "id": "deer",
+   "icon": "deer",
+   "en": "Deer",
+   "ko": "사슴"
+  },
+  {
+   "id": "fox",
+   "icon": "fox",
+   "en": "Fox",
+   "ko": "여우"
+  },
+  {
+   "id": "bear",
+   "icon": "bear",
+   "en": "Bear",
+   "ko": "곰"
+  },
+  {
+   "id": "wolf",
+   "icon": "wolf",
+   "en": "Wolf",
+   "ko": "늑대"
+  },
+  {
+   "id": "raccoon",
+   "icon": "raccoon",
+   "en": "Raccoon",
+   "ko": "라쿤"
+  },
+  {
+   "id": "badger",
+   "icon": "badger",
+   "en": "Badger",
+   "ko": "오소리"
+  },
+  {
+   "id": "skunk",
+   "icon": "skunk",
+   "en": "Skunk",
+   "ko": "스컹크"
+  },
+  {
+   "id": "hedgehog",
+   "icon": "hedgehog",
+   "en": "Hedgehog",
+   "ko": "고슴도치"
+  },
+  {
+   "id": "boar",
+   "icon": "boar",
+   "en": "Wild Boar",
+   "ko": "멧돼지"
+  },
+  {
+   "id": "moose",
+   "icon": "moose",
+   "en": "Moose",
+   "ko": "무스"
+  },
+  {
+   "id": "ox",
+   "icon": "ox",
+   "en": "Ox",
+   "ko": "황소"
+  },
+  {
+   "id": "water_buffalo",
+   "icon": "water_buffalo",
+   "en": "Water Buffalo",
+   "ko": "물소"
+  },
+  {
+   "id": "bison",
+   "icon": "bison",
+   "en": "Bison",
+   "ko": "들소"
+  },
+  {
+   "id": "panda",
+   "icon": "panda",
+   "en": "Panda",
+   "ko": "판다"
+  },
+  {
+   "id": "kangaroo",
+   "icon": "kangaroo",
+   "en": "Kangaroo",
+   "ko": "캥거루"
+  },
+  {
+   "id": "frog",
+   "icon": "frog",
+   "en": "Frog",
+   "ko": "개구리"
+  },
+  {
+   "id": "snail",
+   "icon": "snail",
+   "en": "Snail",
+   "ko": "달팽이"
+  },
+  {
+   "id": "llama",
+   "icon": "llama",
+   "en": "Llama",
+   "ko": "라마"
+  },
+  {
+   "id": "camel",
+   "icon": "camel",
+   "en": "Camel",
+   "ko": "낙타"
+  },
+  {
+   "id": "two_hump_camel",
+   "icon": "two_hump_camel",
+   "en": "Two-Hump Camel",
+   "ko": "쌍봉낙타"
+  },
+  {
+   "id": "cactus",
+   "icon": "cactus",
+   "en": "Cactus",
+   "ko": "선인장"
+  },
+  {
+   "id": "scorpion",
+   "icon": "scorpion",
+   "en": "Scorpion",
+   "ko": "전갈"
+  },
+  {
+   "id": "dragon",
+   "icon": "dragon",
+   "en": "Dragon",
+   "ko": "용"
+  },
+  {
+   "id": "unicorn",
+   "icon": "unicorn",
+   "en": "Unicorn",
+   "ko": "유니콘"
+  },
+  {
+   "id": "phoenix_bird",
+   "icon": "phoenix_bird",
+   "en": "Phoenix",
+   "ko": "불사조"
+  },
+  {
+   "id": "person_merpeople",
+   "icon": "person_merpeople",
+   "en": "Mermaid",
+   "ko": "인어"
+  },
+  {
+   "id": "person_fairy",
+   "icon": "person_fairy",
+   "en": "Fairy",
+   "ko": "요정"
+  },
+  {
+   "id": "spider",
+   "icon": "spider",
+   "en": "Spider",
+   "ko": "거미"
+  },
+  {
+   "id": "sloth",
+   "icon": "sloth",
+   "en": "Sloth",
+   "ko": "나무늘보"
+  },
+  {
+   "id": "koala",
+   "icon": "koala",
+   "en": "Koala",
+   "ko": "코알라"
+  },
+  {
+   "id": "worm",
+   "icon": "worm",
+   "en": "Worm",
+   "ko": "지렁이"
+  },
+  {
+   "id": "bat",
+   "icon": "bat",
+   "en": "Bat",
+   "ko": "박쥐"
+  },
+  {
+   "id": "rose",
+   "icon": "rose",
+   "en": "Rose",
+   "ko": "장미"
+  },
+  {
+   "id": "tulip",
+   "icon": "tulip",
+   "en": "Tulip",
+   "ko": "튤립"
+  },
+  {
+   "id": "sunflower",
+   "icon": "sunflower",
+   "en": "Sunflower",
+   "ko": "해바라기"
+  },
+  {
+   "id": "hibiscus",
+   "icon": "hibiscus",
+   "en": "Hibiscus",
+   "ko": "히비스커스"
+  },
+  {
+   "id": "cherry_blossom",
+   "icon": "cherry_blossom",
+   "en": "Cherry Blossom",
+   "ko": "벚꽃"
+  },
+  {
+   "id": "lotus",
+   "icon": "lotus",
+   "en": "Lotus",
+   "ko": "연꽃"
+  },
+  {
+   "id": "hyacinth",
+   "icon": "hyacinth",
+   "en": "Hyacinth",
+   "ko": "히아신스"
+  },
+  {
+   "id": "blossom",
+   "icon": "blossom",
+   "en": "Daisy",
+   "ko": "데이지"
+  },
+  {
+   "id": "bouquet",
+   "icon": "bouquet",
+   "en": "Bouquet",
+   "ko": "꽃다발"
+  },
+  {
+   "id": "deciduous_tree",
+   "icon": "deciduous_tree",
+   "en": "Tree",
+   "ko": "나무"
+  },
+  {
+   "id": "evergreen_tree",
+   "icon": "evergreen_tree",
+   "en": "Fir Tree",
+   "ko": "전나무"
+  },
+  {
+   "id": "palm_tree",
+   "icon": "palm_tree",
+   "en": "Palm Tree",
+   "ko": "야자수"
+  },
+  {
+   "id": "potted_plant",
+   "icon": "potted_plant",
+   "en": "Potted Plant",
+   "ko": "화분"
+  },
+  {
+   "id": "seedling",
+   "icon": "seedling",
+   "en": "Sprout",
+   "ko": "새싹"
+  },
+  {
+   "id": "christmas_tree",
+   "icon": "christmas_tree",
+   "en": "Christmas Tree",
+   "ko": "크리스마스트리"
+  },
+  {
+   "id": "maple_leaf",
+   "icon": "maple_leaf",
+   "en": "Maple Leaf",
+   "ko": "단풍잎"
+  },
+  {
+   "id": "fallen_leaf",
+   "icon": "fallen_leaf",
+   "en": "Fallen Leaves",
+   "ko": "낙엽"
+  },
+  {
+   "id": "four_leaf_clover",
+   "icon": "four_leaf_clover",
+   "en": "Four-Leaf Clover",
+   "ko": "네잎클로버"
+  },
+  {
+   "id": "shamrock",
+   "icon": "shamrock",
+   "en": "Shamrock",
+   "ko": "세잎클로버"
+  },
+  {
+   "id": "leaf_fluttering_in_wind",
+   "icon": "leaf_fluttering_in_wind",
+   "en": "Blowing Leaves",
+   "ko": "날리는 잎"
+  },
+  {
+   "id": "herb",
+   "icon": "herb",
+   "en": "Herb",
+   "ko": "허브"
+  },
+  {
+   "id": "chestnut",
+   "icon": "chestnut",
+   "en": "Chestnut",
+   "ko": "알밤"
+  },
+  {
+   "id": "jack_o_lantern",
+   "icon": "jack_o_lantern",
+   "en": "Jack-O-Lantern",
+   "ko": "호박 등불"
+  },
+  {
+   "id": "sheaf_of_rice",
+   "icon": "sheaf_of_rice",
+   "en": "Rice Stalks",
+   "ko": "벼 이삭"
+  },
+  {
+   "id": "hatching_chick",
+   "icon": "hatching_chick",
+   "en": "Hatching Chick",
+   "ko": "갓 깬 병아리"
+  },
+  {
+   "id": "sun",
+   "icon": "sun",
+   "en": "Sun",
+   "ko": "해"
+  },
+  {
+   "id": "cloud",
+   "icon": "cloud",
+   "en": "Cloud",
+   "ko": "구름"
+  },
+  {
+   "id": "cloud_with_rain",
+   "icon": "cloud_with_rain",
+   "en": "Rain Cloud",
+   "ko": "비구름"
+  },
+  {
+   "id": "cloud_with_snow",
+   "icon": "cloud_with_snow",
+   "en": "Snow Cloud",
+   "ko": "눈구름"
+  },
+  {
+   "id": "cloud_with_lightning",
+   "icon": "cloud_with_lightning",
+   "en": "Thundercloud",
+   "ko": "번개 구름"
+  },
+  {
+   "id": "rainbow",
+   "icon": "rainbow",
+   "en": "Rainbow",
+   "ko": "무지개"
+  },
+  {
+   "id": "snowflake",
+   "icon": "snowflake",
+   "en": "Snowflake",
+   "ko": "눈송이"
+  },
+  {
+   "id": "tornado",
+   "icon": "tornado",
+   "en": "Tornado",
+   "ko": "토네이도"
+  },
+  {
+   "id": "fog",
+   "icon": "fog",
+   "en": "Fog",
+   "ko": "안개"
+  },
+  {
+   "id": "sun_behind_cloud",
+   "icon": "sun_behind_cloud",
+   "en": "Partly Cloudy",
+   "ko": "구름 조금"
+  },
+  {
+   "id": "rocket",
+   "icon": "rocket",
+   "en": "Rocket",
+   "ko": "로켓"
+  },
+  {
+   "id": "satellite",
+   "icon": "satellite",
+   "en": "Satellite",
+   "ko": "인공위성"
+  },
+  {
+   "id": "ringed_planet",
+   "icon": "ringed_planet",
+   "en": "Saturn",
+   "ko": "토성"
+  },
+  {
+   "id": "comet",
+   "icon": "comet",
+   "en": "Comet",
+   "ko": "혜성"
+  },
+  {
+   "id": "flying_saucer",
+   "icon": "flying_saucer",
+   "en": "UFO",
+   "ko": "비행접시"
+  },
+  {
+   "id": "milky_way",
+   "icon": "milky_way",
+   "en": "Milky Way",
+   "ko": "은하수"
+  },
+  {
+   "id": "shooting_star",
+   "icon": "shooting_star",
+   "en": "Shooting Star",
+   "ko": "별똥별"
+  },
+  {
+   "id": "astronaut",
+   "icon": "astronaut",
+   "en": "Astronaut",
+   "ko": "우주 비행사"
+  },
+  {
+   "id": "telescope",
+   "icon": "telescope",
+   "en": "Telescope",
+   "ko": "망원경"
+  },
+  {
+   "id": "waxing_crescent_moon",
+   "icon": "waxing_crescent_moon",
+   "en": "Waxing Crescent",
+   "ko": "초승달"
+  },
+  {
+   "id": "first_quarter_moon",
+   "icon": "first_quarter_moon",
+   "en": "First Quarter",
+   "ko": "상현달"
+  },
+  {
+   "id": "full_moon",
+   "icon": "full_moon",
+   "en": "Full Moon",
+   "ko": "보름달"
+  },
+  {
+   "id": "last_quarter_moon",
+   "icon": "last_quarter_moon",
+   "en": "Last Quarter",
+   "ko": "하현달"
+  },
+  {
+   "id": "waning_crescent_moon",
+   "icon": "waning_crescent_moon",
+   "en": "Waning Crescent",
+   "ko": "그믐달"
+  },
+  {
+   "id": "mountain",
+   "icon": "mountain",
+   "en": "Mountain",
+   "ko": "산"
+  },
+  {
+   "id": "volcano",
+   "icon": "volcano",
+   "en": "Volcano",
+   "ko": "화산"
+  },
+  {
+   "id": "desert_island",
+   "icon": "desert_island",
+   "en": "Desert Island",
+   "ko": "무인도"
+  },
+  {
+   "id": "beach_with_umbrella",
+   "icon": "beach_with_umbrella",
+   "en": "Seaside",
+   "ko": "바닷가"
+  },
+  {
+   "id": "national_park",
+   "icon": "national_park",
+   "en": "Lake",
+   "ko": "호수"
+  },
+  {
+   "id": "water_wave",
+   "icon": "water_wave",
+   "en": "Wave",
+   "ko": "파도"
+  },
+  {
+   "id": "sunrise_over_mountains",
+   "icon": "sunrise_over_mountains",
+   "en": "Sunrise",
+   "ko": "해돋이"
+  },
+  {
+   "id": "fire",
+   "icon": "fire",
+   "en": "Fire",
+   "ko": "불"
+  },
+  {
+   "id": "hot_springs",
+   "icon": "hot_springs",
+   "en": "Hot Spring",
+   "ko": "온천"
+  },
+  {
+   "id": "candle",
+   "icon": "candle",
+   "en": "Candle",
+   "ko": "양초"
+  },
+  {
+   "id": "snowman",
+   "icon": "snowman",
+   "en": "Snowman",
+   "ko": "눈사람"
+  },
+  {
+   "id": "ice",
+   "icon": "ice",
+   "en": "Ice Cube",
+   "ko": "얼음"
+  },
+  {
+   "id": "ice_cream",
+   "icon": "ice_cream",
+   "en": "Ice Cream",
+   "ko": "아이스크림"
+  },
+  {
+   "id": "shaved_ice",
+   "icon": "shaved_ice",
+   "en": "Shaved Ice",
+   "ko": "빙수"
+  },
+  {
+   "id": "soft_ice_cream",
+   "icon": "soft_ice_cream",
+   "en": "Ice Cream Cone",
+   "ko": "아이스크림콘"
+  },
+  {
+   "id": "droplet",
+   "icon": "droplet",
+   "en": "Droplet",
+   "ko": "물방울"
+  },
+  {
+   "id": "fountain",
+   "icon": "fountain",
+   "en": "Fountain",
+   "ko": "분수"
+  },
+  {
+   "id": "shower",
+   "icon": "shower",
+   "en": "Shower",
+   "ko": "샤워기"
+  },
+  {
+   "id": "bathtub",
+   "icon": "bathtub",
+   "en": "Bathtub",
+   "ko": "욕조"
+  },
+  {
+   "id": "potable_water",
+   "icon": "potable_water",
+   "en": "Drinking Water",
+   "ko": "식수"
+  },
+  {
+   "id": "light_bulb",
+   "icon": "light_bulb",
+   "en": "Light Bulb",
+   "ko": "전구"
+  },
+  {
+   "id": "flashlight",
+   "icon": "flashlight",
+   "en": "Flashlight",
+   "ko": "손전등"
+  },
+  {
+   "id": "diya_lamp",
+   "icon": "diya_lamp",
+   "en": "Oil Lamp",
+   "ko": "등잔"
+  },
+  {
+   "id": "red_paper_lantern",
+   "icon": "red_paper_lantern",
+   "en": "Red Lantern",
+   "ko": "붉은 등불"
+  },
+  {
+   "id": "sparkler",
+   "icon": "sparkler",
+   "en": "Sparkler",
+   "ko": "불꽃 막대"
+  },
+  {
+   "id": "crescent_moon",
+   "icon": "crescent_moon",
+   "en": "Moon",
+   "ko": "달"
+  },
+  {
+   "id": "star",
+   "icon": "star",
+   "en": "Star",
+   "ko": "별"
+  },
+  {
+   "id": "night_with_stars",
+   "icon": "night_with_stars",
+   "en": "City at Night",
+   "ko": "도시 야경"
+  },
+  {
+   "id": "glowing_star",
+   "icon": "glowing_star",
+   "en": "Glowing Star",
+   "ko": "빛나는 별"
+  },
+  {
+   "id": "bridge_at_night",
+   "icon": "bridge_at_night",
+   "en": "Bridge at Night",
+   "ko": "다리 야경"
+  },
+  {
+   "id": "zzz",
+   "icon": "zzz",
+   "en": "Zzz",
+   "ko": "쿨쿨"
+  },
+  {
+   "id": "sparkles",
+   "icon": "sparkles",
+   "en": "Sparkles",
+   "ko": "반짝이"
+  },
+  {
+   "id": "automobile",
+   "icon": "automobile",
+   "en": "Car",
+   "ko": "자동차"
+  },
+  {
+   "id": "taxi",
+   "icon": "taxi",
+   "en": "Taxi",
+   "ko": "택시"
+  },
+  {
+   "id": "bus",
+   "icon": "bus",
+   "en": "Bus",
+   "ko": "버스"
+  },
+  {
+   "id": "delivery_truck",
+   "icon": "delivery_truck",
+   "en": "Delivery Truck",
+   "ko": "트럭"
+  },
+  {
+   "id": "pickup_truck",
+   "icon": "pickup_truck",
+   "en": "Pickup Truck",
+   "ko": "픽업트럭"
+  },
+  {
+   "id": "sport_utility_vehicle",
+   "icon": "sport_utility_vehicle",
+   "en": "SUV",
+   "ko": "SUV"
+  },
+  {
+   "id": "racing_car",
+   "icon": "racing_car",
+   "en": "Race Car",
+   "ko": "경주차"
+  },
+  {
+   "id": "minibus",
+   "icon": "minibus",
+   "en": "Van",
+   "ko": "승합차"
+  },
+  {
+   "id": "articulated_lorry",
+   "icon": "articulated_lorry",
+   "en": "Trailer Truck",
+   "ko": "트레일러"
+  },
+  {
+   "id": "trolleybus",
+   "icon": "trolleybus",
+   "en": "Trolleybus",
+   "ko": "트롤리버스"
+  },
+  {
+   "id": "ambulance",
+   "icon": "ambulance",
+   "en": "Ambulance",
+   "ko": "구급차"
+  },
+  {
+   "id": "fire_engine",
+   "icon": "fire_engine",
+   "en": "Fire Engine",
+   "ko": "소방차"
+  },
+  {
+   "id": "police_car",
+   "icon": "police_car",
+   "en": "Police Car",
+   "ko": "경찰차"
+  },
+  {
+   "id": "police_car_light",
+   "icon": "police_car_light",
+   "en": "Siren",
+   "ko": "사이렌"
+  },
+  {
+   "id": "fire_extinguisher",
+   "icon": "fire_extinguisher",
+   "en": "Fire Extinguisher",
+   "ko": "소화기"
+  },
+  {
+   "id": "rescue_workers_helmet",
+   "icon": "rescue_workers_helmet",
+   "en": "Rescue Helmet",
+   "ko": "구조대 헬멧"
+  },
+  {
+   "id": "sos_button",
+   "icon": "sos_button",
+   "en": "SOS Signal",
+   "ko": "구조 신호"
+  },
+  {
+   "id": "locomotive",
+   "icon": "locomotive",
+   "en": "Locomotive",
+   "ko": "증기기관차"
+  },
+  {
+   "id": "bullet_train",
+   "icon": "bullet_train",
+   "en": "Bullet Train",
+   "ko": "고속열차"
+  },
+  {
+   "id": "metro",
+   "icon": "metro",
+   "en": "Subway",
+   "ko": "지하철"
+  },
+  {
+   "id": "tram",
+   "icon": "tram",
+   "en": "Tram",
+   "ko": "트램"
+  },
+  {
+   "id": "light_rail",
+   "icon": "light_rail",
+   "en": "Light Rail",
+   "ko": "경전철"
+  },
+  {
+   "id": "monorail",
+   "icon": "monorail",
+   "en": "Monorail",
+   "ko": "모노레일"
+  },
+  {
+   "id": "railway_car",
+   "icon": "railway_car",
+   "en": "Railway Car",
+   "ko": "객차"
+  },
+  {
+   "id": "airplane",
+   "icon": "airplane",
+   "en": "Airplane",
+   "ko": "비행기"
+  },
+  {
+   "id": "small_airplane",
+   "icon": "small_airplane",
+   "en": "Small Plane",
+   "ko": "경비행기"
+  },
+  {
+   "id": "helicopter",
+   "icon": "helicopter",
+   "en": "Helicopter",
+   "ko": "헬리콥터"
+  },
+  {
+   "id": "parachute",
+   "icon": "parachute",
+   "en": "Parachute",
+   "ko": "낙하산"
+  },
+  {
+   "id": "sailboat",
+   "icon": "sailboat",
+   "en": "Sailboat",
+   "ko": "돛단배"
+  },
+  {
+   "id": "speedboat",
+   "icon": "speedboat",
+   "en": "Speedboat",
+   "ko": "쾌속정"
+  },
+  {
+   "id": "ferry",
+   "icon": "ferry",
+   "en": "Ferry",
+   "ko": "페리"
+  },
+  {
+   "id": "passenger_ship",
+   "icon": "passenger_ship",
+   "en": "Cruise Ship",
+   "ko": "크루즈선"
+  },
+  {
+   "id": "ship",
+   "icon": "ship",
+   "en": "Passenger Ship",
+   "ko": "여객선"
+  },
+  {
+   "id": "canoe",
+   "icon": "canoe",
+   "en": "Canoe",
+   "ko": "카누"
+  },
+  {
+   "id": "motor_boat",
+   "icon": "motor_boat",
+   "en": "Motorboat",
+   "ko": "모터보트"
+  },
+  {
+   "id": "bicycle",
+   "icon": "bicycle",
+   "en": "Bicycle",
+   "ko": "자전거"
+  },
+  {
+   "id": "motorcycle",
+   "icon": "motorcycle",
+   "en": "Motorcycle",
+   "ko": "오토바이"
+  },
+  {
+   "id": "motor_scooter",
+   "icon": "motor_scooter",
+   "en": "Scooter",
+   "ko": "스쿠터"
+  },
+  {
+   "id": "kick_scooter",
+   "icon": "kick_scooter",
+   "en": "Kick Scooter",
+   "ko": "킥보드"
+  },
+  {
+   "id": "stop_sign",
+   "icon": "stop_sign",
+   "en": "Stop Sign",
+   "ko": "정지 표지판"
+  },
+  {
+   "id": "vertical_traffic_light",
+   "icon": "vertical_traffic_light",
+   "en": "Traffic Light",
+   "ko": "신호등"
+  },
+  {
+   "id": "construction",
+   "icon": "construction",
+   "en": "Barricade",
+   "ko": "바리케이드"
+  },
+  {
+   "id": "bus_stop",
+   "icon": "bus_stop",
+   "en": "Bus Stop",
+   "ko": "버스 정류장"
+  },
+  {
+   "id": "no_entry",
+   "icon": "no_entry",
+   "en": "No Entry",
+   "ko": "진입 금지"
+  },
+  {
+   "id": "airplane_departure",
+   "icon": "airplane_departure",
+   "en": "Takeoff",
+   "ko": "이륙"
+  },
+  {
+   "id": "airplane_arrival",
+   "icon": "airplane_arrival",
+   "en": "Landing",
+   "ko": "착륙"
+  },
+  {
+   "id": "luggage",
+   "icon": "luggage",
+   "en": "Suitcase",
+   "ko": "캐리어"
+  },
+  {
+   "id": "passport_control",
+   "icon": "passport_control",
+   "en": "Passport Control",
+   "ko": "출입국 심사"
+  },
+  {
+   "id": "baggage_claim",
+   "icon": "baggage_claim",
+   "en": "Baggage Claim",
+   "ko": "짐 찾는 곳"
+  },
+  {
+   "id": "customs",
+   "icon": "customs",
+   "en": "Customs",
+   "ko": "세관"
+  },
+  {
+   "id": "left_luggage",
+   "icon": "left_luggage",
+   "en": "Luggage Locker",
+   "ko": "물품 보관함"
+  },
+  {
+   "id": "ferris_wheel",
+   "icon": "ferris_wheel",
+   "en": "Ferris Wheel",
+   "ko": "관람차"
+  },
+  {
+   "id": "roller_coaster",
+   "icon": "roller_coaster",
+   "en": "Roller Coaster",
+   "ko": "롤러코스터"
+  },
+  {
+   "id": "carousel_horse",
+   "icon": "carousel_horse",
+   "en": "Carousel",
+   "ko": "회전목마"
+  },
+  {
+   "id": "admission_tickets",
+   "icon": "admission_tickets",
+   "en": "Admission Ticket",
+   "ko": "입장권"
+  },
+  {
+   "id": "office_building",
+   "icon": "office_building",
+   "en": "Office Building",
+   "ko": "빌딩"
+  },
+  {
+   "id": "hospital",
+   "icon": "hospital",
+   "en": "Hospital",
+   "ko": "병원"
+  },
+  {
+   "id": "bank",
+   "icon": "bank",
+   "en": "Bank",
+   "ko": "은행"
+  },
+  {
+   "id": "hotel",
+   "icon": "hotel",
+   "en": "Hotel",
+   "ko": "호텔"
+  },
+  {
+   "id": "school",
+   "icon": "school",
+   "en": "School",
+   "ko": "학교"
+  },
+  {
+   "id": "post_office",
+   "icon": "post_office",
+   "en": "Post Office",
+   "ko": "우체국"
+  },
+  {
+   "id": "factory",
+   "icon": "factory",
+   "en": "Factory",
+   "ko": "공장"
+  },
+  {
+   "id": "convenience_store",
+   "icon": "convenience_store",
+   "en": "Convenience Store",
+   "ko": "편의점"
+  },
+  {
+   "id": "department_store",
+   "icon": "department_store",
+   "en": "Department Store",
+   "ko": "백화점"
+  },
+  {
+   "id": "stadium",
+   "icon": "stadium",
+   "en": "Stadium",
+   "ko": "경기장"
+  },
+  {
+   "id": "house",
+   "icon": "house",
+   "en": "House",
+   "ko": "집"
+  },
+  {
+   "id": "house_with_garden",
+   "icon": "house_with_garden",
+   "en": "Cottage",
+   "ko": "전원주택"
+  },
+  {
+   "id": "houses",
+   "icon": "houses",
+   "en": "Village",
+   "ko": "마을"
+  },
+  {
+   "id": "hut",
+   "icon": "hut",
+   "en": "Hut",
+   "ko": "오두막"
+  },
+  {
+   "id": "tent",
+   "icon": "tent",
+   "en": "Tent",
+   "ko": "텐트"
+  },
+  {
+   "id": "castle",
+   "icon": "castle",
+   "en": "Castle",
+   "ko": "성"
+  },
+  {
+   "id": "statue_of_liberty",
+   "icon": "statue_of_liberty",
+   "en": "Statue of Liberty",
+   "ko": "자유의 여신상"
+  },
+  {
+   "id": "tokyo_tower",
+   "icon": "tokyo_tower",
+   "en": "Tokyo Tower",
+   "ko": "도쿄 타워"
+  },
+  {
+   "id": "mount_fuji",
+   "icon": "mount_fuji",
+   "en": "Mount Fuji",
+   "ko": "후지산"
+  },
+  {
+   "id": "moai",
+   "icon": "moai",
+   "en": "Moai Statue",
+   "ko": "모아이 석상"
+  },
+  {
+   "id": "world_map",
+   "icon": "world_map",
+   "en": "World Map",
+   "ko": "세계 지도"
+  },
+  {
+   "id": "globe_showing_europe_africa",
+   "icon": "globe_showing_europe_africa",
+   "en": "Earth",
+   "ko": "지구"
+  },
+  {
+   "id": "globe_with_meridians",
+   "icon": "globe_with_meridians",
+   "en": "Globe",
+   "ko": "지구본"
+  },
+  {
+   "id": "map_of_japan",
+   "icon": "map_of_japan",
+   "en": "Map of Japan",
+   "ko": "일본 지도"
+  },
+  {
+   "id": "building_construction",
+   "icon": "building_construction",
+   "en": "Crane",
+   "ko": "크레인"
+  },
+  {
+   "id": "construction_worker",
+   "icon": "construction_worker",
+   "en": "Builder",
+   "ko": "건설 노동자"
+  },
+  {
+   "id": "brick",
+   "icon": "brick",
+   "en": "Bricks",
+   "ko": "벽돌"
+  },
+  {
+   "id": "ladder",
+   "icon": "ladder",
+   "en": "Ladder",
+   "ko": "사다리"
+  },
+  {
+   "id": "camping",
+   "icon": "camping",
+   "en": "Campsite",
+   "ko": "야영장"
+  },
+  {
+   "id": "backpack",
+   "icon": "backpack",
+   "en": "Backpack",
+   "ko": "배낭"
+  },
+  {
+   "id": "compass",
+   "icon": "compass",
+   "en": "Compass",
+   "ko": "나침반"
+  },
+  {
+   "id": "hiking_boot",
+   "icon": "hiking_boot",
+   "en": "Hiking Boot",
+   "ko": "등산화"
+  },
+  {
+   "id": "axe",
+   "icon": "axe",
+   "en": "Axe",
+   "ko": "도끼"
+  },
+  {
+   "id": "fishing_pole",
+   "icon": "fishing_pole",
+   "en": "Fishing Rod",
+   "ko": "낚싯대"
+  },
+  {
+   "id": "bikini",
+   "icon": "bikini",
+   "en": "Bikini",
+   "ko": "비키니"
+  },
+  {
+   "id": "sunglasses",
+   "icon": "sunglasses",
+   "en": "Sunglasses",
+   "ko": "선글라스"
+  },
+  {
+   "id": "thong_sandal",
+   "icon": "thong_sandal",
+   "en": "Flip-Flop",
+   "ko": "플립플롭"
+  },
+  {
+   "id": "diving_mask",
+   "icon": "diving_mask",
+   "en": "Snorkel Mask",
+   "ko": "스노클 마스크"
+  },
+  {
+   "id": "umbrella_on_ground",
+   "icon": "umbrella_on_ground",
+   "en": "Parasol",
+   "ko": "파라솔"
+  },
+  {
+   "id": "shopping_cart",
+   "icon": "shopping_cart",
+   "en": "Cart",
+   "ko": "카트"
+  },
+  {
+   "id": "shopping_bags",
+   "icon": "shopping_bags",
+   "en": "Shopping Bags",
+   "ko": "쇼핑백"
+  },
+  {
+   "id": "receipt",
+   "icon": "receipt",
+   "en": "Receipt",
+   "ko": "영수증"
+  },
+  {
+   "id": "credit_card",
+   "icon": "credit_card",
+   "en": "Credit Card",
+   "ko": "신용카드"
+  },
+  {
+   "id": "label",
+   "icon": "label",
+   "en": "Price Tag",
+   "ko": "가격표"
+  },
+  {
+   "id": "guitar",
+   "icon": "guitar",
+   "en": "Guitar",
+   "ko": "기타"
+  },
+  {
+   "id": "violin",
+   "icon": "violin",
+   "en": "Violin",
+   "ko": "바이올린"
+  },
+  {
+   "id": "drum",
+   "icon": "drum",
+   "en": "Drum",
+   "ko": "드럼"
+  },
+  {
+   "id": "trumpet",
+   "icon": "trumpet",
+   "en": "Trumpet",
+   "ko": "트럼펫"
+  },
+  {
+   "id": "saxophone",
+   "icon": "saxophone",
+   "en": "Saxophone",
+   "ko": "색소폰"
+  },
+  {
+   "id": "musical_keyboard",
+   "icon": "musical_keyboard",
+   "en": "Piano",
+   "ko": "피아노"
+  },
+  {
+   "id": "accordion",
+   "icon": "accordion",
+   "en": "Accordion",
+   "ko": "아코디언"
+  },
+  {
+   "id": "banjo",
+   "icon": "banjo",
+   "en": "Banjo",
+   "ko": "밴조"
+  },
+  {
+   "id": "flute",
+   "icon": "flute",
+   "en": "Wooden Flute",
+   "ko": "피리"
+  },
+  {
+   "id": "maracas",
+   "icon": "maracas",
+   "en": "Maracas",
+   "ko": "마라카스"
+  },
+  {
+   "id": "long_drum",
+   "icon": "long_drum",
+   "en": "Djembe",
+   "ko": "젬베"
+  },
+  {
+   "id": "headphone",
+   "icon": "headphone",
+   "en": "Headphones",
+   "ko": "헤드폰"
+  },
+  {
+   "id": "microphone",
+   "icon": "microphone",
+   "en": "Microphone",
+   "ko": "마이크"
+  },
+  {
+   "id": "studio_microphone",
+   "icon": "studio_microphone",
+   "en": "Studio Mic",
+   "ko": "방송 마이크"
+  },
+  {
+   "id": "radio",
+   "icon": "radio",
+   "en": "Radio",
+   "ko": "라디오"
+  },
+  {
+   "id": "speaker_high_volume",
+   "icon": "speaker_high_volume",
+   "en": "Speaker",
+   "ko": "스피커"
+  },
+  {
+   "id": "control_knobs",
+   "icon": "control_knobs",
+   "en": "Control Knobs",
+   "ko": "조절 다이얼"
+  },
+  {
+   "id": "loudspeaker",
+   "icon": "loudspeaker",
+   "en": "Bullhorn",
+   "ko": "전기 확성기"
+  },
+  {
+   "id": "bell",
+   "icon": "bell",
+   "en": "Bell",
+   "ko": "종"
+  },
+  {
+   "id": "megaphone",
+   "icon": "megaphone",
+   "en": "Cheer Megaphone",
+   "ko": "응원 메가폰"
+  },
+  {
+   "id": "postal_horn",
+   "icon": "postal_horn",
+   "en": "Bugle",
+   "ko": "나팔"
+  },
+  {
+   "id": "alarm_clock",
+   "icon": "alarm_clock",
+   "en": "Alarm Clock",
+   "ko": "알람 시계"
+  },
+  {
+   "id": "firecracker",
+   "icon": "firecracker",
+   "en": "Firecracker",
+   "ko": "폭죽"
+  },
+  {
+   "id": "telephone",
+   "icon": "telephone",
+   "en": "Telephone",
+   "ko": "전화기"
+  },
+  {
+   "id": "mobile_phone",
+   "icon": "mobile_phone",
+   "en": "Smartphone",
+   "ko": "스마트폰"
+  },
+  {
+   "id": "bellhop_bell",
+   "icon": "bellhop_bell",
+   "en": "Service Bell",
+   "ko": "호출 벨"
+  },
+  {
+   "id": "wind_chime",
+   "icon": "wind_chime",
+   "en": "Wind Chime",
+   "ko": "풍경 종"
+  },
+  {
+   "id": "pencil",
+   "icon": "pencil",
+   "en": "Pencil",
+   "ko": "연필"
+  },
+  {
+   "id": "pen",
+   "icon": "pen",
+   "en": "Pen",
+   "ko": "볼펜"
+  },
+  {
+   "id": "fountain_pen",
+   "icon": "fountain_pen",
+   "en": "Fountain Pen",
+   "ko": "만년필"
+  },
+  {
+   "id": "crayon",
+   "icon": "crayon",
+   "en": "Crayon",
+   "ko": "크레파스"
+  },
+  {
+   "id": "scissors",
+   "icon": "scissors",
+   "en": "Scissors",
+   "ko": "가위"
+  },
+  {
+   "id": "paperclip",
+   "icon": "paperclip",
+   "en": "Paperclip",
+   "ko": "클립"
+  },
+  {
+   "id": "pushpin",
+   "icon": "pushpin",
+   "en": "Pushpin",
+   "ko": "압정"
+  },
+  {
+   "id": "straight_ruler",
+   "icon": "straight_ruler",
+   "en": "Ruler",
+   "ko": "자"
+  },
+  {
+   "id": "triangular_ruler",
+   "icon": "triangular_ruler",
+   "en": "Triangle Ruler",
+   "ko": "삼각자"
+  },
+  {
+   "id": "notebook",
+   "icon": "notebook",
+   "en": "Notebook",
+   "ko": "공책"
+  },
+  {
+   "id": "memo",
+   "icon": "memo",
+   "en": "Memo",
+   "ko": "메모"
+  },
+  {
+   "id": "clipboard",
+   "icon": "clipboard",
+   "en": "Clipboard",
+   "ko": "클립보드"
+  },
+  {
+   "id": "black_nib",
+   "icon": "black_nib",
+   "en": "Pen Nib",
+   "ko": "펜촉"
+  },
+  {
+   "id": "hammer",
+   "icon": "hammer",
+   "en": "Hammer",
+   "ko": "망치"
+  },
+  {
+   "id": "wrench",
+   "icon": "wrench",
+   "en": "Wrench",
+   "ko": "스패너"
+  },
+  {
+   "id": "screwdriver",
+   "icon": "screwdriver",
+   "en": "Screwdriver",
+   "ko": "드라이버"
+  },
+  {
+   "id": "carpentry_saw",
+   "icon": "carpentry_saw",
+   "en": "Saw",
+   "ko": "톱"
+  },
+  {
+   "id": "pick",
+   "icon": "pick",
+   "en": "Pickaxe",
+   "ko": "곡괭이"
+  },
+  {
+   "id": "toolbox",
+   "icon": "toolbox",
+   "en": "Toolbox",
+   "ko": "연장통"
+  },
+  {
+   "id": "clamp",
+   "icon": "clamp",
+   "en": "Clamp",
+   "ko": "클램프"
+  },
+  {
+   "id": "crossed_swords",
+   "icon": "crossed_swords",
+   "en": "Crossed Swords",
+   "ko": "엇갈린 검"
+  },
+  {
+   "id": "dagger",
+   "icon": "dagger",
+   "en": "Dagger",
+   "ko": "단검"
+  },
+  {
+   "id": "bow_and_arrow",
+   "icon": "bow_and_arrow",
+   "en": "Bow and Arrow",
+   "ko": "활과 화살"
+  },
+  {
+   "id": "shield",
+   "icon": "shield",
+   "en": "Shield",
+   "ko": "방패"
+  },
+  {
+   "id": "crown",
+   "icon": "crown",
+   "en": "Crown",
+   "ko": "왕관"
+  },
+  {
+   "id": "watch",
+   "icon": "watch",
+   "en": "Watch",
+   "ko": "손목시계"
+  },
+  {
+   "id": "stopwatch",
+   "icon": "stopwatch",
+   "en": "Stopwatch",
+   "ko": "스톱워치"
+  },
+  {
+   "id": "timer_clock",
+   "icon": "timer_clock",
+   "en": "Kitchen Timer",
+   "ko": "타이머"
+  },
+  {
+   "id": "mantelpiece_clock",
+   "icon": "mantelpiece_clock",
+   "en": "Mantel Clock",
+   "ko": "탁상시계"
+  },
+  {
+   "id": "hourglass_done",
+   "icon": "hourglass_done",
+   "en": "Hourglass",
+   "ko": "모래시계"
+  },
+  {
+   "id": "locked",
+   "icon": "locked",
+   "en": "Padlock",
+   "ko": "자물쇠"
+  },
+  {
+   "id": "unlocked",
+   "icon": "unlocked",
+   "en": "Open Padlock",
+   "ko": "열린 자물쇠"
+  },
+  {
+   "id": "key",
+   "icon": "key",
+   "en": "Key",
+   "ko": "열쇠"
+  },
+  {
+   "id": "old_key",
+   "icon": "old_key",
+   "en": "Old Key",
+   "ko": "옛날 열쇠"
+  },
+  {
+   "id": "syringe",
+   "icon": "syringe",
+   "en": "Syringe",
+   "ko": "주사기"
+  },
+  {
+   "id": "pill",
+   "icon": "pill",
+   "en": "Pill",
+   "ko": "알약"
+  },
+  {
+   "id": "stethoscope",
+   "icon": "stethoscope",
+   "en": "Stethoscope",
+   "ko": "청진기"
+  },
+  {
+   "id": "adhesive_bandage",
+   "icon": "adhesive_bandage",
+   "en": "Adhesive Bandage",
+   "ko": "반창고"
+  },
+  {
+   "id": "thermometer",
+   "icon": "thermometer",
+   "en": "Thermometer",
+   "ko": "체온계"
+  },
+  {
+   "id": "x_ray",
+   "icon": "x_ray",
+   "en": "X-Ray",
+   "ko": "엑스레이"
+  },
+  {
+   "id": "crutch",
+   "icon": "crutch",
+   "en": "Crutch",
+   "ko": "목발"
+  },
+  {
+   "id": "microscope",
+   "icon": "microscope",
+   "en": "Microscope",
+   "ko": "현미경"
+  },
+  {
+   "id": "test_tube",
+   "icon": "test_tube",
+   "en": "Test Tube",
+   "ko": "시험관"
+  },
+  {
+   "id": "petri_dish",
+   "icon": "petri_dish",
+   "en": "Petri Dish",
+   "ko": "페트리 접시"
+  },
+  {
+   "id": "alembic",
+   "icon": "alembic",
+   "en": "Flask",
+   "ko": "플라스크"
+  },
+  {
+   "id": "dna",
+   "icon": "dna",
+   "en": "DNA",
+   "ko": "DNA"
+  },
+  {
+   "id": "magnet",
+   "icon": "magnet",
+   "en": "Magnet",
+   "ko": "자석"
+  },
+  {
+   "id": "atom_symbol",
+   "icon": "atom_symbol",
+   "en": "Atom",
+   "ko": "원자"
+  },
+  {
+   "id": "lab_coat",
+   "icon": "lab_coat",
+   "en": "Lab Coat",
+   "ko": "실험복"
+  },
+  {
+   "id": "goggles",
+   "icon": "goggles",
+   "en": "Goggles",
+   "ko": "고글"
+  },
+  {
+   "id": "toilet",
+   "icon": "toilet",
+   "en": "Toilet",
+   "ko": "변기"
+  },
+  {
+   "id": "soap",
+   "icon": "soap",
+   "en": "Soap",
+   "ko": "비누"
+  },
+  {
+   "id": "toothbrush",
+   "icon": "toothbrush",
+   "en": "Toothbrush",
+   "ko": "칫솔"
+  },
+  {
+   "id": "sponge",
+   "icon": "sponge",
+   "en": "Sponge",
+   "ko": "스펀지"
+  },
+  {
+   "id": "razor",
+   "icon": "razor",
+   "en": "Razor",
+   "ko": "면도기"
+  },
+  {
+   "id": "lotion_bottle",
+   "icon": "lotion_bottle",
+   "en": "Lotion",
+   "ko": "로션"
+  },
+  {
+   "id": "roll_of_paper",
+   "icon": "roll_of_paper",
+   "en": "Toilet Paper",
+   "ko": "휴지"
+  },
+  {
+   "id": "plunger",
+   "icon": "plunger",
+   "en": "Plunger",
+   "ko": "뚫어뻥"
+  },
+  {
+   "id": "bed",
+   "icon": "bed",
+   "en": "Bed",
+   "ko": "침대"
+  },
+  {
+   "id": "chair",
+   "icon": "chair",
+   "en": "Chair",
+   "ko": "의자"
+  },
+  {
+   "id": "couch_and_lamp",
+   "icon": "couch_and_lamp",
+   "en": "Sofa",
+   "ko": "소파"
+  },
+  {
+   "id": "mirror",
+   "icon": "mirror",
+   "en": "Mirror",
+   "ko": "거울"
+  },
+  {
+   "id": "broom",
+   "icon": "broom",
+   "en": "Broom",
+   "ko": "빗자루"
+  },
+  {
+   "id": "bucket",
+   "icon": "bucket",
+   "en": "Bucket",
+   "ko": "양동이"
+  },
+  {
+   "id": "wastebasket",
+   "icon": "wastebasket",
+   "en": "Wastebasket",
+   "ko": "휴지통"
+  },
+  {
+   "id": "sewing_needle",
+   "icon": "sewing_needle",
+   "en": "Needle",
+   "ko": "바늘"
+  },
+  {
+   "id": "thread",
+   "icon": "thread",
+   "en": "Thread",
+   "ko": "실"
+  },
+  {
+   "id": "yarn",
+   "icon": "yarn",
+   "en": "Yarn",
+   "ko": "털실"
+  },
+  {
+   "id": "safety_pin",
+   "icon": "safety_pin",
+   "en": "Safety Pin",
+   "ko": "옷핀"
+  },
+  {
+   "id": "artist_palette",
+   "icon": "artist_palette",
+   "en": "Palette",
+   "ko": "팔레트"
+  },
+  {
+   "id": "paintbrush",
+   "icon": "paintbrush",
+   "en": "Paintbrush",
+   "ko": "붓"
+  },
+  {
+   "id": "framed_picture",
+   "icon": "framed_picture",
+   "en": "Framed Painting",
+   "ko": "그림 액자"
+  },
+  {
+   "id": "basket",
+   "icon": "basket",
+   "en": "Basket",
+   "ko": "바구니"
+  },
+  {
+   "id": "jar",
+   "icon": "jar",
+   "en": "Jar",
+   "ko": "유리병"
+  },
+  {
+   "id": "package",
+   "icon": "package",
+   "en": "Package",
+   "ko": "택배 상자"
+  },
+  {
+   "id": "amphora",
+   "icon": "amphora",
+   "en": "Clay Jar",
+   "ko": "항아리"
+  },
+  {
+   "id": "oil_drum",
+   "icon": "oil_drum",
+   "en": "Oil Barrel",
+   "ko": "드럼통"
+  },
+  {
+   "id": "takeout_box",
+   "icon": "takeout_box",
+   "en": "Takeout Box",
+   "ko": "포장 용기"
+  },
+  {
+   "id": "canned_food",
+   "icon": "canned_food",
+   "en": "Canned Food",
+   "ko": "통조림"
+  },
+  {
+   "id": "envelope",
+   "icon": "envelope",
+   "en": "Envelope",
+   "ko": "편지 봉투"
+  },
+  {
+   "id": "love_letter",
+   "icon": "love_letter",
+   "en": "Love Letter",
+   "ko": "러브레터"
+  },
+  {
+   "id": "postbox",
+   "icon": "postbox",
+   "en": "Postbox",
+   "ko": "우체통"
+  },
+  {
+   "id": "closed_mailbox_with_raised_flag",
+   "icon": "closed_mailbox_with_raised_flag",
+   "en": "Mailbox",
+   "ko": "우편함"
+  },
+  {
+   "id": "coin",
+   "icon": "coin",
+   "en": "Coin",
+   "ko": "동전"
+  },
+  {
+   "id": "dollar_banknote",
+   "icon": "dollar_banknote",
+   "en": "Dollar Bill",
+   "ko": "달러 지폐"
+  },
+  {
+   "id": "euro_banknote",
+   "icon": "euro_banknote",
+   "en": "Euro Note",
+   "ko": "유로 지폐"
+  },
+  {
+   "id": "pound_banknote",
+   "icon": "pound_banknote",
+   "en": "Pound Note",
+   "ko": "파운드 지폐"
+  },
+  {
+   "id": "yen_banknote",
+   "icon": "yen_banknote",
+   "en": "Yen Note",
+   "ko": "엔화 지폐"
+  },
+  {
+   "id": "money_bag",
+   "icon": "money_bag",
+   "en": "Money Bag",
+   "ko": "돈자루"
+  },
+  {
+   "id": "money_with_wings",
+   "icon": "money_with_wings",
+   "en": "Flying Money",
+   "ko": "날아가는 돈"
+  },
+  {
+   "id": "open_book",
+   "icon": "open_book",
+   "en": "Open Book",
+   "ko": "펼친 책"
+  },
+  {
+   "id": "closed_book",
+   "icon": "closed_book",
+   "en": "Red Book",
+   "ko": "빨간 책"
+  },
+  {
+   "id": "green_book",
+   "icon": "green_book",
+   "en": "Green Book",
+   "ko": "초록 책"
+  },
+  {
+   "id": "blue_book",
+   "icon": "blue_book",
+   "en": "Blue Book",
+   "ko": "파란 책"
+  },
+  {
+   "id": "orange_book",
+   "icon": "orange_book",
+   "en": "Orange Book",
+   "ko": "주황 책"
+  },
+  {
+   "id": "books",
+   "icon": "books",
+   "en": "Stack of Books",
+   "ko": "책 더미"
+  },
+  {
+   "id": "page_facing_up",
+   "icon": "page_facing_up",
+   "en": "Document",
+   "ko": "문서"
+  },
+  {
+   "id": "scroll",
+   "icon": "scroll",
+   "en": "Scroll",
+   "ko": "두루마리"
+  },
+  {
+   "id": "newspaper",
+   "icon": "newspaper",
+   "en": "Newspaper",
+   "ko": "신문"
+  },
+  {
+   "id": "rolled_up_newspaper",
+   "icon": "rolled_up_newspaper",
+   "en": "Rolled Newspaper",
+   "ko": "돌돌 만 신문"
+  },
+  {
+   "id": "bar_chart",
+   "icon": "bar_chart",
+   "en": "Bar Chart",
+   "ko": "막대그래프"
+  },
+  {
+   "id": "chart_increasing",
+   "icon": "chart_increasing",
+   "en": "Rising Chart",
+   "ko": "상승 그래프"
+  },
+  {
+   "id": "chart_decreasing",
+   "icon": "chart_decreasing",
+   "en": "Falling Chart",
+   "ko": "하락 그래프"
+  },
+  {
+   "id": "calendar",
+   "icon": "calendar",
+   "en": "Calendar",
+   "ko": "달력"
+  },
+  {
+   "id": "file_cabinet",
+   "icon": "file_cabinet",
+   "en": "File Cabinet",
+   "ko": "서류 캐비닛"
+  },
+  {
+   "id": "file_folder",
+   "icon": "file_folder",
+   "en": "Folder",
+   "ko": "폴더"
+  },
+  {
+   "id": "briefcase",
+   "icon": "briefcase",
+   "en": "Briefcase",
+   "ko": "서류 가방"
+  },
+  {
+   "id": "printer",
+   "icon": "printer",
+   "en": "Printer",
+   "ko": "프린터"
+  },
+  {
+   "id": "magnifying_glass_tilted_left",
+   "icon": "magnifying_glass_tilted_left",
+   "en": "Magnifying Glass",
+   "ko": "돋보기"
+  },
+  {
+   "id": "glasses",
+   "icon": "glasses",
+   "en": "Glasses",
+   "ko": "안경"
+  },
+  {
+   "id": "camera",
+   "icon": "camera",
+   "en": "Camera",
+   "ko": "카메라"
+  },
+  {
+   "id": "crystal_ball",
+   "icon": "crystal_ball",
+   "en": "Crystal Ball",
+   "ko": "수정 구슬"
+  },
+  {
+   "id": "magic_wand",
+   "icon": "magic_wand",
+   "en": "Wand",
+   "ko": "요술봉"
+  },
+  {
+   "id": "top_hat",
+   "icon": "top_hat",
+   "en": "Top Hat",
+   "ko": "신사 모자"
+  },
+  {
+   "id": "joker",
+   "icon": "joker",
+   "en": "Joker",
+   "ko": "조커"
+  },
+  {
+   "id": "t_shirt",
+   "icon": "t_shirt",
+   "en": "T-Shirt",
+   "ko": "티셔츠"
+  },
+  {
+   "id": "jeans",
+   "icon": "jeans",
+   "en": "Jeans",
+   "ko": "청바지"
+  },
+  {
+   "id": "dress",
+   "icon": "dress",
+   "en": "Dress",
+   "ko": "원피스"
+  },
+  {
+   "id": "coat",
+   "icon": "coat",
+   "en": "Coat",
+   "ko": "코트"
+  },
+  {
+   "id": "shorts",
+   "icon": "shorts",
+   "en": "Shorts",
+   "ko": "반바지"
+  },
+  {
+   "id": "kimono",
+   "icon": "kimono",
+   "en": "Kimono",
+   "ko": "기모노"
+  },
+  {
+   "id": "sari",
+   "icon": "sari",
+   "en": "Sari",
+   "ko": "사리"
+  },
+  {
+   "id": "womans_clothes",
+   "icon": "womans_clothes",
+   "en": "Blouse",
+   "ko": "블라우스"
+  },
+  {
+   "id": "running_shirt",
+   "icon": "running_shirt",
+   "en": "Tank Top",
+   "ko": "민소매 운동복"
+  },
+  {
+   "id": "running_shoe",
+   "icon": "running_shoe",
+   "en": "Sneaker",
+   "ko": "운동화"
+  },
+  {
+   "id": "mans_shoe",
+   "icon": "mans_shoe",
+   "en": "Dress Shoe",
+   "ko": "구두"
+  },
+  {
+   "id": "high_heeled_shoe",
+   "icon": "high_heeled_shoe",
+   "en": "High Heel",
+   "ko": "하이힐"
+  },
+  {
+   "id": "womans_sandal",
+   "icon": "womans_sandal",
+   "en": "Sandal",
+   "ko": "샌들"
+  },
+  {
+   "id": "womans_boot",
+   "icon": "womans_boot",
+   "en": "Boot",
+   "ko": "부츠"
+  },
+  {
+   "id": "flat_shoe",
+   "icon": "flat_shoe",
+   "en": "Flats",
+   "ko": "플랫 슈즈"
+  },
+  {
+   "id": "ballet_shoes",
+   "icon": "ballet_shoes",
+   "en": "Ballet Slippers",
+   "ko": "토슈즈"
+  },
+  {
+   "id": "womans_hat",
+   "icon": "womans_hat",
+   "en": "Sun Hat",
+   "ko": "챙 모자"
+  },
+  {
+   "id": "billed_cap",
+   "icon": "billed_cap",
+   "en": "Cap",
+   "ko": "야구 모자"
+  },
+  {
+   "id": "graduation_cap",
+   "icon": "graduation_cap",
+   "en": "Graduation Cap",
+   "ko": "학사모"
+  },
+  {
+   "id": "military_helmet",
+   "icon": "military_helmet",
+   "en": "Army Helmet",
+   "ko": "철모"
+  },
+  {
+   "id": "gem_stone",
+   "icon": "gem_stone",
+   "en": "Gem",
+   "ko": "보석"
+  },
+  {
+   "id": "necktie",
+   "icon": "necktie",
+   "en": "Necktie",
+   "ko": "넥타이"
+  },
+  {
+   "id": "scarf",
+   "icon": "scarf",
+   "en": "Scarf",
+   "ko": "목도리"
+  },
+  {
+   "id": "gloves",
+   "icon": "gloves",
+   "en": "Gloves",
+   "ko": "장갑"
+  },
+  {
+   "id": "ribbon",
+   "icon": "ribbon",
+   "en": "Bow",
+   "ko": "리본"
+  },
+  {
+   "id": "handbag",
+   "icon": "handbag",
+   "en": "Handbag",
+   "ko": "핸드백"
+  },
+  {
+   "id": "clutch_bag",
+   "icon": "clutch_bag",
+   "en": "Pouch",
+   "ko": "파우치"
+  },
+  {
+   "id": "skis",
+   "icon": "skis",
+   "en": "Skis",
+   "ko": "스키"
+  },
+  {
+   "id": "sled",
+   "icon": "sled",
+   "en": "Sled",
+   "ko": "썰매"
+  },
+  {
+   "id": "ice_skate",
+   "icon": "ice_skate",
+   "en": "Ice Skate",
+   "ko": "스케이트"
+  },
+  {
+   "id": "one_piece_swimsuit",
+   "icon": "one_piece_swimsuit",
+   "en": "Swimsuit",
+   "ko": "수영복"
+  },
+  {
+   "id": "lipstick",
+   "icon": "lipstick",
+   "en": "Lipstick",
+   "ko": "립스틱"
+  },
+  {
+   "id": "nail_polish",
+   "icon": "nail_polish",
+   "en": "Nail Polish",
+   "ko": "매니큐어"
+  },
+  {
+   "id": "hair_pick",
+   "icon": "hair_pick",
+   "en": "Comb",
+   "ko": "빗"
+  },
+  {
+   "id": "laptop",
+   "icon": "laptop",
+   "en": "Laptop",
+   "ko": "노트북"
+  },
+  {
+   "id": "desktop_computer",
+   "icon": "desktop_computer",
+   "en": "Desktop PC",
+   "ko": "데스크톱"
+  },
+  {
+   "id": "television",
+   "icon": "television",
+   "en": "Television",
+   "ko": "텔레비전"
+  },
+  {
+   "id": "video_camera",
+   "icon": "video_camera",
+   "en": "Camcorder",
+   "ko": "캠코더"
+  },
+  {
+   "id": "keyboard",
+   "icon": "keyboard",
+   "en": "Keyboard",
+   "ko": "키보드"
+  },
+  {
+   "id": "computer_mouse",
+   "icon": "computer_mouse",
+   "en": "Computer Mouse",
+   "ko": "마우스"
+  },
+  {
+   "id": "floppy_disk",
+   "icon": "floppy_disk",
+   "en": "Floppy Disk",
+   "ko": "플로피 디스크"
+  },
+  {
+   "id": "videocassette",
+   "icon": "videocassette",
+   "en": "Videotape",
+   "ko": "비디오테이프"
+  },
+  {
+   "id": "pager",
+   "icon": "pager",
+   "en": "Pager",
+   "ko": "삐삐"
+  },
+  {
+   "id": "fax_machine",
+   "icon": "fax_machine",
+   "en": "Fax Machine",
+   "ko": "팩스"
+  },
+  {
+   "id": "film_projector",
+   "icon": "film_projector",
+   "en": "Film Projector",
+   "ko": "영사기"
+  },
+  {
+   "id": "computer_disk",
+   "icon": "computer_disk",
+   "en": "Minidisc",
+   "ko": "미니디스크"
+  },
+  {
+   "id": "dvd",
+   "icon": "dvd",
+   "en": "DVD",
+   "ko": "DVD"
+  },
+  {
+   "id": "movie_camera",
+   "icon": "movie_camera",
+   "en": "Movie Camera",
+   "ko": "촬영 카메라"
+  },
+  {
+   "id": "film_frames",
+   "icon": "film_frames",
+   "en": "Film Strip",
+   "ko": "필름"
+  },
+  {
+   "id": "clapper_board",
+   "icon": "clapper_board",
+   "en": "Clapperboard",
+   "ko": "슬레이트"
+  },
+  {
+   "id": "popcorn",
+   "icon": "popcorn",
+   "en": "Popcorn",
+   "ko": "팝콘"
+  },
+  {
+   "id": "battery",
+   "icon": "battery",
+   "en": "Battery",
+   "ko": "배터리"
+  },
+  {
+   "id": "low_battery",
+   "icon": "low_battery",
+   "en": "Low Battery",
+   "ko": "배터리 부족"
+  },
+  {
+   "id": "electric_plug",
+   "icon": "electric_plug",
+   "en": "Plug",
+   "ko": "플러그"
+  },
+  {
+   "id": "high_voltage",
+   "icon": "high_voltage",
+   "en": "High Voltage",
+   "ko": "고전압"
+  },
+  {
+   "id": "robot",
+   "icon": "robot",
+   "en": "Robot",
+   "ko": "로봇"
+  },
+  {
+   "id": "alien",
+   "icon": "alien",
+   "en": "Alien",
+   "ko": "외계인"
+  },
+  {
+   "id": "alien_monster",
+   "icon": "alien_monster",
+   "en": "Pixel Alien",
+   "ko": "픽셀 외계인"
+  },
+  {
+   "id": "mechanical_arm",
+   "icon": "mechanical_arm",
+   "en": "Robot Arm",
+   "ko": "로봇 팔"
+  },
+  {
+   "id": "mechanical_leg",
+   "icon": "mechanical_leg",
+   "en": "Robot Leg",
+   "ko": "로봇 다리"
+  },
+  {
+   "id": "play_button",
+   "icon": "play_button",
+   "en": "Play",
+   "ko": "재생"
+  },
+  {
+   "id": "pause_button",
+   "icon": "pause_button",
+   "en": "Pause",
+   "ko": "일시 정지"
+  },
+  {
+   "id": "stop_button",
+   "icon": "stop_button",
+   "en": "Stop",
+   "ko": "정지"
+  },
+  {
+   "id": "record_button",
+   "icon": "record_button",
+   "en": "Record",
+   "ko": "녹화"
+  },
+  {
+   "id": "fast_forward_button",
+   "icon": "fast_forward_button",
+   "en": "Fast Forward",
+   "ko": "빨리 감기"
+  },
+  {
+   "id": "eject_button",
+   "icon": "eject_button",
+   "en": "Eject",
+   "ko": "꺼내기"
+  },
+  {
+   "id": "next_track_button",
+   "icon": "next_track_button",
+   "en": "Next Track",
+   "ko": "다음 곡"
+  },
+  {
+   "id": "shuffle_tracks_button",
+   "icon": "shuffle_tracks_button",
+   "en": "Shuffle",
+   "ko": "셔플"
+  },
+  {
+   "id": "repeat_button",
+   "icon": "repeat_button",
+   "en": "Repeat",
+   "ko": "반복"
+  },
+  {
+   "id": "soccer_ball",
+   "icon": "soccer_ball",
+   "en": "Soccer Ball",
+   "ko": "축구공"
+  },
+  {
+   "id": "basketball",
+   "icon": "basketball",
+   "en": "Basketball",
+   "ko": "농구공"
+  },
+  {
+   "id": "baseball",
+   "icon": "baseball",
+   "en": "Baseball",
+   "ko": "야구공"
+  },
+  {
+   "id": "softball",
+   "icon": "softball",
+   "en": "Softball",
+   "ko": "소프트볼공"
+  },
+  {
+   "id": "volleyball",
+   "icon": "volleyball",
+   "en": "Volleyball",
+   "ko": "배구공"
+  },
+  {
+   "id": "american_football",
+   "icon": "american_football",
+   "en": "American Football",
+   "ko": "미식축구공"
+  },
+  {
+   "id": "rugby_football",
+   "icon": "rugby_football",
+   "en": "Rugby Ball",
+   "ko": "럭비공"
+  },
+  {
+   "id": "pool_8_ball",
+   "icon": "pool_8_ball",
+   "en": "Eight Ball",
+   "ko": "당구공"
+  },
+  {
+   "id": "tennis",
+   "icon": "tennis",
+   "en": "Tennis Racket",
+   "ko": "테니스 라켓"
+  },
+  {
+   "id": "badminton",
+   "icon": "badminton",
+   "en": "Badminton",
+   "ko": "배드민턴"
+  },
+  {
+   "id": "ping_pong",
+   "icon": "ping_pong",
+   "en": "Ping Pong",
+   "ko": "탁구"
+  },
+  {
+   "id": "field_hockey",
+   "icon": "field_hockey",
+   "en": "Field Hockey",
+   "ko": "필드하키"
+  },
+  {
+   "id": "ice_hockey",
+   "icon": "ice_hockey",
+   "en": "Ice Hockey",
+   "ko": "아이스하키"
+  },
+  {
+   "id": "lacrosse",
+   "icon": "lacrosse",
+   "en": "Lacrosse",
+   "ko": "라크로스"
+  },
+  {
+   "id": "curling_stone",
+   "icon": "curling_stone",
+   "en": "Curling Stone",
+   "ko": "컬링 스톤"
+  },
+  {
+   "id": "snowboarder",
+   "icon": "snowboarder",
+   "en": "Snowboarder",
+   "ko": "스노보더"
+  },
+  {
+   "id": "skier",
+   "icon": "skier",
+   "en": "Skier",
+   "ko": "스키 선수"
+  },
+  {
+   "id": "person_surfing",
+   "icon": "person_surfing",
+   "en": "Surfer",
+   "ko": "서퍼"
+  },
+  {
+   "id": "person_swimming",
+   "icon": "person_swimming",
+   "en": "Swimmer",
+   "ko": "수영 선수"
+  },
+  {
+   "id": "person_rowing_boat",
+   "icon": "person_rowing_boat",
+   "en": "Rower",
+   "ko": "노 젓는 사람"
+  },
+  {
+   "id": "person_playing_water_polo",
+   "icon": "person_playing_water_polo",
+   "en": "Water Polo Player",
+   "ko": "수구 선수"
+  },
+  {
+   "id": "person_biking",
+   "icon": "person_biking",
+   "en": "Cyclist",
+   "ko": "사이클 선수"
+  },
+  {
+   "id": "person_golfing",
+   "icon": "person_golfing",
+   "en": "Golfer",
+   "ko": "골퍼"
+  },
+  {
+   "id": "person_lifting_weights",
+   "icon": "person_lifting_weights",
+   "en": "Weightlifter",
+   "ko": "역도 선수"
+  },
+  {
+   "id": "person_climbing",
+   "icon": "person_climbing",
+   "en": "Rock Climber",
+   "ko": "암벽 등반가"
+  },
+  {
+   "id": "person_fencing",
+   "icon": "person_fencing",
+   "en": "Fencer",
+   "ko": "펜싱 선수"
+  },
+  {
+   "id": "person_cartwheeling",
+   "icon": "person_cartwheeling",
+   "en": "Gymnast",
+   "ko": "체조 선수"
+  },
+  {
+   "id": "person_running",
+   "icon": "person_running",
+   "en": "Runner",
+   "ko": "육상 선수"
+  },
+  {
+   "id": "person_bouncing_ball",
+   "icon": "person_bouncing_ball",
+   "en": "Basketball Player",
+   "ko": "농구 선수"
+  },
+  {
+   "id": "horse_racing",
+   "icon": "horse_racing",
+   "en": "Jockey",
+   "ko": "경마 기수"
+  },
+  {
+   "id": "trophy",
+   "icon": "trophy",
+   "en": "Trophy",
+   "ko": "트로피"
+  },
+  {
+   "id": "1st_place_medal",
+   "icon": "1st_place_medal",
+   "en": "Gold Medal",
+   "ko": "금메달"
+  },
+  {
+   "id": "2nd_place_medal",
+   "icon": "2nd_place_medal",
+   "en": "Silver Medal",
+   "ko": "은메달"
+  },
+  {
+   "id": "3rd_place_medal",
+   "icon": "3rd_place_medal",
+   "en": "Bronze Medal",
+   "ko": "동메달"
+  },
+  {
+   "id": "sports_medal",
+   "icon": "sports_medal",
+   "en": "Medal",
+   "ko": "메달"
+  },
+  {
+   "id": "military_medal",
+   "icon": "military_medal",
+   "en": "Military Medal",
+   "ko": "훈장"
+  },
+  {
+   "id": "teddy_bear",
+   "icon": "teddy_bear",
+   "en": "Teddy Bear",
+   "ko": "곰 인형"
+  },
+  {
+   "id": "yo_yo",
+   "icon": "yo_yo",
+   "en": "Yo-Yo",
+   "ko": "요요"
+  },
+  {
+   "id": "kite",
+   "icon": "kite",
+   "en": "Kite",
+   "ko": "연"
+  },
+  {
+   "id": "puzzle_piece",
+   "icon": "puzzle_piece",
+   "en": "Puzzle Piece",
+   "ko": "퍼즐 조각"
+  },
+  {
+   "id": "nesting_dolls",
+   "icon": "nesting_dolls",
+   "en": "Nesting Doll",
+   "ko": "마트료시카"
+  },
+  {
+   "id": "flying_disc",
+   "icon": "flying_disc",
+   "en": "Flying Disc",
+   "ko": "원반"
+  },
+  {
+   "id": "water_pistol",
+   "icon": "water_pistol",
+   "en": "Squirt Gun",
+   "ko": "물총"
+  },
+  {
+   "id": "balloon",
+   "icon": "balloon",
+   "en": "Balloon",
+   "ko": "풍선"
+  },
+  {
+   "id": "boomerang",
+   "icon": "boomerang",
+   "en": "Boomerang",
+   "ko": "부메랑"
+  },
+  {
+   "id": "game_die",
+   "icon": "game_die",
+   "en": "Dice",
+   "ko": "주사위"
+  },
+  {
+   "id": "chess_pawn",
+   "icon": "chess_pawn",
+   "en": "Chess Pawn",
+   "ko": "체스 말"
+  },
+  {
+   "id": "mahjong_red_dragon",
+   "icon": "mahjong_red_dragon",
+   "en": "Mahjong Tile",
+   "ko": "마작 패"
+  },
+  {
+   "id": "spade_suit",
+   "icon": "spade_suit",
+   "en": "Spade Suit",
+   "ko": "스페이드 무늬"
+  },
+  {
+   "id": "heart_suit",
+   "icon": "heart_suit",
+   "en": "Heart Suit",
+   "ko": "하트 무늬"
+  },
+  {
+   "id": "diamond_suit",
+   "icon": "diamond_suit",
+   "en": "Diamond Suit",
+   "ko": "다이아 무늬"
+  },
+  {
+   "id": "club_suit",
+   "icon": "club_suit",
+   "en": "Club Suit",
+   "ko": "클로버 무늬"
+  },
+  {
+   "id": "party_popper",
+   "icon": "party_popper",
+   "en": "Party Popper",
+   "ko": "축하 폭죽"
+  },
+  {
+   "id": "confetti_ball",
+   "icon": "confetti_ball",
+   "en": "Confetti Ball",
+   "ko": "축하 박"
+  },
+  {
+   "id": "wrapped_gift",
+   "icon": "wrapped_gift",
+   "en": "Gift",
+   "ko": "선물"
+  },
+  {
+   "id": "pi_ata",
+   "icon": "pi_ata",
+   "en": "Piñata",
+   "ko": "피냐타"
+  },
+  {
+   "id": "mirror_ball",
+   "icon": "mirror_ball",
+   "en": "Disco Ball",
+   "ko": "미러볼"
+  },
+  {
+   "id": "fireworks",
+   "icon": "fireworks",
+   "en": "Fireworks",
+   "ko": "불꽃놀이"
+  },
+  {
+   "id": "collision",
+   "icon": "collision",
+   "en": "Explosion",
+   "ko": "폭발"
+  },
+  {
+   "id": "bomb",
+   "icon": "bomb",
+   "en": "Bomb",
+   "ko": "폭탄"
+  },
+  {
+   "id": "santa_claus",
+   "icon": "santa_claus",
+   "en": "Santa Claus",
+   "ko": "산타클로스"
+  },
+  {
+   "id": "mrs_claus",
+   "icon": "mrs_claus",
+   "en": "Mrs. Claus",
+   "ko": "산타 할머니"
+  },
+  {
+   "id": "ghost",
+   "icon": "ghost",
+   "en": "Ghost",
+   "ko": "유령"
+  },
+  {
+   "id": "spider_web",
+   "icon": "spider_web",
+   "en": "Spider Web",
+   "ko": "거미줄"
+  },
+  {
+   "id": "skull",
+   "icon": "skull",
+   "en": "Skull",
+   "ko": "해골"
+  },
+  {
+   "id": "headstone",
+   "icon": "headstone",
+   "en": "Tombstone",
+   "ko": "묘비"
+  },
+  {
+   "id": "circus_tent",
+   "icon": "circus_tent",
+   "en": "Circus Tent",
+   "ko": "서커스 천막"
+  },
+  {
+   "id": "clown_face",
+   "icon": "clown_face",
+   "en": "Clown",
+   "ko": "광대"
+  },
+  {
+   "id": "person_juggling",
+   "icon": "person_juggling",
+   "en": "Juggler",
+   "ko": "저글링 곡예사"
+  },
+  {
+   "id": "performing_arts",
+   "icon": "performing_arts",
+   "en": "Theater Masks",
+   "ko": "연극 가면"
+  },
+  {
+   "id": "musical_score",
+   "icon": "musical_score",
+   "en": "Sheet Music",
+   "ko": "악보"
+  },
+  {
+   "id": "ticket",
+   "icon": "ticket",
+   "en": "Ticket",
+   "ko": "티켓"
+  },
+  {
+   "id": "singer",
+   "icon": "singer",
+   "en": "Singer",
+   "ko": "가수"
+  },
+  {
+   "id": "skull_and_crossbones",
+   "icon": "skull_and_crossbones",
+   "en": "Skull and Bones",
+   "ko": "해골 마크"
+  },
+  {
+   "id": "anchor",
+   "icon": "anchor",
+   "en": "Anchor",
+   "ko": "닻"
+  },
+  {
+   "id": "hook",
+   "icon": "hook",
+   "en": "Hook",
+   "ko": "갈고리"
+  },
+  {
+   "id": "princess",
+   "icon": "princess",
+   "en": "Princess",
+   "ko": "공주"
+  },
+  {
+   "id": "wedding",
+   "icon": "wedding",
+   "en": "Wedding Chapel",
+   "ko": "예식장"
+  },
+  {
+   "id": "person_with_veil",
+   "icon": "person_with_veil",
+   "en": "Bride",
+   "ko": "신부"
+  },
+  {
+   "id": "person_in_tuxedo",
+   "icon": "person_in_tuxedo",
+   "en": "Groom",
+   "ko": "신랑"
+  },
+  {
+   "id": "baby_bottle",
+   "icon": "baby_bottle",
+   "en": "Baby Bottle",
+   "ko": "젖병"
+  },
+  {
+   "id": "baby_angel",
+   "icon": "baby_angel",
+   "en": "Cherub",
+   "ko": "아기 천사"
+  },
+  {
+   "id": "baby_symbol",
+   "icon": "baby_symbol",
+   "en": "Baby Care Room",
+   "ko": "수유실"
+  },
+  {
+   "id": "sleeping_face",
+   "icon": "sleeping_face",
+   "en": "Sleepyhead",
+   "ko": "잠꾸러기"
+  },
+  {
+   "id": "person_in_bed",
+   "icon": "person_in_bed",
+   "en": "Sleeper",
+   "ko": "잠자는 사람"
+  },
+  {
+   "id": "ogre",
+   "icon": "ogre",
+   "en": "Goblin",
+   "ko": "도깨비"
+  },
+  {
+   "id": "person_zombie",
+   "icon": "person_zombie",
+   "en": "Zombie",
+   "ko": "좀비"
+  },
+  {
+   "id": "person_vampire",
+   "icon": "person_vampire",
+   "en": "Vampire",
+   "ko": "뱀파이어"
+  },
+  {
+   "id": "troll",
+   "icon": "troll",
+   "en": "Troll",
+   "ko": "트롤"
+  },
+  {
+   "id": "firefighter",
+   "icon": "firefighter",
+   "en": "Firefighter",
+   "ko": "소방관"
+  },
+  {
+   "id": "police_officer",
+   "icon": "police_officer",
+   "en": "Police Officer",
+   "ko": "경찰관"
+  },
+  {
+   "id": "cook",
+   "icon": "cook",
+   "en": "Chef",
+   "ko": "요리사"
+  },
+  {
+   "id": "farmer",
+   "icon": "farmer",
+   "en": "Farmer",
+   "ko": "농부"
+  },
+  {
+   "id": "pilot",
+   "icon": "pilot",
+   "en": "Pilot",
+   "ko": "조종사"
+  },
+  {
+   "id": "teacher",
+   "icon": "teacher",
+   "en": "Teacher",
+   "ko": "선생님"
+  },
+  {
+   "id": "scientist",
+   "icon": "scientist",
+   "en": "Scientist",
+   "ko": "과학자"
+  },
+  {
+   "id": "health_worker",
+   "icon": "health_worker",
+   "en": "Doctor",
+   "ko": "의사"
+  },
+  {
+   "id": "judge",
+   "icon": "judge",
+   "en": "Judge",
+   "ko": "판사"
+  },
+  {
+   "id": "mechanic",
+   "icon": "mechanic",
+   "en": "Mechanic",
+   "ko": "정비사"
+  },
+  {
+   "id": "artist",
+   "icon": "artist",
+   "en": "Artist",
+   "ko": "화가"
+  },
+  {
+   "id": "detective",
+   "icon": "detective",
+   "en": "Detective",
+   "ko": "탐정"
+  },
+  {
+   "id": "person_mage",
+   "icon": "person_mage",
+   "en": "Wizard",
+   "ko": "마법사"
+  },
+  {
+   "id": "person_elf",
+   "icon": "person_elf",
+   "en": "Elf",
+   "ko": "엘프"
+  },
+  {
+   "id": "person_genie",
+   "icon": "person_genie",
+   "en": "Genie",
+   "ko": "지니"
+  },
+  {
+   "id": "prince",
+   "icon": "prince",
+   "en": "Prince",
+   "ko": "왕자"
+  },
+  {
+   "id": "thumbs_up",
+   "icon": "thumbs_up",
+   "en": "Thumbs Up",
+   "ko": "엄지 척"
+  },
+  {
+   "id": "thumbs_down",
+   "icon": "thumbs_down",
+   "en": "Thumbs Down",
+   "ko": "엄지 내리기"
+  },
+  {
+   "id": "victory_hand",
+   "icon": "victory_hand",
+   "en": "Peace Sign",
+   "ko": "브이"
+  },
+  {
+   "id": "ok_hand",
+   "icon": "ok_hand",
+   "en": "OK Sign",
+   "ko": "오케이"
+  },
+  {
+   "id": "waving_hand",
+   "icon": "waving_hand",
+   "en": "Waving Hand",
+   "ko": "손 인사"
+  },
+  {
+   "id": "clapping_hands",
+   "icon": "clapping_hands",
+   "en": "Applause",
+   "ko": "박수"
+  },
+  {
+   "id": "raised_fist",
+   "icon": "raised_fist",
+   "en": "Fist",
+   "ko": "주먹"
+  },
+  {
+   "id": "crossed_fingers",
+   "icon": "crossed_fingers",
+   "en": "Fingers Crossed",
+   "ko": "손가락 꼬기"
+  },
+  {
+   "id": "call_me_hand",
+   "icon": "call_me_hand",
+   "en": "Call Me",
+   "ko": "전화해"
+  },
+  {
+   "id": "folded_hands",
+   "icon": "folded_hands",
+   "en": "Praying Hands",
+   "ko": "기도하는 손"
+  },
+  {
+   "id": "eye",
+   "icon": "eye",
+   "en": "Eye",
+   "ko": "눈동자"
+  },
+  {
+   "id": "mouth",
+   "icon": "mouth",
+   "en": "Lips",
+   "ko": "입술"
+  },
+  {
+   "id": "tongue",
+   "icon": "tongue",
+   "en": "Tongue",
+   "ko": "혀"
+  },
+  {
+   "id": "tooth",
+   "icon": "tooth",
+   "en": "Tooth",
+   "ko": "치아"
+  },
+  {
+   "id": "bone",
+   "icon": "bone",
+   "en": "Bone",
+   "ko": "뼈"
+  },
+  {
+   "id": "brain",
+   "icon": "brain",
+   "en": "Brain",
+   "ko": "뇌"
+  },
+  {
+   "id": "lungs",
+   "icon": "lungs",
+   "en": "Lungs",
+   "ko": "폐"
+  },
+  {
+   "id": "anatomical_heart",
+   "icon": "anatomical_heart",
+   "en": "Human Heart",
+   "ko": "심장"
+  },
+  {
+   "id": "ear",
+   "icon": "ear",
+   "en": "Ear",
+   "ko": "귀"
+  },
+  {
+   "id": "nose",
+   "icon": "nose",
+   "en": "Nose",
+   "ko": "코"
+  },
+  {
+   "id": "foot",
+   "icon": "foot",
+   "en": "Foot",
+   "ko": "발"
+  },
+  {
+   "id": "leg",
+   "icon": "leg",
+   "en": "Leg",
+   "ko": "사람 다리"
+  },
+  {
+   "id": "footprints",
+   "icon": "footprints",
+   "en": "Footprints",
+   "ko": "발자국"
+  },
+  {
+   "id": "paw_prints",
+   "icon": "paw_prints",
+   "en": "Paw Prints",
+   "ko": "동물 발자국"
+  },
+  {
+   "id": "kiss_mark",
+   "icon": "kiss_mark",
+   "en": "Kiss Mark",
+   "ko": "입술 자국"
+  },
+  {
+   "id": "feather",
+   "icon": "feather",
+   "en": "Feather",
+   "ko": "깃털"
+  },
+  {
+   "id": "red_heart",
+   "icon": "red_heart",
+   "en": "Red Heart",
+   "ko": "빨간 하트"
+  },
+  {
+   "id": "blue_heart",
+   "icon": "blue_heart",
+   "en": "Blue Heart",
+   "ko": "파란 하트"
+  },
+  {
+   "id": "green_heart",
+   "icon": "green_heart",
+   "en": "Green Heart",
+   "ko": "초록 하트"
+  },
+  {
+   "id": "yellow_heart",
+   "icon": "yellow_heart",
+   "en": "Yellow Heart",
+   "ko": "노란 하트"
+  },
+  {
+   "id": "purple_heart",
+   "icon": "purple_heart",
+   "en": "Purple Heart",
+   "ko": "보라 하트"
+  },
+  {
+   "id": "orange_heart",
+   "icon": "orange_heart",
+   "en": "Orange Heart",
+   "ko": "주황 하트"
+  },
+  {
+   "id": "black_heart",
+   "icon": "black_heart",
+   "en": "Black Heart",
+   "ko": "검은 하트"
+  },
+  {
+   "id": "white_heart",
+   "icon": "white_heart",
+   "en": "White Heart",
+   "ko": "하얀 하트"
+  },
+  {
+   "id": "brown_heart",
+   "icon": "brown_heart",
+   "en": "Brown Heart",
+   "ko": "갈색 하트"
+  },
+  {
+   "id": "pink_heart",
+   "icon": "pink_heart",
+   "en": "Pink Heart",
+   "ko": "분홍 하트"
+  },
+  {
+   "id": "red_circle",
+   "icon": "red_circle",
+   "en": "Red Circle",
+   "ko": "빨간 동그라미"
+  },
+  {
+   "id": "blue_circle",
+   "icon": "blue_circle",
+   "en": "Blue Circle",
+   "ko": "파란 동그라미"
+  },
+  {
+   "id": "green_circle",
+   "icon": "green_circle",
+   "en": "Green Circle",
+   "ko": "초록 동그라미"
+  },
+  {
+   "id": "yellow_circle",
+   "icon": "yellow_circle",
+   "en": "Yellow Circle",
+   "ko": "노란 동그라미"
+  },
+  {
+   "id": "purple_circle",
+   "icon": "purple_circle",
+   "en": "Purple Circle",
+   "ko": "보라 동그라미"
+  },
+  {
+   "id": "orange_circle",
+   "icon": "orange_circle",
+   "en": "Orange Circle",
+   "ko": "주황 동그라미"
+  },
+  {
+   "id": "brown_circle",
+   "icon": "brown_circle",
+   "en": "Brown Circle",
+   "ko": "갈색 동그라미"
+  },
+  {
+   "id": "black_circle",
+   "icon": "black_circle",
+   "en": "Black Circle",
+   "ko": "검은 동그라미"
+  },
+  {
+   "id": "white_circle",
+   "icon": "white_circle",
+   "en": "White Circle",
+   "ko": "하얀 동그라미"
+  },
+  {
+   "id": "red_square",
+   "icon": "red_square",
+   "en": "Red Square",
+   "ko": "빨간 네모"
+  },
+  {
+   "id": "blue_square",
+   "icon": "blue_square",
+   "en": "Blue Square",
+   "ko": "파란 네모"
+  },
+  {
+   "id": "green_square",
+   "icon": "green_square",
+   "en": "Green Square",
+   "ko": "초록 네모"
+  },
+  {
+   "id": "yellow_square",
+   "icon": "yellow_square",
+   "en": "Yellow Square",
+   "ko": "노란 네모"
+  },
+  {
+   "id": "purple_square",
+   "icon": "purple_square",
+   "en": "Purple Square",
+   "ko": "보라 네모"
+  },
+  {
+   "id": "orange_square",
+   "icon": "orange_square",
+   "en": "Orange Square",
+   "ko": "주황 네모"
+  },
+  {
+   "id": "brown_square",
+   "icon": "brown_square",
+   "en": "Brown Square",
+   "ko": "갈색 네모"
+  },
+  {
+   "id": "black_large_square",
+   "icon": "black_large_square",
+   "en": "Black Square",
+   "ko": "검은 네모"
+  },
+  {
+   "id": "white_large_square",
+   "icon": "white_large_square",
+   "en": "White Square",
+   "ko": "하얀 네모"
+  },
+  {
+   "id": "aries",
+   "icon": "aries",
+   "en": "Aries",
+   "ko": "양자리"
+  },
+  {
+   "id": "taurus",
+   "icon": "taurus",
+   "en": "Taurus",
+   "ko": "황소자리"
+  },
+  {
+   "id": "gemini",
+   "icon": "gemini",
+   "en": "Gemini",
+   "ko": "쌍둥이자리"
+  },
+  {
+   "id": "cancer",
+   "icon": "cancer",
+   "en": "Cancer",
+   "ko": "게자리"
+  },
+  {
+   "id": "leo",
+   "icon": "leo",
+   "en": "Leo",
+   "ko": "사자자리"
+  },
+  {
+   "id": "virgo",
+   "icon": "virgo",
+   "en": "Virgo",
+   "ko": "처녀자리"
+  },
+  {
+   "id": "libra",
+   "icon": "libra",
+   "en": "Libra",
+   "ko": "천칭자리"
+  },
+  {
+   "id": "scorpio",
+   "icon": "scorpio",
+   "en": "Scorpio",
+   "ko": "전갈자리"
+  },
+  {
+   "id": "sagittarius",
+   "icon": "sagittarius",
+   "en": "Sagittarius",
+   "ko": "사수자리"
+  },
+  {
+   "id": "capricorn",
+   "icon": "capricorn",
+   "en": "Capricorn",
+   "ko": "염소자리"
+  },
+  {
+   "id": "aquarius",
+   "icon": "aquarius",
+   "en": "Aquarius",
+   "ko": "물병자리"
+  },
+  {
+   "id": "pisces",
+   "icon": "pisces",
+   "en": "Pisces",
+   "ko": "물고기자리"
+  },
+  {
+   "id": "plus",
+   "icon": "plus",
+   "en": "Plus",
+   "ko": "더하기"
+  },
+  {
+   "id": "minus",
+   "icon": "minus",
+   "en": "Minus",
+   "ko": "빼기"
+  },
+  {
+   "id": "multiply",
+   "icon": "multiply",
+   "en": "Multiply",
+   "ko": "곱하기"
+  },
+  {
+   "id": "divide",
+   "icon": "divide",
+   "en": "Divide",
+   "ko": "나누기"
+  },
+  {
+   "id": "heavy_equals_sign",
+   "icon": "heavy_equals_sign",
+   "en": "Equals",
+   "ko": "등호"
+  },
+  {
+   "id": "infinity",
+   "icon": "infinity",
+   "en": "Infinity",
+   "ko": "무한대"
+  },
+  {
+   "id": "no_smoking",
+   "icon": "no_smoking",
+   "en": "No Smoking",
+   "ko": "금연"
+  },
+  {
+   "id": "prohibited",
+   "icon": "prohibited",
+   "en": "Prohibited",
+   "ko": "금지"
+  },
+  {
+   "id": "no_bicycles",
+   "icon": "no_bicycles",
+   "en": "No Bicycles",
+   "ko": "자전거 금지"
+  },
+  {
+   "id": "no_littering",
+   "icon": "no_littering",
+   "en": "No Littering",
+   "ko": "쓰레기 금지"
+  },
+  {
+   "id": "no_pedestrians",
+   "icon": "no_pedestrians",
+   "en": "No Pedestrians",
+   "ko": "보행 금지"
+  },
+  {
+   "id": "no_mobile_phones",
+   "icon": "no_mobile_phones",
+   "en": "No Phones",
+   "ko": "휴대폰 금지"
+  },
+  {
+   "id": "warning",
+   "icon": "warning",
+   "en": "Warning Sign",
+   "ko": "경고 표지"
+  },
+  {
+   "id": "radioactive",
+   "icon": "radioactive",
+   "en": "Radiation",
+   "ko": "방사능"
+  },
+  {
+   "id": "biohazard",
+   "icon": "biohazard",
+   "en": "Biohazard",
+   "ko": "생물 재해"
+  },
+  {
+   "id": "mens_room",
+   "icon": "mens_room",
+   "en": "Gentlemen",
+   "ko": "남자 화장실"
+  },
+  {
+   "id": "womens_room",
+   "icon": "womens_room",
+   "en": "Ladies",
+   "ko": "여자 화장실"
+  },
+  {
+   "id": "restroom",
+   "icon": "restroom",
+   "en": "Restroom",
+   "ko": "화장실"
+  },
+  {
+   "id": "wheelchair_symbol",
+   "icon": "wheelchair_symbol",
+   "en": "Wheelchair Access",
+   "ko": "휠체어 표지"
+  },
+  {
+   "id": "information",
+   "icon": "information",
+   "en": "Information",
+   "ko": "안내"
+  },
+  {
+   "id": "up_arrow",
+   "icon": "up_arrow",
+   "en": "Up Arrow",
+   "ko": "위쪽 화살표"
+  },
+  {
+   "id": "down_arrow",
+   "icon": "down_arrow",
+   "en": "Down Arrow",
+   "ko": "아래쪽 화살표"
+  },
+  {
+   "id": "left_arrow",
+   "icon": "left_arrow",
+   "en": "Left Arrow",
+   "ko": "왼쪽 화살표"
+  },
+  {
+   "id": "right_arrow",
+   "icon": "right_arrow",
+   "en": "Right Arrow",
+   "ko": "오른쪽 화살표"
+  },
+  {
+   "id": "left_right_arrow",
+   "icon": "left_right_arrow",
+   "en": "Left-Right Arrow",
+   "ko": "좌우 화살표"
+  },
+  {
+   "id": "up_down_arrow",
+   "icon": "up_down_arrow",
+   "en": "Up-Down Arrow",
+   "ko": "위아래 화살표"
+  },
+  {
+   "id": "keycap_1",
+   "icon": "keycap_1",
+   "en": "Number 1",
+   "ko": "숫자 1"
+  },
+  {
+   "id": "keycap_2",
+   "icon": "keycap_2",
+   "en": "Number 2",
+   "ko": "숫자 2"
+  },
+  {
+   "id": "keycap_3",
+   "icon": "keycap_3",
+   "en": "Number 3",
+   "ko": "숫자 3"
+  },
+  {
+   "id": "keycap_4",
+   "icon": "keycap_4",
+   "en": "Number 4",
+   "ko": "숫자 4"
+  },
+  {
+   "id": "keycap_5",
+   "icon": "keycap_5",
+   "en": "Number 5",
+   "ko": "숫자 5"
+  },
+  {
+   "id": "keycap_6",
+   "icon": "keycap_6",
+   "en": "Number 6",
+   "ko": "숫자 6"
+  },
+  {
+   "id": "keycap_7",
+   "icon": "keycap_7",
+   "en": "Number 7",
+   "ko": "숫자 7"
+  },
+  {
+   "id": "keycap_8",
+   "icon": "keycap_8",
+   "en": "Number 8",
+   "ko": "숫자 8"
+  },
+  {
+   "id": "keycap_9",
+   "icon": "keycap_9",
+   "en": "Number 9",
+   "ko": "숫자 9"
+  },
+  {
+   "id": "keycap_0",
+   "icon": "keycap_0",
+   "en": "Number 0",
+   "ko": "숫자 0"
+  },
+  {
+   "id": "cheese_wedge",
+   "icon": "cheese_wedge",
+   "en": "Cheese",
+   "ko": "치즈"
+  },
+  {
+   "id": "front_facing_baby_chick",
+   "icon": "front_facing_baby_chick",
+   "en": "Chick",
+   "ko": "병아리"
+  },
+  {
+   "id": "boxing_glove",
+   "icon": "boxing_glove",
+   "en": "Boxing Glove",
+   "ko": "권투 글러브"
+  }
+ ]
+}
