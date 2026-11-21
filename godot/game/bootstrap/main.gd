@@ -19,10 +19,6 @@ func _init() -> void:
  launch_game = _launch_round
  score_provider = func() -> Dictionary: return {"score": int(state.data.tutorial.hits) * 100, "runId": state.data.ui.get("runId", ""), "completed": state.data.tutorial.status == "complete"}
 
-func _ready() -> void:
- landscape = true
- super._ready()
-
 func _launch_round(owner: Control) -> void:
  if state.data.tutorial.status != "active" and not state.replay_tutorial():
   _show_error(state.error)

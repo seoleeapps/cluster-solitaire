@@ -129,16 +129,6 @@
       ]
     },
     {
-      "id": "ui_landscape",
-      "core": true,
-      "foundation": false,
-      "paths": [
-        "godot/addons/seorilabs_game/ui/**",
-        "godot/addons/seorilabs_game/flow/outgame_main.gd",
-        "godot/game/features/**"
-      ]
-    },
-    {
       "id": "ui_kit",
       "core": true,
       "foundation": false,

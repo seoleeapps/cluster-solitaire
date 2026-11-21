@@ -42,6 +42,12 @@ class NativeExportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root=self.clone_config(folder);p=root/'godot/project.godot';p.write_text(p.read_text().replace('textures/vram_compression/import_etc2_astc=true','textures/vram_compression/import_etc2_astc=false'))
             self.assertIn('Mobile texture import must be enabled for native exports',check_native.validate(root))
+    def test_landscape_display_is_rejected(self):
+        for old,new in [('window/handheld/orientation=1','window/handheld/orientation=0'),('window/size/viewport_width=390\nwindow/size/viewport_height=844','window/size/viewport_width=1280\nwindow/size/viewport_height=720'),('window/stretch/aspect="keep_width"','window/stretch/aspect="expand"')]:
+            with self.subTest(old=old),tempfile.TemporaryDirectory() as folder:
+                root=self.clone_config(folder);p=root/'godot/project.godot';text=p.read_text()
+                self.assertIn(old,text);p.write_text(text.replace(old,new))
+                self.assertIn('Display must be portrait 390x844 stretched by width',check_native.validate(root))
     def test_unvalidated_platform_preset_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             root=self.clone_config(folder);p=root/'godot/export_presets.cfg';p.write_text(p.read_text()+'\n[preset.2]\nname="iOS"\nplatform="iOS"\nrunnable=false\n\n[preset.2.options]\n')

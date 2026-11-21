@@ -29,7 +29,7 @@ def main():
     p.add_argument('--project', default='godot')
     p.add_argument('--out', type=Path)
     p.add_argument('--capture', action='store_true')
-    p.add_argument('--size', default='568x320')
+    p.add_argument('--size', default='390x844')
     a = p.parse_args()
     root = a.root.resolve(); project = (root / a.project).resolve()
     if not project.is_relative_to(root): p.error('project must be inside repository')

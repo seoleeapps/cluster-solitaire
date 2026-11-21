@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the Android export identity, signing boundaries and release resource exclusions."""
+"""Validate the Android export identity, portrait display, signing boundaries and release resource exclusions."""
 import configparser
 import hashlib
 import json
@@ -29,6 +29,11 @@ def validate(root):
         errors.append('Invalid native dependency lock: '+type(error).__name__)
     project=configparser.ConfigParser(interpolation=None);project.optionxform=str;project.read_string('[general]\n'+(root/'godot/project.godot').read_text())
     if value(project,'rendering','textures/vram_compression/import_etc2_astc') is not True:errors.append('Mobile texture import must be enabled for native exports')
+    # Godot 4 takes the Android screen orientation from the project display settings, not from the export preset.
+    # The common flow draws portrait screens at a fixed scale, so the logical size stays 390x844 and only the height grows.
+    display={key:value(project,'display',key) for key in ['window/size/viewport_width','window/size/viewport_height','window/handheld/orientation','window/stretch/mode','window/stretch/aspect']}
+    if display!={'window/size/viewport_width':390,'window/size/viewport_height':844,'window/handheld/orientation':1,'window/stretch/mode':'canvas_items','window/stretch/aspect':'keep_width'}:
+        errors.append('Display must be portrait 390x844 stretched by width')
     try:
         product=json.loads((root/'godot/config/product.json').read_text())
         play=json.loads((root/'play-store/google-play.config.json').read_text())
