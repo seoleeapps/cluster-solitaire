@@ -25,7 +25,9 @@ ROOT = Path(__file__).resolve().parents[2]
 PACK_VERSION = 1
 GENERATOR_VERSION = 1
 HOLD_SLOTS = 2
-ROUNDING = 0.005 + 1e-9
+# 합을 구하는 순서와 방식이 달라 생기는 마지막 자리 차이(Python 3.12부터 sum은 보정 합산이다)를 봐준다.
+FLOAT_SLACK = 1e-9
+ROUNDING = 0.005 + FLOAT_SLACK
 BASE_DATE = datetime.date(2026, 12, 1)
 
 LAYOUTS = {
@@ -167,7 +169,7 @@ def check_level(content, level, number, tier, recent):
                              [group_of[card] for card in reserve], (), HOLD_SLOTS)
     if count is None:
         problems.append('not solvable with %d slots' % HOLD_SLOTS)
-    elif not rule['f'][0] <= chance <= rule['f'][1]:
+    elif not rule['f'][0] - FLOAT_SLACK <= chance <= rule['f'][1] + FLOAT_SLACK:
         problems.append('forgiveness %.4f outside tier range' % chance)
     elif not isinstance(level.get('f'), (int, float)) or abs(level['f'] - chance) > ROUNDING:
         problems.append('f %r differs from reference %.4f' % (level.get('f'), chance))

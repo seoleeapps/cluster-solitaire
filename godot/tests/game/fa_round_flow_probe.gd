@@ -227,9 +227,12 @@ func _start_and_resume() -> bool:
 	_store.writable = true
 	_check(not starter.checkpoint(Progress.create(), board, 40), "진행 중인 판이 없으면 저장하지 않는다")
 
-	starter.abandon(progress)
+	_check(starter.abandon(progress) == {"new": ["A"], "coins": 5}, "버린 판에서 완성한 범주도 도감에 등록한다")
 	_check(not progress.has_run() and starter.resume(progress) == null, "다시 하기나 나가기는 진행 중인 판을 지운다")
+	_check(progress.album_items("A") == ["a1", "a2", "a3", "a4"] and progress.coins() == 205, "도감과 새 범주 코인")
 	_check(_analytics.last("level_end") == {"level_name": "stage_1", "mode": "journey", "success": false}, "끝내지 못한 판을 알린다")
+	_check(_analytics.last("earn_virtual_currency") == {"virtual_currency_name": "coin", "value": 5, "source": "journey"}, "도감 코인을 알린다")
+	_check(starter.abandon(progress) == {"new": [], "coins": 0}, "진행 중인 판이 없으면 버릴 것이 없다")
 	_check(LoadProgress.new(_store).execute()["progress"].run().is_empty(), "지운 것도 저장한다")
 	_check(starter.start(progress, "journey", 1, "", _level(1)).slot_count() == 2, "다시 시작한 판에서는 3번째 칸이 다시 잠긴다")
 	return true
@@ -294,6 +297,10 @@ func _finish_daily() -> bool:
 	_check(progress.booster("hint") == 2 and progress.coins() == 500 and board.slot_count() == 2 and board.can_undo(), "부스터도 코인도 줄지 않는다")
 	_check(_ad_flow().check(progress, "rewarded_continue", "daily") == {"ok": false, "reason": "daily_challenge"}, "일일 도전에서는 이어하기 광고가 없다")
 	_check(_ad_flow().check(progress, "rewarded_booster", "daily")["reason"] == "daily_challenge", "일일 도전에서는 부스터 광고가 없다")
+	var failed: Board = Board.create(_level(10), Board.HOLD_SLOTS_BASE)
+	for last: String in ["b3", "b4", "c3", "c4"]:
+		failed.submit(["a1", "a2", "a3", last])
+	_check(failed.is_failed() and not _ad_flow().finish_continue(progress, "earned", failed) and failed.is_failed(), "일일 도전에서는 광고를 봐도 이어 가지 못한다")
 
 	board.submit(["a1", "a2", "a3", "b3"])
 	_win(board)

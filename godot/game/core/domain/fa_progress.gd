@@ -269,6 +269,23 @@ func register_album(category: String, items: Array) -> bool:
 	return is_new
 
 
+## 판에서 완성한 범주를 모두 도감에 넣고 새 범주와 10개 단위 달성의 코인을 준다.
+## 결과는 {new: 새로 등록한 범주, coins: 받은 코인}이다. 끝낸 판과 버린 판 모두에 쓴다.
+func collect_album(board: Board) -> Dictionary:
+	var fresh: Array[String] = []
+	var earned: int = 0
+	for category: String in board.solved():
+		if not register_album(category, board.group_items(category)):
+			continue
+		fresh.append(category)
+		if grant("album:" + category, {"coins": Economy.ALBUM_NEW_CATEGORY}):
+			earned += Economy.ALBUM_NEW_CATEGORY
+		var milestone: int = Economy.album_milestone(album_count())
+		if milestone > 0 and grant("album_count:%d" % album_count(), {"coins": milestone}):
+			earned += milestone
+	return {"new": fresh, "coins": earned}
+
+
 func album_count() -> int:
 	return _data["album"].size()
 

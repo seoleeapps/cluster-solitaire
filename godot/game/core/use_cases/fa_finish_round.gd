@@ -49,7 +49,7 @@ func execute(progress: Progress, board: Board, seconds: int) -> Dictionary:
 			_settle_daily(progress, board, run["date"], seconds, result)
 		RoundMode.TUTORIAL:
 			_settle_tutorial(progress, result)
-	result["album"] = _register_album(progress, board)
+	result["album"] = progress.collect_album(board)
 	if mode != RoundMode.TUTORIAL:
 		AdPolicy.record_round_end(progress.ads())
 	progress.clear_run()
@@ -95,19 +95,3 @@ func _pay_round(progress: Progress, kind: String, id: String, coins: int, result
 	if progress.grant("%s:%s" % [kind, id], {"coins": coins}):
 		result["coins"] = coins
 		result["bonus"] = {"key": "%s_bonus:%s" % [kind, id], "coins": Economy.ad_bonus(coins)}
-
-
-## 완성한 범주를 도감에 넣고 새 범주와 10개 단위 달성의 코인을 준다.
-func _register_album(progress: Progress, board: Board) -> Dictionary:
-	var fresh: Array[String] = []
-	var coins: int = 0
-	for category: String in board.solved():
-		if not progress.register_album(category, board.group_items(category)):
-			continue
-		fresh.append(category)
-		if progress.grant("album:" + category, {"coins": Economy.ALBUM_NEW_CATEGORY}):
-			coins += Economy.ALBUM_NEW_CATEGORY
-		var milestone: int = Economy.album_milestone(progress.album_count())
-		if milestone > 0 and progress.grant("album_count:%d" % progress.album_count(), {"coins": milestone}):
-			coins += milestone
-	return {"new": fresh, "coins": coins}

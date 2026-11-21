@@ -291,6 +291,22 @@ func _album() -> bool:
 	_check(progress.album_items("fruits") == ["banana", "lemon", "grapes", "peach", "mango", "kiwi_fruit", "pear"], "새로 본 카드만 더한다")
 	_check(progress.register_album("birds", ["owl", "duck", "swan", "eagle"]) and progress.album_count() == 2, "범주 수")
 	_check(progress.album_categories() == ["fruits", "birds"] and progress.album_items("tools").is_empty(), "등록한 범주 목록")
+
+	progress = Progress.create()
+	for index: int in 8:
+		progress.register_album("seen%d" % index, ["x"])
+	var board: Board = Board.create({
+		"groups": [{"cat": "A", "items": ["a1", "a2", "a3", "a4"]}, {"cat": "B", "items": ["b1", "b2", "b3", "b4"]}],
+		"cols": [["b1", "a1"], ["b2", "a2"]], "reserve": ["a3", "a4", "b3", "b4"],
+	}, Board.HOLD_SLOTS_BASE)
+	_check(progress.collect_album(board) == {"new": [], "coins": 0}, "완성한 범주가 없으면 도감에 넣을 것이 없다")
+	board.submit(["a1", "a2", "a3", "a4"])
+	_check(progress.collect_album(board) == {"new": ["A"], "coins": 5}, "완성한 범주를 등록하고 새 범주 코인 5를 준다")
+	_check(progress.album_items("A") == ["a1", "a2", "a3", "a4"] and progress.coins() == 5 and progress.has_grant("album:A"), "그 판에서 본 카드와 지급 기록")
+	_check(progress.collect_album(board) == {"new": [], "coins": 0} and progress.coins() == 5, "같은 범주로 다시 받지 않는다")
+	board.submit(["b1", "b2", "b3", "b4"])
+	_check(progress.collect_album(board) == {"new": ["B"], "coins": 55}, "10번째 범주에서는 달성 코인 50을 더 받는다")
+	_check(progress.album_count() == 10 and progress.has_grant("album_count:10") and progress.coins() == 60, "달성 기록과 코인")
 	return true
 
 

@@ -242,7 +242,8 @@ var result := FaFinishRound.new(store, analytics, clock).execute(progress, board
 | `record_daily_success(date, today, summary)` | 날짜, 오늘, 요약 | `{recorded, counted, streak}` |
 | `daily_result(date)` | 날짜 | 요약 `{mistakes, holds, seconds, order}` 또는 빈 값 |
 | `daily_streak(today)`, `daily_best()` | 오늘, 없음 | `int` |
-| `register_album(category, items)` | 범주, 본 카드 | `bool`. 처음 등록한 범주면 `true` |
+| `register_album(category, items)` | 범주, 본 카드 | `bool`. 처음 등록한 범주면 `true`. 코인은 주지 않는다 |
+| `collect_album(board)` | 판 | `{new, coins}`. 판에서 완성한 범주를 모두 등록하고 새 범주와 10개 단위 달성의 코인을 준다 |
 | `album_count()`, `album_categories()`, `album_items(category)` | 없음, 없음, 범주 | `int`, `Array[String]`, `Array[String]` |
 | `attendance_day()` | 없음 | `int`. 주기 안에서 다음에 받을 날(0~6) |
 | `can_claim_attendance(today)` | 오늘 | `bool` |
@@ -281,7 +282,7 @@ var result := FaFinishRound.new(store, analytics, clock).execute(progress, board
 | `FaStartRound.new(store, analytics)` | `start(progress, mode, stage, date, level)` | 저장, 판 종류, 스테이지, 날짜, 레벨 | `FaBoard`. 레벨이 틀리거나 아직 열리지 않은 스테이지, 잘못된 날짜면 `null` |
 | | `resume(progress)` | 저장 | `FaBoard`. 진행 중인 판이 없으면 `null` |
 | | `checkpoint(progress, board, seconds)` | 저장, 판, 이 판에 쓴 초 | `bool`. 저장했는지 |
-| | `abandon(progress)` | 저장 | 없음. 다시 하기와 나가기 |
+| | `abandon(progress)` | 저장 | `{new, coins}`. 다시 하기와 나가기. 버린 판에서 완성한 범주를 도감에 넣고 그 결과를 돌려준다 |
 | `FaFinishRound.new(store, analytics, clock)` | `execute(progress, board, seconds)` | 저장, 끝난 판, 걸린 초 | 아래 설명 |
 | `FaUseBooster.new(store, analytics)` | `execute(progress, board, booster, pay_coins)` | 저장, 판, 부스터 id, 보유분이 없을 때 코인으로 살지 | 아래 설명 |
 | `FaAdFlow.new(store, ads, clock, config, analytics)` | `begin_session(progress)` | 저장 | 없음. 앱 실행마다 한 번 |
@@ -290,7 +291,7 @@ var result := FaFinishRound.new(store, analytics, clock).execute(progress, board
 | | `decline(progress)` | 저장 | 없음. 보상형 제안을 거절했을 때 |
 | | `finish_interstitial(progress, result)` | 저장, 광고 결과 | 없음 |
 | | `finish_booster(progress, result, booster)` | 저장, 광고 결과, 부스터 id | `bool`. 부스터 1개를 줬는지 |
-| | `finish_continue(progress, result, board)` | 저장, 광고 결과, 실패한 판 | `bool`. 이어 갔는지 |
+| | `finish_continue(progress, result, board)` | 저장, 광고 결과, 실패한 판 | `bool`. 이어 갔는지. 일일 도전에서는 항상 `false` |
 | | `finish_bonus(progress, result, bonus)` | 저장, 광고 결과, 정산 결과의 `bonus` | `bool`. 코인을 줬는지 |
 
 `FaFinishRound.execute`는 진행 중인 판이 없으면 `{ok: false, reason: "no_run"}`, 판이 끝나지 않았으면 `{ok: false, reason: "not_won"}`을 돌려준다. 정산하면 다음 값을 돌려준다.
@@ -473,6 +474,7 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 | 끝난 판 수 | 클리어한 여정과 일일 도전 판만 센다. 버린 판과 튜토리얼은 세지 않는다 | 실패하고 다시 하기를 되풀이할 때 전면 광고가 앞당겨지지 않게 한다 |
 | 스테이지 코인 | 스테이지를 처음 깼을 때만 준다 | 같은 스테이지를 되풀이해 코인을 모으는 길을 막는다 |
 | 지난 날짜의 일일 도전 | 코인 30은 주고 연속 기록에만 넣지 않는다 | GDD는 연속 기록만 정했다 |
+| 도감에 넣는 시점 | 판을 끝낼 때와 버릴 때, 그 판에서 완성한 범주를 넣는다 | GDD는 범주를 한 번 완성하면 등록한다고 했다. 실패하거나 그만둔 판에서 완성한 범주도 빠지지 않게 한다 |
 | 출석 | 날을 건너뛰어도 7일 주기가 이어진다 | GDD에 끊김 규칙이 없다 |
 | 시계가 뒤로 간 경우 | 광고 간격은 지난 것으로 본다 | 기기 시간을 되돌렸을 때 보상형 버튼이 오래 막히지 않게 한다 |
 | 진행 중인 판의 검증 | 저장을 읽을 때 `run.board`까지 확인하고 틀리면 저장 전체를 `corrupt`로 본다 | 직전 백업은 보통 한 수 전의 온전한 상태다 |
@@ -482,7 +484,7 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 
 - 선택 상태(최대 4장, 다시 누르면 해제)는 화면이 들고 있다가 `submit`에 넘긴다. 코어는 `can_select`와 `submit`의 `invalid`로만 확인한다
 - 예비 칸과 임시 칸은 자리를 유지한다. 카드가 빠진 자리는 `""`이고 남은 카드가 당겨지지 않는다
-- `submit`, `hold`, `undo`, `unlock_slot`, `apply_continue`로 판을 바꾼 뒤에는 `FaStartRound.checkpoint`를 부른다. `FaUseBooster`와 `FaAdFlow.finish_continue`는 스스로 저장한다
+- `submit`, `hold`, `undo`, `unlock_slot`, `apply_continue`로 판을 바꾼 뒤에는 `FaStartRound.checkpoint`를 부른다. `FaUseBooster`와 `FaAdFlow.finish_continue`는 스스로 저장한다. `abandon`은 마지막으로 저장한 판을 기준으로 도감을 채운다
 - 막힘 창은 `is_stuck()`, 실패 창은 `is_failed()`로 띄우고, 보여 줄 버튼은 `can_undo()`, `can_unlock_slot()`, `can_continue()`로 정한다
 - 3번째 칸은 `FaBoard` 안에만 있어서 다음 판을 `start`하면 다시 2칸이다
 - 걸린 시간은 화면이 재서 `checkpoint`와 `FaFinishRound.execute`에 넘긴다. 전면 광고의 누적 플레이 조건은 `FaAdFlow.add_play_time`으로 쌓는다

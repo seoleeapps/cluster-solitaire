@@ -8,6 +8,8 @@ const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
 const StorePort := preload("res://game/core/ports/fa_store_port.gd")
 const AnalyticsPort := preload("res://game/core/ports/fa_analytics_port.gd")
 
+const COIN := "coin"
+
 var _store: StorePort
 var _analytics: AnalyticsPort
 
@@ -41,13 +43,20 @@ func checkpoint(progress: Progress, board: Board, seconds: int) -> bool:
 	return progress.update_run(board, seconds) and _store.write(progress.to_dict())
 
 
-## 끝내지 않고 판을 버린다(다시 하기, 나가기).
-func abandon(progress: Progress) -> void:
+## 끝내지 않고 판을 버린다(다시 하기, 나가기). 그 판에서 완성한 범주는 도감에 남긴다.
+## 결과는 도감에 새로 들어간 {new, coins}이고, 진행 중인 판이 없으면 둘 다 비어 있다.
+func abandon(progress: Progress) -> Dictionary:
 	if not progress.has_run():
-		return
+		return {"new": [], "coins": 0}
 	var run: Dictionary = progress.run()
+	var album: Dictionary = progress.collect_album(Board.from_dict(run["board"]))
 	progress.clear_run()
 	_store.write(progress.to_dict())
 	_analytics.log_event("level_end", {
 		"level_name": RoundMode.level_name(run["mode"], run["stage"], run["date"]), "mode": run["mode"], "success": false,
 	})
+	if album["coins"] > 0:
+		_analytics.log_event("earn_virtual_currency", {
+			"virtual_currency_name": COIN, "value": album["coins"], "source": run["mode"],
+		})
+	return album

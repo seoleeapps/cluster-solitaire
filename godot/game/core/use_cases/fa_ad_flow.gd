@@ -8,6 +8,7 @@ const Board := preload("res://game/core/domain/fa_board.gd")
 const Progress := preload("res://game/core/domain/fa_progress.gd")
 const Economy := preload("res://game/core/domain/fa_economy.gd")
 const AdPolicy := preload("res://game/core/domain/fa_ad_policy.gd")
+const RoundMode := preload("res://game/core/domain/fa_round_mode.gd")
 const StorePort := preload("res://game/core/ports/fa_store_port.gd")
 const AdsPort := preload("res://game/core/ports/fa_ads_port.gd")
 const ClockPort := preload("res://game/core/ports/fa_clock_port.gd")
@@ -74,11 +75,14 @@ func finish_booster(progress: Progress, result: String, booster: String) -> bool
 	return granted
 
 
-## 이어하기 광고가 끝났을 때 부른다. 끝까지 봤으면 board의 실수를 2 줄이고 true다. 판당 1회다.
+## 이어하기 광고가 끝났을 때 부른다. 끝까지 봤으면 진행 중인 판 board의 실수를 2 줄이고 true다.
+## 판당 1회이고 일일 도전에서는 이어 가지 못한다.
 func finish_continue(progress: Progress, result: String, board: Board) -> bool:
-	var granted: bool = _record(progress, AdPolicy.REWARDED_CONTINUE, result) and board.apply_continue()
-	if granted and progress.has_run():
-		progress.update_run(board, progress.run()["seconds"])
+	var run: Dictionary = progress.run()
+	var allowed: bool = not run.is_empty() and run["mode"] != RoundMode.DAILY
+	var granted: bool = _record(progress, AdPolicy.REWARDED_CONTINUE, result) and allowed and board.apply_continue()
+	if granted:
+		progress.update_run(board, run["seconds"])
 	_store.write(progress.to_dict())
 	return granted
 
