@@ -169,6 +169,7 @@ func _settings() -> void:
 | `fa_admob_sdk_probe.gd` | `FaLiveServices`와 플러그인의 GDScript 층을 그대로 쓰고 Android 싱글턴 다섯 개만 대역으로 바꿔, 동의부터 광고 결과까지 따라간다 |
 | `fa_analytics_adapter_probe.gd` | 제한 검사, 공통 값, 25개 묶음, 보내지 않는 조건, 대기열 상한과 만료, 실패와 다시 시도, 기기 저장, 실행 시작 이벤트, 공통 흐름의 분석 선택 |
 | `fa_remote_config_probe.gd` | 프로필에서 만든 규칙, 형과 범위, 받기와 캐시, 대체, `remote/config.json`, 광고 정책과의 연결 |
+| `tools/test_services.py`의 HTTP 검사 | `FaHttp`와 `FaRemoteConfig`를 이 기기 안의 서버(127.0.0.1)에 붙여 실제 GET과 POST, 크기 제한과 시간 제한, 연결 실패를 본다. 바깥 네트워크는 쓰지 않는다 |
 | `python3 tools/check_ga4_payload.py` | 어댑터가 만든 실제 본문을 GA4의 검증 주소에 대어 본다. 기록되지 않는 주소이고 네트워크와 측정 값이 필요해 `npm test`에는 없다 |
 
 프로브는 `npm test`가 실행한다. 네이티브 SDK의 실제 동작(동의 양식 표시, 광고 표시와 보상, 닫은 뒤 복귀, GA4 수신)은 프로브로 확인할 수 없고 설계의 기기 확인 항목 AND-05~07에서 본다.

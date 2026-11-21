@@ -2,11 +2,17 @@
 
 실제 자격증명과 빌드 결과물을 쓰지 않는다. 값은 테스트가 임시 폴더에 만든 가짜다.
 """
+import http.server
 import json
+import os
 import re
 import shutil
+import socketserver
 import stat
+import subprocess
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 
@@ -447,6 +453,65 @@ class PayloadCheckTests(unittest.TestCase):
         dump = (ROOT / 'godot/tests/game/fa_analytics_payload_dump.gd').read_text()
         self.assertNotIn('HTTPRequest', dump)
         self.assertNotIn('fa_http.gd', dump)
+
+
+class LoopbackHandler(http.server.BaseHTTPRequestHandler):
+    """godot/tests/game/fa_http_check.gd가 붙는 서버. 이 기기 안에서만 듣는다."""
+    config = b''
+
+    def log_message(self, *arguments):
+        pass
+
+    def reply(self, status, body, content_type='application/json'):
+        try:
+            self.send_response(status)
+            self.send_header('Content-Type', content_type)
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # 크기나 시간 제한으로 앱이 먼저 끊은 요청
+
+    def do_GET(self):
+        if self.path == '/config.json':
+            self.reply(200, self.config)
+        elif self.path == '/big':
+            self.reply(200, b'x' * 200000, 'text/plain')
+        elif self.path == '/slow':
+            time.sleep(3)
+            self.reply(200, b'{}')
+        else:
+            self.reply(404, b'{}')
+
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get('Content-Length', '0')))
+        self.reply(200, json.dumps({'body': body.decode(), 'content_type': self.headers.get('Content-Type'), 'path': self.path}).encode())
+
+
+class LoopbackServer(socketserver.ThreadingTCPServer):
+    # http.server의 서버는 묶을 때 주소의 호스트 이름을 찾는데, 그 조회가 수십 초 걸리는 환경이 있어 쓰지 않는다.
+    allow_reuse_address = True
+    daemon_threads = True
+
+
+class HttpTransportTests(unittest.TestCase):
+    def test_http_adapter_talks_to_a_loopback_server(self):
+        LoopbackHandler.config = (ROOT / check_remote_config.CONFIG).read_bytes()
+        server = LoopbackServer(('127.0.0.1', 0), LoopbackHandler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            done = subprocess.run(
+                [os.environ.get('GODOT', 'godot'), '--headless', '--path', str(ROOT / 'godot'), '--script', 'res://tests/game/fa_http_check.gd',
+                 '--', '--base', 'http://127.0.0.1:%d' % server.server_address[1]],
+                capture_output=True, text=True, timeout=120)
+        finally:
+            server.shutdown()
+            server.server_close()
+        log = done.stdout + done.stderr
+        self.assertEqual(0, done.returncode, log[-3000:])
+        self.assertNotRegex(log, r'(?m)^(?:SCRIPT ERROR|ERROR:)')
+        self.assertRegex(log, r'Fa http check: \d+ checks, 0 failed')
+        self.assertNotIn('api_secret', log, 'request addresses must not reach the log')
 
 
 class SigningEnvironmentTests(unittest.TestCase):
