@@ -9,7 +9,7 @@ extends "res://game/core/ports/fa_analytics_port.gd"
 ##   GATE_CLOSED: 규제 지역이거나 알 수 없다. 들고 있던 것과 저장한 것을 버린다(결정 로그 DEC-020).
 ## 설정에서 끄면 대기 중인 이벤트와 저장한 대기열을 버린다.
 ##
-## 모든 이벤트에 platform, app_market, release_version, session_id, engagement_time_msec을 붙인다.
+## 모든 이벤트에 runtime_platform, app_market, release_version, session_id, engagement_time_msec을 붙인다.
 ## 첫 실행과 실행 시작(app_first_run, app_session)은 여기서 보낸다. 기기의 식별자 파일을 쓸 수 있는
 ## 문이 열린 때에만 알 수 있는 값(실행 번호, 설치 뒤 지난 날)이 들어가기 때문이다.
 ## 전송 실패는 게임에 알리지 않는다. 요청 주소에는 비밀값이 들어가므로 어디에도 출력하지 않는다.
@@ -233,7 +233,7 @@ func _append(name: String, params: Dictionary, unix_seconds: float) -> void:
 	if _session_id.is_empty():
 		begin_session()
 	var merged: Dictionary = params.duplicate()
-	merged["platform"] = PLATFORM
+	merged["runtime_platform"] = PLATFORM
 	merged["app_market"] = APP_MARKET
 	merged["release_version"] = _release_version
 	merged["session_id"] = _session_id

@@ -339,7 +339,7 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 
 ### 분석 이벤트
 
-유스케이스가 06 문서의 분류대로 보낸다. `platform`, `app_market`, `release_version`은 분석 어댑터가 모든 이벤트에 붙인다.
+유스케이스가 06 문서의 분류대로 보낸다. `runtime_platform`, `app_market`, `release_version`은 분석 어댑터가 모든 이벤트에 붙인다.
 
 | 이벤트 | 매개변수 | 보내는 곳 |
 |---|---|---|

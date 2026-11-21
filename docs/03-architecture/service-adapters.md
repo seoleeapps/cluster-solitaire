@@ -57,7 +57,7 @@
 
 ## 분석
 
-`FaGa4Analytics`는 GA4 Measurement Protocol의 웹 스트림 주소로 보낸다. 한 요청에 25개까지 싣고, 대기열에 이벤트가 있으면 15초마다, 25개가 차면 바로 보낸다. 모든 이벤트에 `platform`(`android`), `app_market`(`google_play`), `release_version`(`application/config/version`), `session_id`(실행을 시작한 유닉스 초), `engagement_time_msec`(지난 이벤트 뒤 화면 앞에서 흐른 시간)을 붙인다. 참 거짓 값은 1과 0으로 보낸다. 디버그 빌드는 `debug_mode`를 함께 싣는다.
+`FaGa4Analytics`는 GA4 Measurement Protocol의 웹 스트림 주소로 보낸다. 한 요청에 25개까지 싣고, 대기열에 이벤트가 있으면 15초마다, 25개가 차면 바로 보낸다. 모든 이벤트에 `runtime_platform`(`android`), `app_market`(`google_play`), `release_version`(`application/config/version`), `session_id`(실행을 시작한 유닉스 초), `engagement_time_msec`(지난 이벤트 뒤 화면 앞에서 흐른 시간)을 붙인다. 참 거짓 값은 1과 0으로 보낸다. 디버그 빌드는 `debug_mode`를 함께 싣는다.
 
 보내는 조건은 셋이 모두 맞을 때다.
 

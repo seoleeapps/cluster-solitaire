@@ -52,7 +52,7 @@ docs/design, docs/qa, docs/game-design
 
 ## 분석 이벤트 분류
 
-전송은 GA4 Measurement Protocol이다. 모든 이벤트에 `platform`(android), `app_market`(google_play), `release_version`을 싣는다. 설정에서 분석을 끄면 보내지 않는다. Measurement Protocol은 `first_open`과 `session_start`를 받지 않으므로 첫 실행과 세션 시작은 자체 이벤트로 보낸다.
+전송은 GA4 Measurement Protocol이다. 모든 이벤트에 `runtime_platform`(android), `app_market`(google_play), `release_version`을 싣는다. 설정에서 분석을 끄면 보내지 않는다. Measurement Protocol은 `first_open`과 `session_start`를 받지 않으므로 첫 실행과 세션 시작은 자체 이벤트로 보낸다.
 
 | 질문 | 이벤트 | 주요 매개변수 | 발생 시점 |
 |---|---|---|---|
@@ -66,7 +66,7 @@ docs/design, docs/qa, docs/game-design
 | 재방문 장치 | `daily_complete`, `attendance_claim`, `album_unlock`, `share` | `streak`, `day`, `category` | 해당 시점 |
 | 설정 | `settings_change` | `key`, `value` | 언어, 소리, 분석 |
 
-GA4에는 `platform`, `app_market`, `release_version`을 이벤트 범위 맞춤 측정기준으로 등록했다(속성 565197717, 2026-11-21).
+GA4에는 `runtime_platform`, `app_market`, `release_version`을 이벤트 범위 맞춤 측정기준으로 등록했다(속성 565197717, 2026-11-21). 매개변수 이름은 조직의 분석 이벤트 정책(`seorilabs/.github`의 `contracts/analytics-event-policy.yaml`)을 따른다.
 
 ## 성능 예산
 

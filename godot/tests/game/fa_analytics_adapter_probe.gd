@@ -199,7 +199,7 @@ func _common_params() -> bool:
 	var event: Dictionary = body["events"][0]
 	var params: Dictionary = event["params"]
 	_check(event["name"] == "level_end" and event["timestamp_micros"] == (NOON + 2.0) * 1000000.0, "이름과 일어난 시각")
-	_check(params["platform"] == "android" and params["app_market"] == "google_play" and params["release_version"] == "1.0.0", "platform, app_market, release_version")
+	_check(params["runtime_platform"] == "android" and params["app_market"] == "google_play" and params["release_version"] == "1.0.0", "runtime_platform, app_market, release_version")
 	_check(params["session_id"] == str(int(NOON)), "session_id는 실행을 시작한 시각이다")
 	_check(params["engagement_time_msec"] == 2000.0, "engagement_time_msec은 지난 이벤트 뒤 화면 앞에서 흐른 시간이다")
 	_check(params["mode"] == "journey" and params["level"] == 12.0 and params["success"] == 1.0 and params["continue_used"] == 0.0, "게임이 넘긴 값(참 거짓은 1과 0)")
@@ -212,10 +212,10 @@ func _common_params() -> bool:
 	_check(rig.transport.body(1)["events"][0]["params"]["engagement_time_msec"] == 1.0, "시간이 흐르지 않았으면 1이다")
 	rig.transport.reply(true, 204)
 
-	analytics.log_event("share", {"platform": "ios", "session_id": "mine"})
+	analytics.log_event("share", {"runtime_platform": "ios", "session_id": "mine"})
 	analytics.flush()
 	var overridden: Dictionary = rig.transport.body(2)["events"][0]["params"]
-	_check(overridden["platform"] == "android" and overridden["session_id"] == str(int(NOON)), "게임이 같은 이름을 넘겨도 공통 값이 이긴다")
+	_check(overridden["runtime_platform"] == "android" and overridden["session_id"] == str(int(NOON)), "게임이 같은 이름을 넘겨도 공통 값이 이긴다")
 	rig.transport.reply(true, 204)
 
 	analytics.log_event("ad_impression", {"placement": "rewarded_booster", "format": "rewarded"})
