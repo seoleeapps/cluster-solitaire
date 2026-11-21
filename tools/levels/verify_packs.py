@@ -71,7 +71,7 @@ def daily_tier(number):
 
 
 PACKS = {
-    'journey': {'count': 600, 'recent': 3, 'tier': journey_tier},
+    'journey': {'count': 600, 'recent': 8, 'tier': journey_tier},
     'daily': {'count': 1100, 'recent': 21, 'tier': daily_tier},
 }
 

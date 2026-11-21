@@ -166,7 +166,7 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 - `attempts`는 범주 4개를 고르려고 시도한 횟수다. 1이면 첫 시도로 만든 판이다
 - `error`는 `bad_tier`, `no_categories`(대분류 조건을 지키는 범주가 4개가 안 됨), `exhausted`(200번 시도해도 실패)다
 - 범주는 무작위 순서로 하나씩 살펴 이미 고른 범주와 카드에 맞는 것만 받는다. 판에 고른 범주끼리는 등급의 "다른 범주로도 보이는 카드" 한도를 지키고, 판에 없는 범주의 후보는 두 묶음 이상에 걸칠 때만 세어 `FaDifficulty.outside_limit`을 넘지 않게 한다(DEC-021). 그 뒤 묶는 방법이 하나뿐인지 전수 확인하고, 임시 칸 2개로 풀리며 관대함이 등급 범위에 드는 배치를 찾는다
-- 상수 `VERSION`(1), `JOURNEY_RECENT_LEVELS`(3), `DAILY_RECENT_LEVELS`(21)를 팩 도구와 저장 모델이 함께 쓴다
+- 상수 `VERSION`(1), `JOURNEY_RECENT_LEVELS`(8), `DAILY_RECENT_LEVELS`(21)를 팩 도구와 저장 모델이 함께 쓴다
 
 ### FaEconomy (`domain/fa_economy.gd`)
 
@@ -249,7 +249,7 @@ var result := FaFinishRound.new(store, analytics).execute(progress, board, secon
 | `best_stars(stage_number)` | 스테이지 번호 | `int`. 깬 적이 없으면 0 |
 | `total_stars()` | 없음 | `int`. 스테이지별 최고 별의 합 |
 | `clear_stage(stage_number, star_count, categories)` | 스테이지, 별, 그 판의 범주 | `bool`. 지금 풀 차례인 스테이지를 처음 깨 다음이 열렸으면 `true` |
-| `recent_categories()` | 없음 | `Array[String]`. 최근에 처음 깬 3판의 범주 |
+| `recent_categories()` | 없음 | `Array[String]`. 최근에 처음 깬 8판의 범주 |
 | `has_run()`, `run()` | 없음 | `bool`, 진행 중인 판 `{mode, stage, date, started, seconds, board}` 또는 빈 값 |
 | `set_run(mode, stage_number, date, started, seconds, board)` | 판 종류, 스테이지, 날짜, 시작한 날(일일 도전만, 나머지는 `""`), 걸린 초, 판 | `bool` |
 | `update_run(board, seconds)` | 판, 걸린 초 | `bool`. 진행 중인 판의 상태와 시간만 고친다 |
@@ -467,7 +467,7 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 ```
 
 - `generate_packs.gd`는 Godot 프로젝트 밖(`tools/levels`)에 있고 `res://../` 경로로 실행한다. 프로젝트 안의 코어를 `preload`로 그대로 쓴다. 등급별로 범주를 몇 번 골랐는지도 알린다
-- 여정은 직전 3판, 일일 도전은 직전 21일(범주 84개)의 범주를 다시 쓰지 않는다
+- 여정은 직전 8판(범주 32개), 일일 도전은 직전 21일(범주 84개)의 범주를 다시 쓰지 않는다
 - 같은 콘텐츠로 다시 돌리면 같은 파일이 나온다. `fa_packs_probe.gd`도 두 팩을 전부 다시 만들어 글자 단위로 대조한다
 - `verify_packs.py`는 등급표와 배치, 판 밖 범주 규칙을 GDD에서 따로 옮겨 적어 GDScript 구현과 독립으로 본다. 탐색기는 `tools/levels/reference_solver.py`(설계 단계 프로토타입을 옮긴 것)다. `npm test`가 `npm run check:levels`로 이 검증을 돌린다
 - `tools/levels/solver_fixtures.py`는 `fa_solver_probe.gd`에 박아 넣은 기대값 표를 만든다
@@ -481,15 +481,15 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 
 ### 여정 600판
 
-같은 범주를 다시 쓰기까지의 간격은 최소 4판, 중앙값 25판이다.
+같은 범주를 다시 쓰기까지의 간격은 최소 9판, 중앙값 27판이다(직전 8판의 범주를 다시 쓰지 않는다).
 
 | 등급 | 판 수 | 배치 | 관대함 최소 | 중앙값 | 최대 | 다른 범주로도 보이는 카드가 든 판 | 대분류가 모두 다른 판 | 같은 대분류 2개가 든 판 |
 |---|---|---|---|---|---|---|---|---|
 | T1 | 8 | open 8 | 1.000 | 1.000 | 1.000 | 0 | 8 | 0 |
-| T2 | 82 | step 82 | 0.458 | 0.566 | 0.854 | 0 | 82 | 0 |
-| T3 | 159 | classic 159 | 0.250 | 0.333 | 0.562 | 0 | 119 | 40 |
-| T4 | 252 | classic 127, deep 125 | 0.100 | 0.156 | 0.296 | 93 | 167 | 85 |
-| T5 | 99 | deep 99 | 0.042 | 0.062 | 0.118 | 41 | 68 | 31 |
+| T2 | 82 | step 82 | 0.453 | 0.583 | 0.875 | 0 | 82 | 0 |
+| T3 | 159 | classic 159 | 0.250 | 0.340 | 0.583 | 0 | 110 | 49 |
+| T4 | 252 | classic 127, deep 125 | 0.102 | 0.146 | 0.292 | 91 | 166 | 86 |
+| T5 | 99 | deep 99 | 0.040 | 0.062 | 0.120 | 38 | 68 | 31 |
 
 ### 일일 도전 1,100판
 
@@ -508,30 +508,30 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 
 | 범주 난도 | 범주 수 | 가장 많이 쓰인 범주 | 가장 적게 쓰인 범주 | 중앙값 |
 |---|---|---|---|---|
-| 1 | 53 | `farm_animals` 61회 | `furniture` 19회 | 48회 |
-| 2 | 55 | `headwear` 61회 | `stars` 18회 | 44회 |
-| 3 | 45 | `spring` 52회 | `red_foods` 21회 | 41회 |
-| 4 | 5 | `fairy_tale` 32회 | `night_animals` 16회 | 25회 |
+| 1 | 53 | `bathroom` 61회 | `maps` 22회 | 50회 |
+| 2 | 55 | `racket_sports` 57회 | `stars` 24회 | 42회 |
+| 3 | 45 | `black_white` 56회 | `red_foods` 25회 | 41회 |
+| 4 | 5 | `tracks` 29회 | `night_animals` 19회 | 21회 |
 
-난도 4 범주는 T4와 T5 판에만 나올 수 있어 횟수가 적다. 같은 난도 안에서 가장 많이 쓰인 범주는 가장 적게 쓰인 범주의 2.0배(난도 4)에서 3.4배(난도 2)다.
+난도 4 범주는 T4와 T5 판에만 나올 수 있어 횟수가 적다. 같은 난도 안에서 가장 많이 쓰인 범주는 가장 적게 쓰인 범주의 1.5배(난도 4)에서 2.8배(난도 1)다.
 
 색 범주와 후보가 넓은 범주(후보 35장 이상)는 다음과 같이 나왔다. 비율은 전체 1,700판 가운데 그 범주가 나온 판이다.
 
 | 범주 | 대분류 | 난도 | 후보 수 | 쓰인 횟수 | 비율 |
 |---|---|---|---|---|---|
-| `blue_things` | color | 3 | 143 | 40 | 2.35% |
-| `yellow_things` | color | 3 | 114 | 39 | 2.29% |
-| `red_things` | color | 3 | 113 | 29 | 1.71% |
+| `blue_things` | color | 3 | 143 | 39 | 2.29% |
+| `yellow_things` | color | 3 | 114 | 41 | 2.41% |
+| `red_things` | color | 3 | 113 | 31 | 1.82% |
 | `purple_things` | color | 3 | 94 | 40 | 2.35% |
-| `green_things` | color | 3 | 74 | 47 | 2.76% |
-| `fairy_tale` | fun | 4 | 46 | 32 | 1.88% |
-| `circles` | symbol | 1 | 45 | 53 | 3.12% |
-| `orange_things` | color | 3 | 43 | 44 | 2.59% |
+| `green_things` | color | 3 | 74 | 48 | 2.82% |
+| `fairy_tale` | fun | 4 | 46 | 22 | 1.29% |
+| `circles` | symbol | 1 | 45 | 52 | 3.06% |
+| `orange_things` | color | 3 | 43 | 36 | 2.12% |
 | `pink_things` | color | 3 | 38 | 48 | 2.82% |
-| `containers` | home | 3 | 37 | 46 | 2.71% |
+| `containers` | home | 3 | 37 | 48 | 2.82% |
 | `loud` | music | 3 | 36 | 43 | 2.53% |
-| `body_parts` | people | 1 | 36 | 57 | 3.35% |
-| `zodiac` | symbol | 3 | 35 | 37 | 2.18% |
+| `body_parts` | people | 1 | 36 | 58 | 3.41% |
+| `zodiac` | symbol | 3 | 35 | 39 | 2.29% |
 
 ## 설계 문서에 없어 여기서 정한 것
 
@@ -540,7 +540,7 @@ godot --headless --path godot --script res://../tools/levels/generate_packs.gd -
 | 난수 | `FaRandom`(Mulberry32)을 따로 뒀다 | 엔진 난수기는 버전이 바뀌면 값이 달라질 수 있다. 601판부터 기기에서 만들 때도 같은 결과가 나와야 한다 |
 | 시드 | 여정은 스테이지 번호, 일일 도전은 `2^24 + 번호` | 두 팩이 같은 번호에서 같은 판을 내지 않게 한다 |
 | 범주를 고르는 방식 | 범주를 무작위 순서로 하나씩 살펴 맞는 것만 받는다 | 넷을 한꺼번에 뽑고 맞지 않으면 통째로 버리는 방식은 일일 도전의 21일 제외 조건에서 평균 77번을 다시 뽑고 86판이 200번 상한을 넘겼다. 규칙은 같고 찾는 순서만 다르다 |
-| 601판 이후의 최근 범주 | 저장의 `journey.recent`에 최근에 처음 깬 3판의 범주를 두고 `FaPickLevel.journey`에 넘긴다 | 팩 밖에서는 앞 판을 다시 만들지 않고는 최근 범주를 알 수 없다. 이미 깬 601판 이후의 스테이지를 다시 하면 그때의 최근 범주에 따라 다른 판이 나올 수 있다 |
+| 601판 이후의 최근 범주 | 저장의 `journey.recent`에 최근에 처음 깬 8판의 범주를 두고 `FaPickLevel.journey`에 넘긴다 | 팩 밖에서는 앞 판을 다시 만들지 않고는 최근 범주를 알 수 없다. 이미 깬 601판 이후의 스테이지를 다시 하면 그때의 최근 범주에 따라 다른 판이 나올 수 있다 |
 | 헷갈리는 카드 | T4와 T5에서 한도까지 허용만 하고 일부러 넣지는 않는다 | GDD가 상한만 정했다. 지금 콘텐츠로는 T4의 약 36%, T5의 41% 판에 들어간다 |
 | 일일 도전의 판정 기준일 | 판을 시작한 날로 판정하고 진행 기록에 그날을 남긴다 | 자정이나 월말을 넘겨 끝내도 연속 기록과 코인이 빠지지 않게 한다 |
 | 일일 도전의 광고 | 결과 2배 광고는 허용, 나머지 배치는 금지 | GDD는 부스터와 이어하기, 전면만 막았다 |

@@ -3,6 +3,7 @@ extends SceneTree
 ## 코인과 부스터, 스테이지 클리어, 도감, 출석, 날짜 변경.
 
 const Progress := preload("res://game/core/domain/fa_progress.gd")
+const Generator := preload("res://game/core/domain/fa_generator.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const AdPolicy := preload("res://game/core/domain/fa_ad_policy.gd")
 const Daily := preload("res://game/core/domain/fa_daily.gd")
@@ -240,14 +241,18 @@ func _journey() -> bool:
 	_check(not progress.clear_stage(3, 0, []) and not progress.clear_stage(3, 4, []) and progress.stage() == 3, "별이 범위 밖이면 반영하지 않는다")
 
 	progress = Progress.create()
-	progress.clear_stage(1, 3, ["a1", "a2", "a3", "a4"])
-	progress.clear_stage(2, 3, ["b1", "b2", "b3", "b4"])
-	progress.clear_stage(3, 3, ["c1", "c2", "c3", "c4"])
-	_check(progress.recent_categories() == ["a1", "a2", "a3", "a4", "b1", "b2", "b3", "b4", "c1", "c2", "c3", "c4"], "최근 3판의 범주")
-	progress.clear_stage(4, 3, ["d1", "d2", "d3", "d4"])
-	_check(progress.recent_categories() == ["b1", "b2", "b3", "b4", "c1", "c2", "c3", "c4", "d1", "d2", "d3", "d4"], "오래된 판의 범주는 밀려난다")
+	var window: int = Generator.JOURNEY_RECENT_LEVELS
+	var kept: Array[String] = []
+	for stage: int in range(1, window + 1):
+		var cleared: Array[String] = ["s%d_a" % stage, "s%d_b" % stage, "s%d_c" % stage, "s%d_d" % stage]
+		progress.clear_stage(stage, 3, cleared)
+		kept.append_array(cleared)
+	_check(progress.recent_categories() == kept, "최근 판들의 범주를 깬 순서대로 든다")
+	var newest: Array[String] = ["n_a", "n_b", "n_c", "n_d"]
+	progress.clear_stage(window + 1, 3, newest)
+	_check(progress.recent_categories() == kept.slice(4) + newest, "오래된 판의 범주는 밀려난다")
 	progress.clear_stage(2, 3, ["x1", "x2", "x3", "x4"])
-	_check(progress.recent_categories().has("d4") and not progress.recent_categories().has("x1"), "다시 깬 판은 최근 범주에 넣지 않는다")
+	_check(progress.recent_categories().has("n_d") and not progress.recent_categories().has("x1"), "다시 깬 판은 최근 범주에 넣지 않는다")
 	return true
 
 
