@@ -13,10 +13,16 @@ const Self := preload("res://game/adapters/fa_service_values.gd")
 
 const PATH := "res://data/services/release.json"
 
-## Google이 공개한 Android 테스트 광고 단위. https://developers.google.com/admob/android/test-ads
+## Google이 공개한 테스트 광고 단위.
+## Android: https://developers.google.com/admob/android/test-ads
+## iOS:     https://developers.google.com/admob/ios/test-ads
 const TEST_UNITS := {
 	"rewarded": "ca-app-pub-3940256099942544/5224354917",
 	"interstitial": "ca-app-pub-3940256099942544/1033173712",
+}
+const IOS_TEST_UNITS := {
+	"rewarded": "ca-app-pub-3940256099942544/1712485313",
+	"interstitial": "ca-app-pub-3940256099942544/4411468910",
 }
 
 const UNIT_KEYS := {"rewarded": "admob_rewarded_unit", "interstitial": "admob_interstitial_unit"}
@@ -25,7 +31,11 @@ const MEASUREMENT_PATTERN := "^G-[A-Z0-9]{4,20}$"
 const SECRET_PATTERN := "^[A-Za-z0-9_-]{8,64}$"
 const URL_PATTERN := "^https://[A-Za-z0-9.-]+/[A-Za-z0-9._~/-]*$"
 
-var _units: Dictionary = TEST_UNITS.duplicate()
+var _units: Dictionary = test_units_for()
+
+
+static func test_units_for(os_name: String = OS.get_name()) -> Dictionary:
+	return IOS_TEST_UNITS.duplicate() if os_name == "iOS" else TEST_UNITS.duplicate()
 var _test_ads: bool = true
 var _measurement_id: String = ""
 var _api_secret: String = ""

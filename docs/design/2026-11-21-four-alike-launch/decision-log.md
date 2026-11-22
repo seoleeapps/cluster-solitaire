@@ -19,6 +19,7 @@
 | DEC-014 | 2026-11-21 | 출시 마켓과 끝 지점 | Google Play만, 공개 출시까지 | 질문 응답 "Google Play만", "공개 출시까지" |
 | DEC-015 | 2026-11-21 | 저장소와 식별자 | GitHub `seoleeapps/cluster-solitaire` 공개 저장소, 패키지 `com.seoleeapps.fouralike` | 질문 응답 "seoleeapps 공개 저장소" |
 | DEC-016 | 2026-11-21 | 자원 생성과 기기 사용 | AdMob 앱과 광고 단위, GA4 분석 속성, Play 앱 등록과 업로드 서명 키, 배경음악 생성 API를 승인. Android 폰 1대로 AND-01~08을 약 30분 확인하는 것을 승인 | 질문 응답(자원 4개 모두 선택, 기기 사용 "승인") |
+| DEC-027 | 2026-11-22 | Apple App Store 출시와 UI 교체 | Google Play UI 수정분 `1.0.0 (4)` 심사 교체와 Apple App Store(`com.seoleeapps.fouralike`, public) 추가 출시를 승인. iOS는 비추적(No-ATT, 비개인화 `npa=1` 광고, UMP 미호출, 설정의 데이터 분석 끄기 스위치 유지)을 채택 | 질문 응답(iOS public 출시 승인, 비추적 iOS 앱, Play versionCode=4 교체 제출) |
 
 DEC-002는 사내 수익화 프레임워크의 "전면 광고에는 광고 제거 상품을 함께 둔다"(DEC-M03)는 조건의 예외다. 같은 예외가 send-lane-duel(DEC-M19)과 Gather Puzzle(DEC-M22)에 있었다. 이 게임의 예외는 설계 승인 뒤 기획 원장(`seorilabs/planning`의 수익화 결정 로그)에 새 항목으로 기록하고, 프로필 검사기의 필수 슬롯 경고(BM-037)는 감수한다.
 

@@ -5,6 +5,7 @@ extends RefCounted
 const Solver := preload("res://game/core/domain/fa_solver.gd")
 const Board := preload("res://game/core/domain/fa_board.gd")
 const ClockPort := preload("res://game/core/ports/fa_clock_port.gd")
+const Ui := preload("res://game/features/shared/fa_ui.gd")
 
 ## 애니메이션이 끝나길 기다리는 한도(프레임). headless는 초당 약 145프레임, 렌더링은 60프레임이다.
 const SETTLE_FRAMES := 1500
@@ -250,4 +251,39 @@ func fits() -> String:
 		var size: Vector2 = named[key].get_global_rect().size
 		if size.x < minimum or size.y < minimum:
 			return "%s touch area is under 48: %s" % [key, size]
+	# 상단 줄의 스테이지 띠와 하트, 코인 칩이 서로 겹치거나 알약 밖으로 나가지 않아야 한다.
+	var s: float = screen_play.stage_scale()
+	var ribbon: Control = screen_play._ribbon
+	var ribbon_rect: Rect2 = ribbon.get_global_rect()
+	if not screen.encloses(ribbon_rect):
+		return "stage ribbon leaves the screen: %s" % ribbon_rect
+	for part: Control in [screen_play._ribbon_small, screen_play._ribbon_big]:
+		if part.is_visible_in_tree() and not part.text.is_empty():
+			if not ribbon_rect.grow(1.0).encloses(part.get_global_rect()):
+				return "%s leaves stage ribbon: %s in %s" % [part.name, part.get_global_rect(), ribbon_rect]
+	var chip: Control = screen_play.coin_chip
+	var pill: Rect2 = chip.get_global_rect().grow_individual(0.0, -Ui.CHIP_INSET * s, 0.0, -Ui.CHIP_INSET * s)
+	for child_name: String in ["Row/Icon", "Row/Value", "Row/Add"]:
+		var child: Control = chip.get_node_or_null(child_name) as Control
+		if child != null and child.is_visible_in_tree():
+			if not pill.grow(0.5).encloses(child.get_global_rect()):
+				return "play coin chip %s overflows pill: %s not in %s" % [child_name, child.get_global_rect(), pill]
+	var hud_items: Array = [ribbon, chip] + screen_play._hearts
+	for first: int in hud_items.size():
+		for second: int in range(first + 1, hud_items.size()):
+			var a: Rect2 = pill if hud_items[first] == chip else hud_items[first].get_global_rect()
+			var b: Rect2 = pill if hud_items[second] == chip else hud_items[second].get_global_rect()
+			if a.grow(-0.5).intersects(b.grow(-0.5)):
+				return "hud item %s overlaps %s" % [hud_items[first].name, hud_items[second].name]
+	var submit_rect: Rect2 = screen_play.submit_button.get_global_rect()
+	for child: Node in screen_play.submit_button.find_children("*", "Label", true, false):
+		var lbl: Control = child as Control
+		if lbl.is_visible_in_tree() and not submit_rect.grow(1.0).encloses(lbl.get_global_rect()):
+			return "submit %s overflows button: %s" % [lbl.name, lbl.get_global_rect()]
+	for booster_btn: Control in [screen_play.hint_button, screen_play.undo_button]:
+		if booster_btn.is_visible_in_tree():
+			var disc: Rect2 = booster_btn._disc.get_global_rect()
+			var cap: Rect2 = booster_btn._label.get_global_rect()
+			if disc.end.y > cap.position.y + 0.5:
+				return "%s disc overlaps caption: %s vs %s" % [booster_btn.name, disc, cap]
 	return ""

@@ -153,11 +153,21 @@ func _booster_row(booster: String) -> Control:
 	var owned: Label = Fonts.text(_t("You have %d", "보유 %d개") % _session.player.booster(booster), Fonts.display(600), Ui.sized(13), Color("6a46e8"))
 	owned.name = "owned_" + booster
 	text.add_child(owned)
-	row.add_child(_price_button("buy_" + booster, Economy.price(booster), _buy_booster.bind(booster)))
+	row.add_child(_price_button("buy_" + booster, Economy.price(booster), _confirm_booster.bind(booster, names[booster][0])))
 	var description: Label = Fonts.text(Fonts.keep_words(names[booster][1]), Fonts.body(500), Ui.sized(13), Color("5a5a88"))
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(description)
 	return card
+
+
+func _confirm_booster(booster: String, title: String) -> void:
+	var price: int = Economy.price(booster)
+	if _session.player.coins() < price:
+		_tell_short(price - _session.player.coins())
+		return
+	var art: TextureRect = Art.picture(Art.play(BOOSTER_ART[booster]), Vector2(56, 58))
+	art.custom_minimum_size = Vector2(56, 58)
+	_open_confirm(art, title, price, _buy_booster.bind(booster))
 
 
 func _buy_booster(booster: String) -> void:
@@ -225,7 +235,9 @@ func _theme_tile(kind: String, id: String) -> Control:
 	elif status["owned"]:
 		box.add_child(Ui.button("use_" + key, _t("Use", "사용"), false, _use.bind(kind, id), null, Vector2.ZERO, 110.0, [17, 15], 48.0))
 	else:
-		box.add_child(_price_button("buy_" + id, int(status["price"]), _buy_theme.bind(id)))
+		var buy: Button = _price_button("buy_" + id, int(status["price"]), _confirm_theme.bind(kind, id))
+		buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		box.add_child(buy)
 	return card
 
 
@@ -266,6 +278,15 @@ func _preview(kind: String, id: String) -> Control:
 	return mask
 
 
+func _confirm_theme(kind: String, id: String) -> void:
+	var status: Dictionary = _session.shop.status(_session.player, id)
+	var short: int = int(status["short"])
+	if short > 0:
+		_tell_short(short)
+		return
+	_open_confirm(_preview(kind, id), Look.theme_name(kind, id, host.language()), int(status["price"]), _buy_theme.bind(id))
+
+
 func _buy_theme(id: String) -> void:
 	var result: Dictionary = _session.shop.buy_theme(_session.player, id)
 	if not result["ok"]:
@@ -295,6 +316,49 @@ func _price_button(button_name: String, price: int, action: Callable) -> Button:
 	if _session.player.coins() < price:
 		Ui.mark_unaffordable(button, host)
 	return button
+
+
+func _open_confirm(preview: Control, item_name: String, price: int, on_confirm: Callable) -> void:
+	var popup: Control = Ui.popup(_t("Confirm purchase", "구매 확인"), true, host.size.x)
+	popup.name = "shop_confirm_popup"
+	var box := VBoxContainer.new()
+	box.name = "column"
+	box.add_theme_constant_override("separation", 10)
+	popup.add_content(box)
+	var holder := CenterContainer.new()
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(holder)
+	holder.add_child(preview)
+	var title_label: Label = Ui.heading(item_name, 19)
+	title_label.name = "item_name"
+	box.add_child(title_label)
+	var price_row := HBoxContainer.new()
+	price_row.name = "price_row"
+	price_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	price_row.add_theme_constant_override("separation", 6)
+	price_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var coin_icon: TextureRect = Art.picture(Art.skin("icon_coin"), Vector2(22, 22))
+	coin_icon.custom_minimum_size = Vector2(22, 22)
+	coin_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	price_row.add_child(coin_icon)
+	var price_label: Label = Fonts.text(_chip.format_amount(price), Fonts.display(700), Ui.sized(18), Fonts.INK)
+	price_label.name = "item_price"
+	price_row.add_child(price_label)
+	box.add_child(price_row)
+	var remaining: int = maxi(0, _session.player.coins() - price)
+	var ask: Label = Ui.note(_t("Buy this item?\nRemaining coins: %s", "이 항목을 구매할까요?\n남는 코인 %s") % _chip.format_amount(remaining), 14, MUTED)
+	ask.name = "confirm_note"
+	box.add_child(ask)
+	var confirm: Button = Ui.button("confirm_buy", _t("Buy", "구매"), true, func() -> void: pass)
+	var cancel: Button = Ui.button("cancel_buy", _t("Cancel", "취소"), false, popup.close)
+	confirm.pressed.connect(func() -> void:
+		confirm.disabled = true
+		cancel.disabled = true
+		popup.close()
+		on_confirm.call())
+	box.add_child(confirm)
+	box.add_child(cancel)
+	host.show_popup(popup)
 
 
 func _tell_short(short: int) -> void:

@@ -25,6 +25,7 @@ class FakeSdk extends AdSdk:
 	var privacy: bool = false
 	var calls: Array[String] = []
 	var rating: String = ""
+	var non_personalized: bool = false
 	var units: Dictionary = {}
 	var update_done: Callable
 	var form_done: Callable
@@ -67,6 +68,9 @@ class FakeSdk extends AdSdk:
 
 	func set_max_ad_content_rating(value: String) -> void:
 		rating = value
+
+	func set_non_personalized(enabled: bool) -> void:
+		non_personalized = enabled
 
 	func load_ad(format: String, unit_id: String, on_done: Callable) -> void:
 		calls.append("load:" + format)
@@ -617,4 +621,18 @@ func _consent_debug() -> bool:
 	_check(sdk.consent_debug.is_empty(), "정하지 않으면 SDK에 검수 설정을 넘기지 않는다")
 	ads.set_consent_debug("eea", ["AAAA"])
 	_check(sdk.consent_debug == ["eea", PackedStringArray(["AAAA"])], "정한 검수 설정을 SDK에 넘긴다")
+
+	# iOS No-UMP 모드: UMP를 부르지 않고 비개인화(npa=1)로 바로 준비한다.
+	var ios_sdk: FakeSdk = _sdk()
+	ios_sdk.privacy = true
+	var ios_ads: Ads = Ads.new(ios_sdk, UNITS, true)
+	ios_ads.start()
+	_check(ios_sdk.count("update") == 0 and ios_sdk.count("form") == 0, "iOS No-UMP 모드는 UMP를 호출하지 않는다")
+	_check(ios_ads.consent_settled() and not ios_ads.consent_pending(), "iOS No-UMP 모드는 즉시 동의 완료 상태다")
+	_check(ios_ads.can_request_ads() and ios_ads.analytics_allowed(), "광고와 1차 사용 통계를 허용한다")
+	_check(not ios_ads.privacy_choice_required() and ios_sdk.non_personalized, "개인정보 선택 메뉴는 숨기고 비개인화(npa=1)로 요청한다")
+	_check(ios_sdk.count("initialize") == 1, "동의 대기 없이 SDK를 초기화한다")
+	ios_ads.open_privacy_choice()
+	_check(ios_sdk.count("privacy") == 0, "iOS No-UMP 모드는 UMP 개인정보 선택 창을 열지 않는다")
+	_check(Values.test_units_for("iOS") == Values.IOS_TEST_UNITS, "iOS 디버그·미주입 단위는 Apple 테스트 단위다")
 	return true

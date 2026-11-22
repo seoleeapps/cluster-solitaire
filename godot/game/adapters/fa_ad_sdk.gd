@@ -67,6 +67,11 @@ func set_max_ad_content_rating(_rating: String) -> void:
 	pass
 
 
+## 비개인화 광고(npa=1) 요청 여부. iOS No-ATT 등 UMP 없이 광고할 때 켠다.
+func set_non_personalized(_enabled: bool) -> void:
+	pass
+
+
 ## format(rewarded, interstitial)의 광고를 불러온다. 끝나면 on_done(성공 여부)를 부른다.
 func load_ad(_format: String, _unit_id: String, _on_done: Callable) -> void:
 	pass

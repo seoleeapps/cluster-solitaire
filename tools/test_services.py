@@ -190,11 +190,25 @@ class PrepareServicesTests(unittest.TestCase):
         self.assertEqual(app['SECRET_PATTERN'], tool['GA4_MP_API_SECRET'])
         self.assertEqual(app['URL_PATTERN'], tool['FA_REMOTE_CONFIG_URL'])
         test_units = re.findall(r'"(ca-app-pub-\d{16}/\d{10})"', source)
-        self.assertEqual(2, len(test_units))
+        self.assertEqual(4, len(test_units))
         for unit in test_units:
             self.assertIn(prepare_services.TEST_PUBLISHER, unit)
         keys = set(re.findall(r'document\.get\("(\w+)"\)', source)) | set(re.findall(r'"(admob_\w+_unit)"', source))
         self.assertEqual(set(prepare_services.release_document({**ADMOB, **ANALYTICS, 'FA_REMOTE_CONFIG_URL': 'x'})) - {'admob_app_id'}, keys)
+
+    def test_ios_platform_collection_and_app_id_injection(self):
+        ios_env = {
+            'ADMOB_IOS_APP_ID': ADMOB['ADMOB_APP_ID'].replace('~1234567890', '~9999999999'),
+            'ADMOB_IOS_REWARDED_AD_UNIT_ID': ADMOB['ADMOB_REWARDED_AD_UNIT_ID'].replace('/1111111111', '/3333333333'),
+            'ADMOB_IOS_INTERSTITIAL_AD_UNIT_ID': ADMOB['ADMOB_INTERSTITIAL_AD_UNIT_ID'].replace('/2222222222', '/4444444444'),
+            **ANALYTICS,
+        }
+        collected = prepare_services.collect(ios_env, Path('/tmp/unused-home'), platform='ios')
+        self.assertEqual(ios_env['ADMOB_IOS_APP_ID'], collected['ADMOB_APP_ID'])
+        text = (ROOT / 'godot/project.godot').read_text()
+        injected = prepare_services.with_app_id(text, collected['ADMOB_APP_ID'], prepare_services.PLATFORM_ADMOB['ios'][3])
+        self.assertIn('general/ios/app_id="%s"' % ios_env['ADMOB_IOS_APP_ID'], injected)
+        self.assertEqual(text, prepare_services.strip_app_id(injected))
 
 
 class RemoteConfigTests(unittest.TestCase):

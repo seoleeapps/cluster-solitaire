@@ -45,7 +45,7 @@ func _init(storage_dir: String) -> void:
 	var files: JsonFiles = JsonFiles.new(storage_dir)
 	_http = Http.new()
 	add_child(_http)
-	ads = AdmobAds.new(_make_sdk(), values.ad_units())
+	ads = AdmobAds.new(_make_sdk(), values.ad_units(), OS.get_name() == "iOS")
 	var arguments: PackedStringArray = OS.get_cmdline_args()
 	arguments.append_array(OS.get_cmdline_user_args())
 	var consent_debug: Dictionary = consent_debug_from(arguments, OS.is_debug_build())

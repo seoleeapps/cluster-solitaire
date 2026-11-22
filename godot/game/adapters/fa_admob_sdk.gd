@@ -26,6 +26,8 @@ var _serial: Dictionary = {}
 var _loaders: Dictionary = {}
 ## 기기 검수용 동의 설정. 정하지 않았으면 null이다.
 var _consent_debug: ConsentDebugSettings = null
+## 비개인화 광고(npa=1) 강제 여부.
+var _non_personalized: bool = false
 
 
 func available() -> bool:
@@ -76,8 +78,15 @@ func show_privacy_options(on_done: Callable) -> void:
 
 func initialize(on_done: Callable) -> void:
 	var listener: OnInitializationCompleteListener = OnInitializationCompleteListener.new()
-	listener.on_initialization_complete = func(_status: Variant) -> void: on_done.call()
+	listener.on_initialization_complete = func(_status: Variant) -> void:
+		if OS.get_name() == "iOS":
+			MobileAds.set_ios_app_pause_on_background(true)
+		on_done.call()
 	MobileAds.initialize(listener)
+
+
+func set_non_personalized(enabled: bool) -> void:
+	_non_personalized = enabled
 
 
 func set_max_ad_content_rating(rating: String) -> void:
@@ -98,20 +107,23 @@ func load_ad(format: String, unit_id: String, on_done: Callable) -> void:
 	var failed: Callable = func(_error: Variant) -> void:
 		if _serial[format] == serial:
 			on_done.call(false)
+	var request: AdRequest = AdRequest.new()
+	if _non_personalized:
+		request.extras["npa"] = "1"
 	if format == FORMAT_REWARDED:
 		var callback: RewardedAdLoadCallback = RewardedAdLoadCallback.new()
 		callback.on_ad_loaded = loaded
 		callback.on_ad_failed_to_load = failed
 		var loader: RewardedAdLoader = RewardedAdLoader.new()
 		_loaders[format] = loader
-		loader.load(unit_id, AdRequest.new(), callback)
+		loader.load(unit_id, request, callback)
 	else:
 		var callback: InterstitialAdLoadCallback = InterstitialAdLoadCallback.new()
 		callback.on_ad_loaded = loaded
 		callback.on_ad_failed_to_load = failed
 		var loader: InterstitialAdLoader = InterstitialAdLoader.new()
 		_loaders[format] = loader
-		loader.load(unit_id, AdRequest.new(), callback)
+		loader.load(unit_id, request, callback)
 
 
 func show_ad(format: String, on_event: Callable) -> void:

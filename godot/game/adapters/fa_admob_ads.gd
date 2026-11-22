@@ -33,6 +33,8 @@ const MAX_STEP_SECONDS := 1.0
 var _sdk: AdSdk
 ## 형식별 광고 단위 ID.
 var _units: Dictionary
+## iOS 등 ATT 없이 비개인화 광고만 쓰고 UMP 양식을 띄우지 않는 모드.
+var _skip_ump: bool = false
 var _started: bool = false
 ## 동의 갱신이나 동의 양식이 진행 중인지.
 var _consent_busy: bool = false
@@ -48,9 +50,10 @@ var _show: AdShow = null
 var _show_result: Callable
 
 
-func _init(sdk: AdSdk, units: Dictionary) -> void:
+func _init(sdk: AdSdk, units: Dictionary, skip_ump: bool = false) -> void:
 	_sdk = sdk
 	_units = units.duplicate()
+	_skip_ump = skip_ump
 	for format: String in FORMATS:
 		_slots[format] = {"loaded": false, "loading": false, "failures": 0, "retry_in": -1.0, "waited": 0.0}
 
@@ -71,6 +74,11 @@ func start() -> void:
 	if _started or not _sdk.available():
 		return
 	_started = true
+	if _skip_ump:
+		_consent_settled = true
+		_sdk.set_non_personalized(true)
+		_apply_consent()
+		return
 	_update_consent()
 
 
@@ -117,7 +125,7 @@ func advance(seconds: float) -> void:
 ## 백그라운드에서 돌아왔을 때 부른다. 동의 상태를 아직 모르면 기다리지 않고 다시 갱신한다.
 ## 동의 양식이 닫혔다는 알림을 놓쳤을 때를 대비해, 진행 중이면 지금의 동의 상태로 광고 준비를 다시 맞춘다.
 func resume() -> void:
-	if not _started:
+	if not _started or _skip_ump:
 		return
 	if _consent_busy:
 		_apply_consent()
@@ -125,23 +133,28 @@ func resume() -> void:
 		_update_consent()
 
 
-## 광고를 요청해도 되는지. UMP의 canRequestAds와 같은 조건이다(동의가 필요 없거나 받았음).
+## 광고를 요청해도 되는지. UMP의 canRequestAds와 같은 조건이다(동의가 필요 없거나 받았음). iOS No-UMP 모드는 항상 허용한다.
 func can_request_ads() -> bool:
 	if not _started:
 		return false
+	if _skip_ump:
+		return true
 	var status: int = _sdk.consent_status()
 	return status == AdSdk.CONSENT_NOT_REQUIRED or status == AdSdk.CONSENT_OBTAINED
 
 
-## 분석 이벤트를 보내도 되는지. 이번 실행의 동의 갱신이 끝났고 동의가 필요 없는 지역일 때만 참이다.
-## 규제 지역(EEA, 영국, 스위스)이거나 아직 모르면 거짓이다(결정 로그 DEC-020).
+## 분석 이벤트를 보내도 되는지. UMP 모드에서는 규제 지역이 아닐 때만, iOS No-UMP 모드에서는 항상 허용(설정의 끄기 스위치로 제어)한다.
 func analytics_allowed() -> bool:
+	if _skip_ump:
+		return _started
 	return _started and _consent_settled and _sdk.consent_status() == AdSdk.CONSENT_NOT_REQUIRED
 
 
 ## 동의 상태를 아직 모르는지. start() 전이거나 갱신이 끝나지 않았거나, 끝났어도 상태를 받지 못했으면 참이다.
 ## SDK가 없으면 알아낼 것이 없으므로 거짓이다.
 func consent_pending() -> bool:
+	if _skip_ump:
+		return false
 	return _sdk.available() and (not _consent_settled or _sdk.consent_status() == AdSdk.CONSENT_UNKNOWN)
 
 
@@ -177,11 +190,13 @@ func show(format: String, on_result: Callable) -> void:
 
 
 func privacy_choice_required() -> bool:
+	if _skip_ump:
+		return false
 	return _started and _sdk.privacy_options_required()
 
 
 func open_privacy_choice() -> void:
-	if not privacy_choice_required() or _show != null:
+	if _skip_ump or not privacy_choice_required() or _show != null:
 		return
 	_sdk.show_privacy_options(_apply_consent)
 
@@ -239,6 +254,7 @@ func _prepare() -> void:
 	if _initializing:
 		return
 	_initializing = true
+	_sdk.set_non_personalized(_skip_ump)
 	_sdk.initialize(func() -> void:
 		_initializing = false
 		_initialized = true

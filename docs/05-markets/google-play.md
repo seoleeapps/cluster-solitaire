@@ -17,11 +17,11 @@
 
 ## 현재 상태
 
-광고와 동의, 분석, 원격 설정의 어댑터가 `godot/game/adapters`에 있고 시작 장면에 연결되어 있으며, 원격 설정은 GitHub Pages(`https://seoleeapps.github.io/cluster-solitaire/config.json`)에 배포되어 HTTP 200을 반환한다. Android 서명 AAB(`build/android/four-alike.aab`, `1.0.0`, versionCode 3)를 빌드해 `check_aab.py`를 통과시켰고, Google Play 내부 테스트 설치 기준 실기기 검수(AND-01~08, [실기기 검수 기록](../07-qa/device-and01-08.md))를 마친 뒤 프로덕션 트랙 `1.0.0 (3)`을 178개 전체 국가 대상으로 제출해 `검토 중` 상태를 재조회로 확인했다. 남은 관문은 Google Play 심사 승인·자동 공개(`관리형 게시 사용 중지됨`), 스토어 공개 라이브 스모크 확인, 공개 후 AdMob 스토어 연결이다. 출시별 상태와 근거는 [출시 원장](../../release/market-launch-state.json)에 남긴다.
+광고와 동의, 분석, 원격 설정의 어댑터가 `godot/game/adapters`에 있고 시작 장면에 연결되어 있으며, 원격 설정은 GitHub Pages(`https://seoleeapps.github.io/cluster-solitaire/config.json`)에 배포되어 HTTP 200을 반환한다. Android 서명 AAB(`build/android/four-alike.aab`, `1.0.0`, versionCode 3)로 Google Play 내부 테스트 실기기 검수(AND-01~08, [실기기 검수 기록](../07-qa/device-and01-08.md))를 통과한 뒤, UI·상점 구매 확인 팝업·칩/리본 정렬 수정 사항을 반영해 `versionCode 4`(`53,725,037` bytes, 서명 검증 통과)를 재빌드하고 `en-US`·`ko-KR` 스크린샷 각 `6`장을 교체해 프로덕션 트랙 `1.0.0 (4)`를 제출(내부 편집 `16172288282021029684`, 프로덕션 편집 `10401325201721956332`, `versionCodes=["4"]`, `completed`)했다. 남은 관문은 Google Play 심사 승인·자동 공개(`관리형 게시 사용 중지됨`), 스토어 공개 라이브 스모크 확인, 공개 후 AdMob 스토어 연결이다. 출시별 상태와 근거는 [출시 원장](../../release/market-launch-state.json)에 남긴다.
 
 ## Play Console 등록 상태 (2026-11-22 기준)
 
-앱은 Play Console(`Seori Apps`, 계정 ID `5547060480954653351`, 앱 ID `4975800442388222513`)에 만들어져 있고, 앱 설정 12/12와 내부 테스트 3/3(`1.0.0 (3)` 활성, `Seorilabs Testers`·`내부테스트 그룹` 선택, 참여 URL `https://play.google.com/apps/internaltest/4700231235037871892`)을 마쳤다. 프로덕션 트랙은 178개 전체 국가/지역에 `1.0.0 (3)` 전체 출시를 제출해 현재 `검토 중`이며 관리형 게시가 꺼져 있어 승인 시 자동 공개된다.
+앱은 Play Console(`Seori Apps`, 계정 ID `5547060480954653351`, 앱 ID `4975800442388222513`)에 만들어져 있고, 앱 설정 12/12와 내부 테스트 3/3(`1.0.0 (3)` 첫 설치 확인 뒤 UI 수정 반영 `1.0.0 (4)` 내부 편집 `16172288282021029684` `completed`, 참여 URL `https://play.google.com/apps/internaltest/4700231235037871892`)을 마쳤다. 프로덕션 트랙은 178개 전체 국가/지역에 `1.0.0 (4)` 교체 제출(편집 `10401325201721956332`, `en-US`·`ko-KR` 스크린샷 각 `6`장 교체, `versionCodes=["4"]`, `completed`)을 완료했으며 관리형 게시가 꺼져 있어 승인 시 자동 공개된다.
 
 | 항목 | 저장한 값 |
 |---|---|

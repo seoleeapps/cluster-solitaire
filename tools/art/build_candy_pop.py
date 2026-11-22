@@ -63,16 +63,19 @@ def circle(cx, cy, r, fill, extra=""):
 
 
 def primary(top, mid, bot, lip, band, press=0):
-    """Primary button: body 98x58 (radius 22) with a 3px white outline, a 3px light band inside the top edge and a
-    7px lip below. The lip sits over the outline, so the outline shows on the top and the sides only."""
+    """Primary button: body 98x47 (radius 16) inside a 104x60 white ring with a 7px lip below.
+    The white outline encloses both the front face and the bottom lip (3px margin on all four sides)."""
     defs = (grad("g", [(0, top), (0.55, mid), (1, bot)])
-            + f'<clipPath id="c"><rect x="3" y="{3 + press}" width="98" height="58" rx="22"/></clipPath>')
-    y = press
-    body = (rect(0, y, 104, 64, 25, WHITE)
-            + rect(3, 10, 98, 58, 22, lip)
-            + rect(3, 3 + y, 98, 58, 22, band)
-            + f'<g clip-path="url(#c)">{rect(3, 6 + y, 98, 58, 22, "url(#g)")}</g>')
-    return svg(104, 68, body, defs)
+            + f'<clipPath id="c"><rect x="3" y="{3 + press}" width="98" height="47" rx="16"/></clipPath>')
+    outer_y = 3 if press else 0
+    outer_h = 57 if press else 60
+    lip_y = 10 if press else 9
+    lip_h = 47 if press else 48
+    body = (rect(0, outer_y, 104, outer_h, 19, WHITE)
+            + rect(3, lip_y, 98, lip_h, 16, lip)
+            + rect(3, 3 + press, 98, 47, 16, band)
+            + f'<g clip-path="url(#c)">{rect(3, 6 + press, 98, 47, 16, "url(#g)")}</g>')
+    return svg(104, 60, body, defs)
 
 
 def skin_files():
@@ -118,11 +121,11 @@ def skin_files():
         "primary": ORANGE_MID,
         "focus": "#FFE27A",
         "textures": {
-            "button_primary": {"normal": "ui_button_primary_normal.svg", "pressed": "ui_button_primary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [26, 26, 26, 32], "content": [20, 9, 20, 13], "minimum": [72, 56]},
+            "button_primary": {"normal": "ui_button_primary_normal.svg", "pressed": "ui_button_primary_pressed.svg", "disabled": "ui_button_primary_disabled.svg", "margins": [22, 20, 22, 26], "content": [18, 9, 18, 15], "minimum": [72, 54]},
             "button_secondary": {"normal": "ui_button_secondary_normal.svg", "pressed": "ui_button_secondary_pressed.svg", "disabled": "ui_button_secondary_disabled.svg", "margins": [22, 20, 22, 26], "content": [16, 8, 16, 14], "minimum": [56, 48]},
             "panel": {"normal": "ui_panel.svg", "margins": [24, 24, 24, 30], "content": [16, 12, 16, 18], "minimum": [56, 56]},
             "popup_frame": {"normal": "ui_popup_frame.svg", "margins": [38, 38, 38, 46], "content": [22, 20, 22, 30], "minimum": [96, 96]},
-            "chip": {"normal": "ui_chip.svg", "margins": [22, 14, 22, 14], "content": [10, 4, 10, 4], "minimum": [56, 36]},
+            "chip": {"normal": "ui_chip.svg", "margins": [22, 14, 22, 14], "content": [10, 5, 14, 5], "minimum": [56, 38]},
         },
         "icons": {"coin": "icon_coin.svg"},
         "fonts": {
@@ -226,15 +229,15 @@ def line_glyph(paths):
 
 
 def round_button(top, bot, lip, glyph=()):
-    """Booster button: a 52px disc with a 3px white outline, a 3px light band inside the top edge and a 5px lip.
+    """Booster button: a 52px disc inside a 58x62 white capsule outline with a 4px lip below.
     With a glyph the icon is drawn in the middle (the reward picture of that booster)."""
     defs = grad("g", [(0, top), (1, bot)]) + '<clipPath id="c"><circle cx="29" cy="29" r="26"/></clipPath>'
-    body = (circle(29, 29, 29, WHITE) + circle(29, 34, 26, lip) + circle(29, 29, 26, "#FFFFFF")
+    body = (rect(0, 0, 58, 62, 29, WHITE) + circle(29, 33, 26, lip) + circle(29, 29, 26, "#FFFFFF")
             + circle(29, 29, 26, top, 'fill-opacity="0.45"')
             + f'<g clip-path="url(#c)">{circle(29, 32, 26, "url(#g)")}</g>')
     if glyph:
         body += f'<g transform="translate(15 15)">{line_glyph(glyph)}</g>'
-    return svg(58, 60, body, defs)
+    return svg(58, 62, body, defs)
 
 
 def heart(fill, opacity, shade="", shine=""):
@@ -352,11 +355,11 @@ def gear(cx, cy, outer, inner, hole, teeth=8):
 
 
 def pill(w, h, top, bot, lip, ring=0, lip_size=4, band=""):
-    """A rounded bar with an optional white ring around the body and a lip below it (the lip sits over the ring)."""
+    """A rounded bar with an optional white ring enclosing both the face and the lip below."""
     r = h / 2
     body = ""
     if ring:
-        body += rect(0, 0, w + ring * 2, h + ring * 2, r + ring, WHITE)
+        body += rect(0, 0, w + ring * 2, h + ring * 2 + lip_size, r + ring, WHITE)
     body += rect(ring, ring + lip_size, w, h, r, lip) + rect(ring, ring, w, h, r, "url(#g)")
     if band:
         body += f'<g clip-path="url(#c)">{rect(ring, ring - h + 3, w, h, r, band)}</g>'

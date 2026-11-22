@@ -28,7 +28,8 @@
   ],
   "environments": [
     "dev",
-    "android"
+    "android",
+    "ios"
   ],
   "redesign": true,
   "foundationRerun": true,
@@ -41,20 +42,24 @@
     "AND-05 동의 창 표시와 선택 저장",
     "AND-06 보상형 광고 불러오기, 시청 완료 보상, 중도 닫기 무보상",
     "AND-07 전면 광고 표시와 닫은 뒤 소리·입력 복귀, 광고 중 앱 전환",
-    "AND-08 효과음, 배경음악, 진동"
+    "AND-08 효과음, 배경음악, 진동",
+    "IOS-01 새 설치 첫 실행부터 홈·첫 광고까지 자체 동의 창과 ATT·UMP 창 미노출 확인",
+    "IOS-02 설정에서 개인정보 선택 메뉴 미노출과 데이터 분석 허용 끄기 스위치 확인",
+    "IOS-03 iOS 비개인화(npa=1) 보상형·전면 광고 표시 및 Info.plist/PrivacyInfo 점검",
+    "IOS-04 노치·홈 인디케이터 안전 영역 및 TestFlight 설치 실행"
   ],
   "devRuns": [
     "npm test",
     "python3 tools/check.py --capture --size 390x844",
-    "python3 tools/check.py --capture --size 390x693",
-    "python3 tools/check.py --capture --size 390x866",
+    "python3 tools/check.py --capture --size 360x640",
     "python3 tools/levels/verify_packs.py",
     "tools/check_monetization.sh"
   ],
   "reviewRounds": 3,
   "release": {
     "markets": [
-      "google-play"
+      "google-play",
+      "apple-app-store"
     ],
     "until": "public"
   }

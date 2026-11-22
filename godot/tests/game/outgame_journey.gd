@@ -80,20 +80,49 @@ func in_scroll(control: Control) -> bool:
 	return node != null
 
 
-## 공통 화면의 버튼이 세로 화면 밖으로 나가거나 서로 겹치지 않는지 본다. 목록 안의 버튼은 스크롤로 닿으므로 제외한다.
+## 바깥 화면의 버튼과 판, 코인 칩, 글자가 화면이나 자기 틀 밖으로 나가거나 서로 겹치지 않는지 본다.
 func fits() -> String:
 	var screen := Rect2(Vector2.ZERO, Vector2(d.viewport.size))
 	var placed: Array[Control] = []
 	for button: Control in main.content.find_children("*", "BaseButton", true, false):
-		if not button.is_visible_in_tree() or in_scroll(button):
+		if not button.is_visible_in_tree():
 			continue
 		var rect: Rect2 = button.get_global_rect()
+		if button is Button and not (button is CheckButton):
+			for sub: Node in button.find_children("*", "Control", true, false):
+				var child: Control = sub as Control
+				if child.is_visible_in_tree() and (child is Label or child.name == "icon"):
+					if not rect.grow(1.0).encloses(child.get_global_rect()):
+						return "%s child %s overflows button: %s not in %s" % [button.name, child.name, child.get_global_rect(), rect]
+		if in_scroll(button):
+			continue
 		if not screen.encloses(rect):
 			return "%s leaves the screen: %s" % [button.name, rect]
 		for other: Control in placed:
 			if other.get_global_rect().intersects(rect) and not other.is_ancestor_of(button):
 				return "%s overlaps %s" % [button.name, other.name]
 		placed.append(button)
+	for node: Node in main.content.find_children("*", "PanelContainer", true, false):
+		var panel: PanelContainer = node as PanelContainer
+		if not panel.is_visible_in_tree():
+			continue
+		var p_rect: Rect2 = panel.get_global_rect()
+		if panel.has_node("Row/Icon") and panel.has_node("Row/Value"):
+			var pill: Rect2 = p_rect.grow_individual(0.0, -Ui.CHIP_INSET, 0.0, -Ui.CHIP_INSET)
+			if not screen.encloses(p_rect):
+				return "coin chip %s leaves the screen: %s" % [panel.name, p_rect]
+			for child_name: String in ["Row/Icon", "Row/Value", "Row/Add"]:
+				var child: Control = panel.get_node_or_null(child_name) as Control
+				if child != null and child.is_visible_in_tree() and not pill.grow(0.5).encloses(child.get_global_rect()):
+					return "coin chip %s %s overflows pill: %s not in %s" % [panel.name, child_name, child.get_global_rect(), pill]
+		else:
+			for sub: Node in panel.find_children("*", "Label", true, false):
+				var lbl: Label = sub as Label
+				if not lbl.is_visible_in_tree() or lbl.get_parent() is Button or lbl.get_parent().get_parent() is Button:
+					continue
+				var l_rect: Rect2 = lbl.get_global_rect()
+				if l_rect.position.x < p_rect.position.x - 1.0 or l_rect.end.x > p_rect.end.x + 1.0:
+					return "%s label %s overflows panel horizontally: %s not in %s" % [panel.name, lbl.name, l_rect, p_rect]
 	return "" if not placed.is_empty() else "no visible button"
 
 
@@ -842,7 +871,11 @@ func shop_and_decor() -> void:
 	var coins: int = player().coins()
 	var hints: int = player().booster("hint")
 	d.step("enough coins for a hint", coins >= Economy.price("hint"))
-	d.step("buy a hint for 100", await d.tap(b("buy_hint")) and player().coins() == coins - Economy.price("hint") and player().booster("hint") == hints + 1)
+	d.step("tapping buy asks for confirmation first", await d.tap(b("buy_hint")) and await outgame_popup_open() and player().coins() == coins and b("confirm_buy") != null and b("cancel_buy") != null)
+	popup_fit_step("shop confirm")
+	await d.shot("shop-confirm")
+	d.step("cancelling leaves coins and boosters unchanged", await d.tap(b("cancel_buy")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and player().coins() == coins and player().booster("hint") == hints)
+	d.step("open confirmation again and buy a hint for 100", await d.tap(b("buy_hint")) and await outgame_popup_open() and await d.tap(b("confirm_buy")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and player().coins() == coins - Economy.price("hint") and player().booster("hint") == hints + 1)
 	d.expect_equal("the owned count and the spend are recorded", [b("owned_hint").text, recorder.last("spend_virtual_currency")["item_name"]], ["보유 %d개" % (hints + 1), "hint"])
 	fit_step("shop")
 	await d.shot("shop")
@@ -850,8 +883,9 @@ func shop_and_decor() -> void:
 	coins = player().coins()
 	var dear: Control = b("buy_background_night")
 	d.step("SCR-010 a theme you cannot afford shows a red price", dear != null and dear.get_meta("unaffordable", false))
-	d.step("tapping it only tells the shortage", await d.tap(dear) and player().coins() == coins and not player().owns_theme("background_night"))
+	d.step("tapping it only tells the shortage", await d.tap(dear) and main.outgame_popup == null and player().coins() == coins and not player().owns_theme("background_night"))
 	d.expect_equal("shortage toast", main.toasts.back(), "코인이 %d개 모자라요" % (Economy.theme_price("background_night") - coins))
+	fit_step("shop decor")
 	await d.shot("shop-decor")
 	d.step("back home", await d.tap(b("back")) and main.screen == "home")
 	d.expect_equal("the board was kept", label_of(b("play")), "이어 하기")
@@ -867,9 +901,9 @@ func shop_and_decor() -> void:
 	d.step("open the shop", await d.tap(b("shop")) and main.screen == "shop")
 	d.step("decor tab", await d.tap(b("tab_decor")))
 	coins = player().coins()
-	d.step("buy mint card backs", await d.tap(b("buy_card_back_mint")) and player().owns_theme("card_back_mint") and player().coins() == coins - 600)
+	d.step("buy mint card backs after confirm", await d.tap(b("buy_card_back_mint")) and await outgame_popup_open() and await d.tap(b("confirm_buy")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and player().owns_theme("card_back_mint") and player().coins() == coins - 600)
 	d.step("SCR-010 the bought theme is in use and the default can be picked", b("using_card_back_mint") != null and b("use_card_back_default") != null)
-	d.step("buy the peach background", await d.tap(b("buy_background_peach")) and main.backdrop.theme_id == "background_peach")
+	d.step("buy the peach background after confirm", await d.tap(b("buy_background_peach")) and await outgame_popup_open() and await d.tap(b("confirm_buy")) and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300) and main.backdrop.theme_id == "background_peach")
 	await d.shot("shop-bought")
 	d.step("back home", await d.tap(b("back")) and main.screen == "home")
 	var next_back: Control = b("next_backs").get_child(0)

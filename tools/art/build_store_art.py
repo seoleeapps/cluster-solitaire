@@ -17,8 +17,11 @@ import zlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ASSETS = ROOT / "godot/game/assets"
+IOS_ICONS = ASSETS / "ios"
 STORE = ROOT / "play-store/assets"
+APP_STORE = ROOT / "app-store/assets"
 RENDER = pathlib.Path(__file__).with_name("render_svg.gd")
+IOS_ICON_SIZES = (1024, 180, 167, 152, 120, 87, 80, 60, 58, 40)
 
 BG = '<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#58C4FF"/><stop offset="0.46" stop-color="#6E8CFF"/><stop offset="1" stop-color="#A56BFF"/></linearGradient>'
 BACK = '<linearGradient id="bk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A63FF"/><stop offset="1" stop-color="#6C46E8"/></linearGradient>'
@@ -92,8 +95,9 @@ def files():
         ASSETS / "icon_background.svg": svg(432, 432, f'<rect width="432" height="432" fill="url(#bg)"/>{bubbles(432, 432)}'),
         ASSETS / "icon_foreground.svg": svg(432, 432, card_group(*ADAPTIVE_AT, ADAPTIVE_SCALE)),
         ASSETS / "icon_monochrome.svg": svg(432, 432, monochrome(*MONO_AT, MONO_SCALE), ""),
-        # Store icon source: full-bleed square, Google Play applies its own mask.
+        # Store icon source: full-bleed square, Google Play and App Store apply their own masks.
         STORE / "icon-512.svg": square(512),
+        APP_STORE / "icon-1024.svg": square(1024),
     }
 
 
@@ -135,24 +139,43 @@ def stamp_png(path, digest):
     path.write_bytes(data[:header_end] + chunk + data[header_end:])
 
 
-def render_store_icon(source, png, digest):
-    """Rasterise the store icon with the engine. Returns an error message, or "" on success."""
+def render_store_icon(source, png, digest, expected_size=512, opaque_rgb=False):
+    """Rasterise a store icon with the engine. Returns an error message, or "" on success."""
     if shutil.which("godot") is None:
-        return "godot is not on PATH, so play-store/assets/icon-512.png was not rendered"
+        return f"godot is not on PATH, so {png.relative_to(ROOT)} was not rendered"
+    png.parent.mkdir(parents=True, exist_ok=True)
     png.unlink(missing_ok=True)
     done = subprocess.run(["godot", "--headless", "--path", str(ROOT / "godot"), "--script", str(RENDER), "--",
                            str(source), str(png)], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    if done.returncode == 0 and opaque_rgb and png.is_file():
+        from PIL import Image
+        with Image.open(png) as img:
+            img.convert("RGB").save(png, format="PNG")
     info = png_info(png)
-    if done.returncode != 0 or info is None or info[:2] != (512, 512):
-        return f"rendering play-store/assets/icon-512.png failed (exit {done.returncode}): {done.stderr.strip()[-400:]}"
+    if done.returncode != 0 or info is None or info[:2] != (expected_size, expected_size):
+        return f"rendering {png.relative_to(ROOT)} failed (exit {done.returncode}): {done.stderr.strip()[-400:]}"
     stamp_png(png, digest)
     return ""
+
+
+def write_ios_icon_slots(master_png, digest):
+    """Derive opaque RGB iOS AppIcon slot PNGs from the 1024x1024 master PNG."""
+    from PIL import Image
+    IOS_ICONS.mkdir(parents=True, exist_ok=True)
+    with Image.open(master_png) as master:
+        rgb = master.convert("RGB")
+        for px in IOS_ICON_SIZES:
+            out = IOS_ICONS / f"icon_{px}.png"
+            resized = rgb if px == 1024 else rgb.resize((px, px), Image.Resampling.LANCZOS)
+            resized.save(out, format="PNG")
+            stamp_png(out, digest)
 
 
 def main():
     check = "--check" in sys.argv
     bad = []
-    for path, text in files().items():
+    generated = files()
+    for path, text in generated.items():
         if check:
             if not path.exists() or path.read_text() != text:
                 bad.append(str(path.relative_to(ROOT)))
@@ -160,18 +183,30 @@ def main():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
     source, png = STORE / "icon-512.svg", STORE / "icon-512.png"
-    digest = hashlib.sha256(files()[source].encode()).hexdigest()
+    digest = hashlib.sha256(generated[source].encode()).hexdigest()
+    ios_source, ios_png = APP_STORE / "icon-1024.svg", APP_STORE / "icon-1024.png"
+    ios_digest = hashlib.sha256(generated[ios_source].encode()).hexdigest()
     if not check:
-        error = render_store_icon(source, png, digest)
-        if error:
-            print(error, file=sys.stderr)
-            return 1
+        for error in (
+            render_store_icon(source, png, digest, 512, False),
+            render_store_icon(ios_source, ios_png, ios_digest, 1024, True),
+        ):
+            if error:
+                print(error, file=sys.stderr)
+                return 1
+        write_ios_icon_slots(ios_png, ios_digest)
     if png_info(png) != (512, 512, digest):
         bad.append(f"{png.relative_to(ROOT)} (missing, wrong size, or rendered from another SVG)")
+    if png_info(ios_png) != (1024, 1024, ios_digest):
+        bad.append(f"{ios_png.relative_to(ROOT)} (missing, wrong size, or rendered from another SVG)")
+    for px in IOS_ICON_SIZES:
+        slot = IOS_ICONS / f"icon_{px}.png"
+        if png_info(slot) != (px, px, ios_digest):
+            bad.append(f"{slot.relative_to(ROOT)} (missing, wrong size, or rendered from another SVG)")
     if bad:
         print("out of date:", *bad, sep="\n  ")
         return 1
-    print("ok", len(files()), "icon files and icon-512.png")
+    print("ok", len(generated), "icon files, icon-512.png, icon-1024.png and iOS AppIcons")
     return 0
 
 
