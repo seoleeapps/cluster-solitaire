@@ -352,6 +352,17 @@ func _journey() -> void:
 	debug_live.queue_free()
 	await _frames()
 
+	# 비개인화(npa=1) 설정 시 AdRequest extras에 npa=1을 싣는다.
+	var npa_sdk: Variant = load(ADMOB_SDK_PATH).new()
+	npa_sdk.set_non_personalized(true)
+	npa_sdk.load_ad("rewarded", Values.IOS_TEST_UNITS["rewarded"], func(_ok: bool) -> void: pass)
+	_check(rewarded.loads[-1]["request"].get("extras", {}) == {"npa": "1"}, "비개인화 광고 요청 시 extras에 npa=1이 실린다")
+	rewarded.on_rewarded_ad_failed_to_load.emit(rewarded.loads[-1]["uid"], {"code": 3, "domain": "probe", "message": "no fill", "cause": {}, "response_info": {}})
+	await _frames()
+	npa_sdk.shutdown()
+	npa_sdk = null
+	await _frames()
+
 
 ## 플러그인의 정적 변수가 붙들고 있는 콜백을 놓는다. 놓지 않으면 끝날 때 어댑터가 남는다.
 func _release_plugin_callbacks() -> void:

@@ -50,6 +50,10 @@ SOURCES = {
     'FA_ADMOB_ENV': ['ADMOB_APP_ID', 'ADMOB_REWARDED_AD_UNIT_ID', 'ADMOB_INTERSTITIAL_AD_UNIT_ID'],
     'FA_ANALYTICS_ENV': ['GA4_MEASUREMENT_ID', 'GA4_MP_API_SECRET'],
 }
+PLATFORM_ADMOB = {
+    'android': ('ADMOB_APP_ID', 'ADMOB_REWARDED_AD_UNIT_ID', 'ADMOB_INTERSTITIAL_AD_UNIT_ID', 'general/android/app_id'),
+    'ios': ('ADMOB_IOS_APP_ID', 'ADMOB_IOS_REWARDED_AD_UNIT_ID', 'ADMOB_IOS_INTERSTITIAL_AD_UNIT_ID', 'general/ios/app_id'),
+}
 ADMOB_SECTION = 'admob'
 ADMOB_SETTING = 'general/android/app_id'
 
@@ -76,10 +80,17 @@ def read_env_file(path):
     return values
 
 
-def collect(environ, home):
+def collect(environ, home, platform='android'):
     """환경과 자격증명 파일에서 값을 모아 검사한다. 문제가 있으면 ServiceValueError를 낸다."""
+    if platform not in PLATFORM_ADMOB:
+        raise ServiceValueError('unsupported platform: %s' % platform)
+    app_key, rew_key, int_key, _setting = PLATFORM_ADMOB[platform]
+    sources = {
+        'FA_ADMOB_ENV': [app_key, rew_key, int_key],
+        'FA_ANALYTICS_ENV': ['GA4_MEASUREMENT_ID', 'GA4_MP_API_SECRET'],
+    }
     values, problems = {}, []
-    for variable, names in SOURCES.items():
+    for variable, names in sources.items():
         missing = [name for name in names if not environ.get(name)]
         from_file, file_problem = {}, ''
         if missing:
@@ -102,6 +113,10 @@ def collect(environ, home):
                 values[name] = value
             elif not file_problem:
                 problems.append('%s is missing' % name)
+    if platform != 'android':
+        values['ADMOB_APP_ID'] = values.pop(app_key, '')
+        values['ADMOB_REWARDED_AD_UNIT_ID'] = values.pop(rew_key, '')
+        values['ADMOB_INTERSTITIAL_AD_UNIT_ID'] = values.pop(int_key, '')
     values['FA_REMOTE_CONFIG_URL'] = environ.get('FA_REMOTE_CONFIG_URL') or DEFAULT_REMOTE_CONFIG_URL
     publishers = set()
     for name, pattern in PATTERNS.items():
@@ -146,20 +161,23 @@ def has_app_id(text):
     return re.search(r'^\[%s\]$' % re.escape(ADMOB_SECTION), text, re.M) is not None
 
 
-def with_app_id(text, app_id):
+def with_app_id(text, app_id, setting=ADMOB_SETTING):
     """project.godot 글자에 AdMob 앱 ID를 넣는다. Godot이 저장하는 자리(첫 절 앞)에 둔다."""
     text = strip_app_id(text)
     first = re.search(r'^\[', text, re.M)
     if first is None:
         raise ServiceValueError('project.godot has no sections')
-    section = '[%s]\n\n%s="%s"\n\n' % (ADMOB_SECTION, ADMOB_SETTING, app_id)
+    section = '[%s]\n\n%s="%s"\n\n' % (ADMOB_SECTION, setting, app_id)
     return text[:first.start()] + section + text[first.start():]
 
 
-def inject(root, values):
+def inject(root, values, platform='android'):
     """값을 프로젝트에 쓴다."""
+    if platform not in PLATFORM_ADMOB:
+        raise ServiceValueError('unsupported platform: %s' % platform)
+    setting = PLATFORM_ADMOB[platform][3]
     project = root / PROJECT_FILE
-    patched = with_app_id(project.read_text(), values['ADMOB_APP_ID'])
+    patched = with_app_id(project.read_text(), values['ADMOB_APP_ID'], setting)
     release = root / RELEASE_FILE
     release.parent.mkdir(parents=True, exist_ok=True)
     release.touch(mode=0o600, exist_ok=True)
@@ -188,12 +206,13 @@ def restore(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--restore', action='store_true', help='채운 값을 지운다')
+    parser.add_argument('--platform', choices=sorted(PLATFORM_ADMOB), default='android', help='대상 플랫폼(android 또는 ios)')
     arguments = parser.parse_args()
     if arguments.restore:
         print('service values removed' if restore(ROOT) else 'no injected service values')
         return 0
     try:
-        inject(ROOT, collect(os.environ, Path.home()))
+        inject(ROOT, collect(os.environ, Path.home(), arguments.platform), arguments.platform)
     except ServiceValueError as error:
         print('service values not prepared: %s. Values are never printed.' % error, file=sys.stderr)
         return 1

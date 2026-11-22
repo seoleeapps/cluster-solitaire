@@ -18,7 +18,7 @@ const HEIGHT := 74.0
 const DISC := 52.0
 const RING := 3.0
 const ICON := 28.0
-const LABEL_TOP := 58.0
+const LABEL_TOP := 59.5
 const BADGE := 20.0
 const IDLE_ALPHA := 0.55
 
@@ -66,7 +66,7 @@ func _init() -> void:
 	Fonts.shade(_label)
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_label.position = Vector2(-20.0, LABEL_TOP)
-	_label.size = Vector2(WIDTH + 40.0, HEIGHT - LABEL_TOP)
+	_label.size = Vector2(WIDTH + 40.0, maxf(18.0, HEIGHT - LABEL_TOP))
 	add_child(_label)
 	button_down.connect(func() -> void: Juice.press_punch(_art, 0.92, 0.12))
 

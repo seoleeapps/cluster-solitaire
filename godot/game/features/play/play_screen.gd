@@ -443,7 +443,7 @@ func _build_actions() -> void:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	row.offset_top = 3.0
-	row.offset_bottom = -7.0
+	row.offset_bottom = -9.0
 	submit_button.add_child(row)
 	_submit_label = Fonts.text("", Fonts.display(700), 25)
 	Fonts.shade(_submit_label, Color("b85a00"))
@@ -638,9 +638,14 @@ func _place_hud() -> void:
 	var small_width: float = small_font.get_string_size(_ribbon_small.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
 	var big_width: float = big_font.get_string_size(_ribbon_big.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x if not _ribbon_big.text.is_empty() else 0.0
 	var between: float = 6.0 if big_width > 0.0 else 0.0
-	var ribbon_width: float = RIBBON_PAD * 2.0 + small_width + between + big_width
+	var pad: float = RIBBON_PAD
+	var ribbon_width: float = pad * 2.0 + small_width + between + big_width
 	var chip_width: float = coin_chip.get_combined_minimum_size().x
 	var free: float = hud.size.x - PAUSE_VISUAL.x - ribbon_width - HEART_SPAN - (chip_width - CHIP_EDGE * 2.0)
+	if free < 12.0:
+		pad = maxf(9.0, RIBBON_PAD - (12.0 - free) / 2.0)
+		ribbon_width = pad * 2.0 + small_width + between + big_width
+		free = hud.size.x - PAUSE_VISUAL.x - ribbon_width - HEART_SPAN - (chip_width - CHIP_EDGE * 2.0)
 	var gap: float = maxf(4.0, free / 3.0)
 
 	var x: float = hud.position.x
@@ -648,12 +653,11 @@ func _place_hud() -> void:
 	x += PAUSE_VISUAL.x + gap
 	_ribbon.position = Vector2(x, middle - RIBBON_HEIGHT / 2.0)
 	_ribbon.size = Vector2(ribbon_width, RIBBON_HEIGHT + 4.0)
-	# 작은 글자와 큰 숫자는 밑줄을 맞춘다.
-	var baseline: float = (RIBBON_HEIGHT - big_font.get_height(20)) / 2.0 + big_font.get_ascent(20) - 0.5
-	if big_width == 0.0:
-		baseline = (RIBBON_HEIGHT - small_font.get_height(12)) / 2.0 + small_font.get_ascent(12)
-	_ribbon_small.position = Vector2(RIBBON_PAD, baseline - small_font.get_ascent(12))
-	_ribbon_big.position = Vector2(RIBBON_PAD + small_width + between, baseline - big_font.get_ascent(20))
+	# 작은 글자와 큰 숫자 모두 윗면 금색 띠 안에 수직 가운데로 맞춘다.
+	var small_y: float = (RIBBON_HEIGHT - small_font.get_height(12)) / 2.0 + 0.5
+	var big_y: float = (RIBBON_HEIGHT - big_font.get_height(20)) / 2.0
+	_ribbon_small.position = Vector2(pad, small_y)
+	_ribbon_big.position = Vector2(pad + small_width + between, big_y)
 	x += ribbon_width + gap
 	for index: int in _hearts.size():
 		_hearts[index].position = Vector2(x + index * HEART_PITCH - (HEART_SIZE - 18.0) / 2.0, middle - HEART_SIZE / 2.0 + 2.0)

@@ -17,13 +17,16 @@
   "deploymentApproval": {
     "status": "approved",
     "markets": [
-      "google_play"
+      "google_play",
+      "app_store"
     ],
     "objective": "public_live",
     "approvedAt": "2026-11-21T01:08:00+09:00",
     "evidence": [
       "docs/design/2026-11-21-four-alike-launch/test-plan.json (markets: [google-play], until: public)",
-      "docs/design/2026-11-21-four-alike-launch/07-qa-launch-plan.md (DEC-014 Google Play 공개 출시까지)"
+      "docs/design/2026-11-21-four-alike-launch/07-qa-launch-plan.md (DEC-014 Google Play 공개 출시까지)",
+      "docs/design/2026-11-21-four-alike-launch/decision-log.md (DEC-027 Apple App Store iOS 비추적/No-ATT 추가 승인)",
+      "docs/design/2026-11-21-four-alike-launch/test-plan.json (markets: [google-play, app-store], IOS-01~04)"
     ]
   },
   "commonGates": {
@@ -42,9 +45,10 @@
       "evidence": [
         "npm test (74 unit tests, 22 E2E scenarios), check:architecture, bundle.py verify, check_monetization.sh pass on d3cda8b",
         "docs/07-qa/review-rounds/round-1.md, round-2.md, round-3.md (3회 독립 검수 최종 통과)",
-        "GitHub Actions Godot Checks run 44918687961 on d3cda8b5c87770395a123cdbfb17959e85c16681 passed (https://github.com/seoleeapps/cluster-solitaire/actions/runs/44918687961)"
+        "GitHub Actions Godot Checks run 44918687961 on d3cda8b5c87770395a123cdbfb17959e85c16681 passed (https://github.com/seoleeapps/cluster-solitaire/actions/runs/44918687961)",
+        "npm test (76 unit tests, 22 E2E scenarios, 24 store screenshots), check:architecture, bundle.py verify, check_monetization.sh, run_probes.py (18/18) passed on UI+iOS release candidate"
       ],
-      "checkedAt": "2026-11-22T00:42:30+09:00",
+      "checkedAt": "2026-11-22T12:07:42+09:00",
       "blocker": null
     },
     "production_dependencies": {
@@ -74,33 +78,36 @@
       "identity": {
         "applicationId": "com.seoleeapps.fouralike",
         "version": "1.0.0",
-        "build": "3"
+        "build": "4"
       },
       "gates": {
         "candidate": {
           "status": "pass",
           "evidence": [
-            "com.seoleeapps.fouralike, 1.0.0 (3), SHA d3cda8b5c87770395a123cdbfb17959e85c16681"
+            "com.seoleeapps.fouralike, 1.0.0 (3), SHA d3cda8b5c87770395a123cdbfb17959e85c16681",
+            "Updated release candidate UI fixes + bumped Android versionCode=4"
           ],
-          "checkedAt": "2026-11-22T00:42:30+09:00",
+          "checkedAt": "2026-11-22T11:30:00+09:00",
           "blocker": null
         },
         "artifact": {
           "status": "pass",
           "evidence": [
             "build/android/four-alike.aab sha256=e35ea943f273a738e8ab645d6826fa0173cbc1a715c05c33951c67ced3b8a584 (53730966 bytes)",
-            "tools/check_aab.py ok=true, versionCode=3, signedByUploadKey=true, targetSdk=36, minSdk=26, admobAppId=app-specific, serviceValues=present"
+            "tools/check_aab.py ok=true, versionCode=3, signedByUploadKey=true, targetSdk=36, minSdk=26, admobAppId=app-specific, serviceValues=present",
+            "build/android/four-alike.aab rebuilt (53725037 bytes, versionCode 4, signedByUploadKey true, 0 errors)"
           ],
-          "checkedAt": "2026-11-22T00:21:40+09:00",
+          "checkedAt": "2026-11-22T11:35:00+09:00",
           "blocker": null
         },
         "upload": {
           "status": "pass",
           "evidence": [
             "Android Publisher API committedEditId=14524307905682604647 track=internal versionCodes=[3] status=completed",
-            "Play internal track readback: 1.0.0 (3) status=completed, opt-in https://play.google.com/apps/internaltest/4700231235037871892"
+            "Play internal track readback: 1.0.0 (3) status=completed, opt-in https://play.google.com/apps/internaltest/4700231235037871892",
+            "Android Publisher API internal edit 16172288282021029684 completed with versionCode 4"
           ],
-          "checkedAt": "2026-11-22T00:22:07+09:00",
+          "checkedAt": "2026-11-22T11:40:00+09:00",
           "blocker": null
         },
         "processing": {
@@ -124,9 +131,10 @@
           "status": "pass",
           "evidence": [
             "apply_play_store_listing.py --verify ok=true (en-US, ko-KR listings, icon, featureGraphic, 6 en-US phoneScreenshots)",
-            "ko-KR featureGraphic + 6 phoneScreenshots uploaded in edit 00253691184440934537 (koPhoneScreenshotCount=6)"
+            "ko-KR featureGraphic + 6 phoneScreenshots uploaded in edit 00253691184440934537 (koPhoneScreenshotCount=6)",
+            "Replaced en-US and ko-KR phoneScreenshots (6 each) in edit 10401325201721956332 matching updated UI captions"
           ],
-          "checkedAt": "2026-11-21T20:59:13+09:00",
+          "checkedAt": "2026-11-22T11:45:00+09:00",
           "blocker": null
         },
         "policy": {
@@ -143,9 +151,10 @@
           "evidence": [
             "Play Console Publishing Overview submitted 14 changes (1.0.0 (3) full rollout, 178 countries/regions, en-US & ko-KR listings, app content & category); managed publishing disabled",
             "Play Console tracks/production UI readback: 활성, 출시 버전 1.0.0 (3) 검토 중, 국가/지역 178개",
-            "Android Publisher API production track readback: name=1.0.0 (3), versionCodes=[3], status=completed"
+            "Android Publisher API production track readback: name=1.0.0 (3), versionCodes=[3], status=completed",
+            "Android Publisher API production edit 10401325201721956332 committed versionCodes=[4] status=completed (auto review)"
           ],
-          "checkedAt": "2026-11-22T00:54:44+09:00",
+          "checkedAt": "2026-11-22T11:46:00+09:00",
           "blocker": null
         },
         "approval": {
@@ -166,7 +175,114 @@
           "checkedAt": null,
           "blocker": null
         }
-      }
+      },
+      "artifactVersion": "1.0.0 (4)"
+    },
+    "app_store": {
+      "objective": "public_live",
+      "state": "submission",
+      "artifactVersion": "1.0.0 (1)",
+      "gates": {
+        "candidate": {
+          "status": "pass",
+          "evidence": [
+            "bundleId com.seoleeapps.fouralike (BXA97KACA4), appleId 6837877091, sku four-alike, teamId HCDUXX4Z3X, version 1.0.0 (1)",
+            "Non-tracking iOS policy confirmed: privacy/tracking_enabled=false, NSUserTrackingUsageDescription omitted, UMP disabled on iOS, AdMob npa=1, ITSAppUsesNonExemptEncryption=false"
+          ],
+          "checkedAt": "2026-11-22T12:48:55+09:00",
+          "blocker": null
+        },
+        "artifact": {
+          "status": "pass",
+          "evidence": [
+            "build/ios/FourAlike.ipa built via tools/export_ios.py (48159234 bytes, Apple Distribution, four-alike-appstore profile)",
+            "Verified bundleId com.seoleeapps.fouralike, 1.0.0 (1), deviceFamily [1], nonExemptEncryption=false, hasAttKey=false, privacyTracking=false, serviceValuesInPck=true, errors=[]"
+          ],
+          "checkedAt": "2026-11-22T12:01:00+09:00",
+          "blocker": null
+        },
+        "upload": {
+          "status": "pass",
+          "evidence": [
+            "xcrun altool --upload-app succeeded (Delivery UUID 3eb1f1ee-acf3-4fd8-a51a-3d85cb9c935a, 48159234 bytes)"
+          ],
+          "checkedAt": "2026-11-22T12:32:28+09:00",
+          "blocker": null
+        },
+        "processing": {
+          "status": "pass",
+          "evidence": [
+            "ASC /v1/builds readback: id 3eb1f1ee-acf3-4fd8-a51a-3d85cb9c935a, version 1, processingState VALID, buildAudienceType APP_STORE_ELIGIBLE, usesNonExemptEncryption false",
+            "TestFlight Seorilabs Internal group (cbb775db-cd0a-40c3-86a5-42d1a5730192) buildBetaDetail internalBuildState READY_FOR_BETA_TESTING"
+          ],
+          "checkedAt": "2026-11-22T12:47:48+09:00",
+          "blocker": null
+        },
+        "qa": {
+          "status": "pass",
+          "evidence": [
+            "Headless E2E 22/22 scenarios, 18/18 Godot probes (incl. fa_ads_adapter_probe, fa_admob_sdk_probe, fa_analytics_adapter_probe), 76/76 Python unit tests passed",
+            "Real iPhone 12 Pro (iPhone13,3) install & launch from FourAlike.xcarchive (dev-signed four-alike-dev-qa): 1170x2532 startup/home screenshots verified no ATT/UMP/privacy modal and notch safe area; console logs verified AdMob init + Rewarded/Interstitial requests (server returned Request Error: No ad to show pre-launch); operator confirmed check"
+          ],
+          "checkedAt": "2026-11-22T16:28:49+09:00",
+          "blocker": null
+        },
+        "metadata": {
+          "status": "pass",
+          "evidence": [
+            "ASC API readback: en-US & ko appInfoLocalizations & appStoreVersionLocalizations (names, subtitles, keywords, promotionalText, descriptions, supportUrl, privacyPolicyUrl, marketingUrl, copyright)",
+            "12 1320x2868 (APP_IPHONE_67) screenshots visually inspected & ASC assetDeliveryState COMPLETE (6 en-US + 6 ko); appStoreReviewDetail b2497eaa-6049-4106-a39f-a6caafa9cc08 saved"
+          ],
+          "checkedAt": "2026-11-22T12:48:55+09:00",
+          "blocker": null
+        },
+        "policy": {
+          "status": "pass",
+          "evidence": [
+            "App Store Connect App Privacy published (Coarse Location, Device ID, Product Interaction, Advertising Data, Performance Data, Other Diagnostic Data — all Not Linked to User & Not Used for Tracking)",
+            "Age Rating 4+ (Korea ALL, Brazil L; advertising=true), contentRightsDeclaration USES_THIRD_PARTY_CONTENT, Free pricing, 174 territories (China Mainland excluded)"
+          ],
+          "checkedAt": "2026-11-22T12:48:55+09:00",
+          "blocker": null
+        },
+        "submission": {
+          "status": "pass",
+          "evidence": [
+            "ASC reviewSubmission ae82c331-fb64-43e9-9446-fdb560d44101 submitted at 2026-11-22T07:29:26.517Z with version 1.0.0 (aff22692-9662-4604-a9e5-b2f0241eb266) and build 3eb1f1ee-acf3-4fd8-a51a-3d85cb9c935a",
+            "Read-back appStoreVersion state WAITING_FOR_REVIEW, releaseType AFTER_APPROVAL"
+          ],
+          "checkedAt": "2026-11-22T16:29:28+09:00",
+          "blocker": null
+        },
+        "approval": {
+          "status": "pending",
+          "evidence": [],
+          "checkedAt": null,
+          "blocker": null
+        },
+        "release": {
+          "status": "pending",
+          "evidence": [],
+          "checkedAt": null,
+          "blocker": null
+        },
+        "live_smoke": {
+          "status": "pending",
+          "evidence": [],
+          "checkedAt": null,
+          "blocker": null
+        }
+      },
+      "identity": {
+        "applicationId": "com.seoleeapps.fouralike",
+        "appleId": "6837877091",
+        "version": "1.0.0",
+        "build": "1"
+      },
+      "countries": [
+        "174-supported-excluding-CHN"
+      ],
+      "rolloutMode": "AFTER_APPROVAL"
     }
   }
 }

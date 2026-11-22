@@ -12,20 +12,20 @@
       "pressed": "ui_button_primary_pressed.svg",
       "disabled": "ui_button_primary_disabled.svg",
       "margins": [
-        26,
-        26,
-        26,
-        32
+        22,
+        20,
+        22,
+        26
       ],
       "content": [
-        20,
+        18,
         9,
-        20,
-        13
+        18,
+        15
       ],
       "minimum": [
         72,
-        56
+        54
       ]
     },
     "button_secondary": {
@@ -97,13 +97,13 @@
       ],
       "content": [
         10,
-        4,
-        10,
-        4
+        5,
+        14,
+        5
       ],
       "minimum": [
         56,
-        36
+        38
       ]
     }
   },

@@ -12,7 +12,7 @@ class NativeExportTests(unittest.TestCase):
     def clone_config(self,folder):
         root=Path(folder)
         patches=json.loads((ROOT/'native/dependencies.lock.json').read_text())['sources']['admob']['localPatches']
-        for name in ['.gitignore','native/dependencies.lock.json','godot/project.godot','godot/export_presets.cfg','godot/config/product.json','play-store/google-play.config.json',*[entry['file'] for entry in patches]]:
+        for name in ['.gitignore','native/dependencies.lock.json','godot/project.godot','godot/export_presets.cfg','godot/config/product.json','play-store/google-play.config.json','app-store/app-store.config.json',*[entry['file'] for entry in patches]]:
             target=root/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,target)
         return root
     def test_changed_vendor_patch_is_rejected(self):
@@ -92,6 +92,13 @@ class NativeExportTests(unittest.TestCase):
         self.assertEqual('',tracked)
     def test_unvalidated_platform_preset_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
-            root=self.clone_config(folder);p=root/'godot/export_presets.cfg';p.write_text(p.read_text()+'\n[preset.2]\nname="iOS"\nplatform="iOS"\nrunnable=false\n\n[preset.2.options]\n')
-            self.assertIn('Unsupported export preset platform: iOS',check_native.validate(root))
+            root=self.clone_config(folder);p=root/'godot/export_presets.cfg';p.write_text(p.read_text()+'\n[preset.3]\nname="macOS"\nplatform="macOS"\nrunnable=false\n\n[preset.3.options]\n')
+            self.assertIn('Unsupported export preset platform: macOS',check_native.validate(root))
+    def test_ios_tracking_and_identity_mismatch_are_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'godot/export_presets.cfg';p.write_text(p.read_text().replace('privacy/tracking_enabled=false','privacy/tracking_enabled=true'))
+            self.assertIn('iOS non-tracking policy requires privacy/tracking_enabled=false',check_native.validate(root))
+        with tempfile.TemporaryDirectory() as folder:
+            root=self.clone_config(folder);p=root/'app-store/app-store.config.json';data=json.loads(p.read_text());data['bundleId']='com.other.wrong';p.write_text(json.dumps(data))
+            self.assertIn('iOS bundle identity mismatch',check_native.validate(root))
 if __name__=='__main__':unittest.main()

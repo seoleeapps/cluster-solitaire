@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 import re
 ROOT=Path(__file__).resolve().parents[1]
-# Web is the only non-native preset. Any other platform has no validated build lane in this product.
-PRESET_PLATFORMS=('Android','Web')
+# Web is the only non-native preset. Native targets are Android (Google Play) and iOS (App Store).
+PRESET_PLATFORMS=('Android','Web','iOS')
 ADMOB_PLUGIN='res://addons/admob/plugin.cfg'
 SERVICE_VALUES='godot/data/services/release.json'
 def load_presets(root):
@@ -58,6 +58,7 @@ def validate(root):
     try:
         product=json.loads((root/'godot/config/product.json').read_text())
         play=json.loads((root/'play-store/google-play.config.json').read_text())
+        app_store=json.loads((root/'app-store/app-store.config.json').read_text())
     except (OSError,ValueError) as error:return [str(error)]
     identity=product['id']
     if not re.fullmatch(r'[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+',identity):errors.append('Native product ID must be a reverse-DNS identifier')
@@ -89,6 +90,26 @@ def validate(root):
             if value(cfg,options,key):errors.append('Signing values must come from the environment: '+key)
         if (root/'godot'/str(value(cfg,base,'export_path'))).resolve()!=(root/str(play.get('aabPath'))).resolve():errors.append('Android bundle path mismatch')
     if play.get('track')!='internal':errors.append('Uploads go to the internal track; production is reached by promotion')
+    ios_bases=[s for s in presets if value(cfg,s,'name')=='iOS']
+    if len(ios_bases)!=1:errors.append('Missing or duplicate native preset: iOS')
+    else:
+        base=ios_bases[0];options=base+'.options'
+        if value(cfg,base,'platform')!='iOS':errors.append('iOS preset platform mismatch')
+        if value(cfg,base,'runnable') is not False:errors.append('Native automatic device discovery must stay disabled')
+        exclude=value(cfg,base,'exclude_filter') or ''
+        for pattern in ['tests/**','game/scenarios/**']:
+            if pattern not in exclude.split(','):errors.append('iOS must exclude '+pattern)
+        include=value(cfg,base,'include_filter') or ''
+        for license in ['addons/seorilabs_game/fonts/*-OFL.txt','addons/seorilabs_platform/LICENSE']:
+            if license not in include.split(','):errors.append('iOS must retain '+license)
+        if value(cfg,options,'application/bundle_identifier')!=identity or app_store.get('bundleId')!=identity:errors.append('iOS bundle identity mismatch')
+        if value(cfg,options,'application/app_store_team_id')!=app_store.get('teamId'):errors.append('iOS team ID mismatch')
+        if value(cfg,options,'privacy/tracking_enabled') is not False:errors.append('iOS non-tracking policy requires privacy/tracking_enabled=false')
+        plist_extra=str(value(cfg,options,'application/additional_plist_content') or '')
+        if 'NSUserTrackingUsageDescription' in plist_extra:errors.append('No-ATT iOS build must not set NSUserTrackingUsageDescription')
+        if 'ITSAppUsesNonExemptEncryption' not in plist_extra:errors.append('iOS must declare ITSAppUsesNonExemptEncryption')
+        for key in ['application/code_sign_identity_release','application/provisioning_profile_uuid_release','application/provisioning_profile_specifier_release']:
+            if value(cfg,options,key):errors.append('iOS signing overrides must not be embedded in export_presets.cfg: '+key)
     return errors
 if __name__=='__main__':
     errors=validate(ROOT)

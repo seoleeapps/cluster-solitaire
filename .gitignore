@@ -63,9 +63,11 @@ logs/
 **/*.import
 godot/build/
 
-# Generated Android export project and SDK build cache.
+# Generated Android and iOS export project and SDK build cache.
 godot/android/
+godot/ios/
 godot/addons/admob/android/bin/
+godot/addons/admob/ios/bin/
 
 # Service values injected for one release build (tools/prepare_services.py). Never tracked.
 godot/data/services/

@@ -3,7 +3,10 @@
 import argparse,hashlib,urllib.request,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-HASHES={'android':'f7fdf644d50c0e231d8f02ae044057e489d0bcafcf50e908a4858477e7ee05ee'}
+HASHES={
+    'android':'f7fdf644d50c0e231d8f02ae044057e489d0bcafcf50e908a4858477e7ee05ee',
+    'ios':'6e7f1c807761f9c0ad45d335ac4c74acd4bba7a31f9e1c7cd16a5220010cce71',
+}
 def install(platform):
     name=f'{platform}-template-v4.7.2.zip';archive=ROOT/'build/native-downloads'/name
     archive.parent.mkdir(parents=True,exist_ok=True)

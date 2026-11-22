@@ -13,7 +13,7 @@ const BUTTON_HEIGHT := 54.0
 ## 팝업 버튼 안에서 글자와 아이콘이 쓸 수 있는 폭(창의 폭에서 틀과 버튼의 안쪽 여백을 뺀 값), 둘 사이 간격, 아래 옆면의 높이.
 const BUTTON_TEXT_ROOM := 234.0
 const BUTTON_ICON_GAP := 8
-const BUTTON_LIP := 6.0
+const BUTTON_LIP := 9.0
 const BUTTON_FONT_SIZES: Array[int] = [20, 18, 16]
 const BUTTON_SECOND_LINE := 14.0
 const PRIMARY_SHADE := Color("b85a00")
@@ -21,14 +21,14 @@ const PRIMARY_SHADE := Color("b85a00")
 const DANGER_SHADE := Color("9e1f30")
 const DANGER_INK := Color("d6283f")
 ## 스킨의 주 버튼 판과 같은 9분할 여백과 안쪽 여백(skin.json의 button_primary).
-const PRIMARY_MARGINS := [26, 26, 26, 32]
-const PRIMARY_CONTENT := [20, 9, 20, 13]
+const PRIMARY_MARGINS := [22, 20, 22, 26]
+const PRIMARY_CONTENT := [18, 9, 18, 15]
 const POPUP_WIDTH := 318.0
 const DIM := Color(0.09, 0.07, 0.3, 0.62)
 const RED := Color("ff4b5c")
-## 코인 칩: 짙은 반투명 알약에 코인, 숫자, 초록 더하기(show_add일 때만). 터치 영역 높이는 48, 보이는 알약 높이는 34다.
+## 코인 칩: 짙은 반투명 알약에 코인, 숫자, 초록 더하기(show_add일 때만). 터치 영역 높이는 48, 보이는 알약 높이는 38이다.
 const CHIP_HEIGHT := 48.0
-const CHIP_INSET := 7.0
+const CHIP_INSET := 5.0
 ## 흰 판(ui_panel): 9분할 여백과 안쪽 여백.
 const PANEL_MARGINS := [24, 24, 24, 30]
 ## 둥근 메뉴 버튼(홈 아래 줄)의 원판 크기와 이름 글자 크기.
@@ -69,6 +69,7 @@ static func button(button_name: String, text: String, primary: bool, action: Cal
 	row.add_theme_constant_override("separation", BUTTON_ICON_GAP)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	row.offset_top = 3.0
 	row.offset_bottom = -BUTTON_LIP
 	node.add_child(row)
 	var left: float = room
@@ -207,7 +208,7 @@ static func coin_chip(chip_name: String, show_add: bool) -> PanelContainer:
 	var chip: PanelContainer = CurrencyChip.instantiate()
 	chip.name = chip_name
 	chip.show_add = show_add
-	var chip_box: StyleBoxTexture = Art.box(Art.skin("ui_chip"), [22, 14, 22, 14], [0, CHIP_INSET, 5, CHIP_INSET])
+	var chip_box: StyleBoxTexture = Art.box(Art.skin("ui_chip"), [22, 14, 22, 14], [10, CHIP_INSET, 8 if show_add else 14, CHIP_INSET])
 	chip_box.expand_margin_top = -CHIP_INSET
 	chip_box.expand_margin_bottom = -CHIP_INSET
 	chip.add_theme_stylebox_override("panel", chip_box)
@@ -217,7 +218,7 @@ static func coin_chip(chip_name: String, show_add: bool) -> PanelContainer:
 	row.add_theme_constant_override("separation", 5)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	var chip_icon: TextureRect = chip.get_node("Row/Icon")
-	chip_icon.custom_minimum_size = Vector2(28, 28)
+	chip_icon.custom_minimum_size = Vector2(24, 24)
 	chip_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var value: Label = chip.get_node("Row/Value")
 	value.add_theme_font_override("font", Fonts.display(600))
@@ -227,7 +228,7 @@ static func coin_chip(chip_name: String, show_add: bool) -> PanelContainer:
 	var add: Button = chip.get_node("Row/Add")
 	add.text = ""
 	add.focus_mode = Control.FOCUS_NONE
-	add.custom_minimum_size = Vector2(26, 34)
+	add.custom_minimum_size = Vector2(26, 28)
 	add.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	icon_only(add, Art.play("plus_button"))
 	var empty := StyleBoxEmpty.new()
@@ -293,7 +294,7 @@ static func round_button(button_name: String, disc: Texture2D, caption: String, 
 	node.name = button_name
 	node.custom_minimum_size = Vector2(84, ROUND_SIZE + 30)
 	node.focus_mode = Control.FOCUS_NONE
-	var art: TextureRect = Art.picture(disc, Vector2(ROUND_SIZE, ROUND_SIZE * 60.0 / 58.0))
+	var art: TextureRect = Art.picture(disc, Vector2(ROUND_SIZE, ROUND_SIZE * 62.0 / 58.0))
 	art.name = "disc"
 	art.position = Vector2((84 - ROUND_SIZE) / 2.0, 0)
 	art.pivot_offset = art.size / 2.0
@@ -302,7 +303,7 @@ static func round_button(button_name: String, disc: Texture2D, caption: String, 
 	label.name = "caption"
 	Fonts.shade(label)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.position = Vector2(-8, ROUND_SIZE + 6)
+	label.position = Vector2(-8, ROUND_SIZE + 7)
 	label.size = Vector2(100, 22)
 	node.add_child(label)
 	node.button_down.connect(func() -> void: Juice.press_punch(art, 0.92, 0.1))

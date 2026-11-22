@@ -23,6 +23,7 @@ const Look := preload("res://game/features/shared/fa_look.gd")
 ## 게임의 논리 화면(9:16)과 그리는 배율. 휴대전화처럼 논리 크기는 그대로 두고 그리는 배율만 올린다.
 const SCREEN := Vector2i(390, 693)
 const FACTOR := 3
+var _screen: Vector2i = SCREEN
 const DAY_SECONDS := 86400
 ## 게임을 켠 날과 그 전까지 날마다 푼 스테이지 수(합 29: 튜토리얼 뒤 스테이지 1~29).
 const TODAY := "2026-12-10"
@@ -50,9 +51,13 @@ func run() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	var out: String = args[args.find("--out") + 1] if args.has("--out") else "user://store-capture"
 	language = args[args.find("--language") + 1] if args.has("--language") else "en"
+	if args.has("--size"):
+		var parts: PackedStringArray = args[args.find("--size") + 1].split("x")
+		if parts.size() == 2:
+			_screen = Vector2i(int(parts[0]), int(parts[1]))
 	# 연출 입자처럼 전역 난수를 쓰는 곳도 실행마다 같게 한다.
 	seed(20261210)
-	d = Driver.new(self, SCREEN, out, true)
+	d = Driver.new(self, _screen, out, true)
 	pilot = Pilot.new(d)
 	ads = ScriptedAds.new()
 	clock = Pilot.FakeClock.new()
@@ -202,13 +207,13 @@ func open_home() -> bool:
 
 ## 논리 화면은 그대로 두고 3배로 그려 찍는다.
 func shot(shot_name: String, settle: bool = true) -> void:
-	d.viewport.size = SCREEN * FACTOR
-	d.viewport.size_2d_override = SCREEN
+	d.viewport.size = _screen * FACTOR
+	d.viewport.size_2d_override = _screen
 	d.viewport.size_2d_override_stretch = true
 	await d.shot(shot_name, settle)
 	d.viewport.size_2d_override_stretch = false
 	d.viewport.size_2d_override = Vector2i.ZERO
-	d.viewport.size = SCREEN
+	d.viewport.size = _screen
 
 
 ## 4: 일일 도전(아흐레 연속 성공, 오늘의 판이 기다림). 5: 도감.
@@ -271,8 +276,16 @@ func decor_shot() -> void:
 		and await d.wait_for(func() -> bool: return main.screen == "home", 600))
 	d.step("open the shop", await d.tap(b("shop")) and main.screen == "shop")
 	d.step("decor tab", await d.tap(b("tab_decor")))
-	d.step("buy and use the card back", await d.tap(b("buy_" + DECOR_CARD_BACK)) and b("using_" + DECOR_CARD_BACK) != null)
-	d.step("buy and use the background", await d.tap(b("buy_" + DECOR_BACKGROUND)) and main.backdrop.theme_id == DECOR_BACKGROUND)
+	d.step("buy and use the card back", await d.tap(b("buy_" + DECOR_CARD_BACK))
+		and await d.wait_for(func() -> bool: return main.outgame_popup != null and main.outgame_popup.state == "open", 600)
+		and await d.tap(b("confirm_buy"))
+		and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300)
+		and b("using_" + DECOR_CARD_BACK) != null)
+	d.step("buy and use the background", await d.tap(b("buy_" + DECOR_BACKGROUND))
+		and await d.wait_for(func() -> bool: return main.outgame_popup != null and main.outgame_popup.state == "open", 600)
+		and await d.tap(b("confirm_buy"))
+		and await d.wait_for(func() -> bool: return main.outgame_popup == null, 300)
+		and main.backdrop.theme_id == DECOR_BACKGROUND)
 	d.step("back home", await d.tap(b("back")) and main.screen == "home")
 	d.step("the home shows the new card backs", b("next_backs").get_child(0)._back.texture == Look.back_plate(DECOR_CARD_BACK))
 	# 코인 칩이 줄어드는 연출이 끝난 뒤에 찍는다.

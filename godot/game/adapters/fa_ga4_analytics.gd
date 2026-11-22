@@ -27,6 +27,14 @@ const GATE_OPEN := 1
 const ENDPOINT := "https://www.google-analytics.com/mp/collect"
 const PLATFORM := "android"
 const APP_MARKET := "google_play"
+
+
+static func runtime_platform_for(os_name: String = OS.get_name()) -> String:
+	return "ios" if os_name == "iOS" else PLATFORM
+
+
+static func app_market_for(os_name: String = OS.get_name()) -> String:
+	return "apple_app_store" if os_name == "iOS" else APP_MARKET
 ## 게임이 쓰는 이름 가운데 웹 스트림으로 보낼 수 없는 것의 보내는 이름.
 ## ad_impression은 Measurement Protocol이 앱 스트림에서만 받는다(FaGa4Events.RESERVED_EVENTS의 근거 문서).
 ## 수익화 프로필과 코어는 ad_impression을 그대로 쓰고, 보낼 때만 바꾼다.
@@ -244,8 +252,8 @@ func _append(name: String, params: Dictionary, unix_seconds: float) -> void:
 	if _session_id.is_empty():
 		begin_session()
 	var merged: Dictionary = params.duplicate()
-	merged["runtime_platform"] = PLATFORM
-	merged["app_market"] = APP_MARKET
+	merged["runtime_platform"] = runtime_platform_for()
+	merged["app_market"] = app_market_for()
 	merged["release_version"] = _release_version
 	merged["session_id"] = _session_id
 	merged["engagement_time_msec"] = maxi(1, int(_engaged_msec))

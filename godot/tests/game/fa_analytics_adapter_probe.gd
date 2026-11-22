@@ -201,6 +201,7 @@ func _common_params() -> bool:
 	var params: Dictionary = event["params"]
 	_check(event["name"] == "level_end" and event["timestamp_micros"] == (NOON + 2.0) * 1000000.0, "이름과 일어난 시각")
 	_check(params["runtime_platform"] == "android" and params["app_market"] == "google_play" and params["release_version"] == "1.0.0", "runtime_platform, app_market, release_version")
+	_check(Analytics.runtime_platform_for("iOS") == "ios" and Analytics.app_market_for("iOS") == "apple_app_store", "iOS runtime_platform과 app_market")
 	_check(params["session_id"] == str(int(NOON)), "session_id는 실행을 시작한 시각이다")
 	_check(params["engagement_time_msec"] == 2000.0, "engagement_time_msec은 지난 이벤트 뒤 화면 앞에서 흐른 시간이다")
 	_check(params["mode"] == "journey" and params["level"] == 12.0 and params["success"] == 1.0 and params["continue_used"] == 0.0, "게임이 넘긴 값(참 거짓은 1과 0)")

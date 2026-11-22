@@ -2,7 +2,7 @@
 
 한국어로 간결하게 보고한다. 공개 저장소이므로 비밀값, 개인 정보, 로컬 절대 경로를 커밋하지 않는다.
 
-제품은 세로형 Android 게임이고 출시 마켓은 Google Play뿐이다. 승인 범위는 [첫 출시 설계](docs/design/2026-11-21-four-alike-launch/design.md)와 같은 폴더의 test-plan.json을 따른다. iOS, 앱인토스, 인앱결제, 로그인, 서버는 범위에 없다. 다시 넣으려면 새 설계 승인이 필요하다.
+제품은 세로형 모바일 게임이고 출시 마켓은 Google Play와 Apple App Store(2026-11-22 추가 승인)다. 승인 범위는 [첫 출시 설계](docs/design/2026-11-21-four-alike-launch/design.md)와 같은 폴더의 test-plan.json을 따른다. iOS는 비추적(No-ATT, 비개인화 `npa=1` 광고, UMP 미호출) 구성을 쓴다. 앱인토스, 인앱결제, 로그인, 서버는 범위에 없다. 다시 넣으려면 새 설계 승인이 필요하다.
 
 제품 규칙은 GDScript의 godot/game/core, 장면과 전용 그림은 features, 저장과 SDK 연결은 adapters, 공통 흐름과의 연결은 bootstrap에 둔다. 공통 묶음 세 폴더(godot/addons/seorilabs_game, godot/addons/seorilabs_platform, godot/tests/common)는 common-bundle.lock.json으로 고정돼 있으므로 직접 고치거나 파일을 더하지 않는다. 공통 수정은 game-foundation 원본에서 하고 검수한 묶음을 설치한다.
 
